@@ -8,7 +8,7 @@ using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
 using Unfold.Interfaces;
 using DynamoText;
-using Dynamo.Utilities;
+
 
 namespace Unfold
 {
@@ -272,7 +272,7 @@ namespace Unfold
             catch (Exception e)
             {
                 Geometry.ExportToSAT((new List<Geometry>() { surf1, surf2 }), "C:\\Users\\Mike\\Desktop\\testdebug.SAT");
-                Dynamo.Utilities.dynSettings.DynamoLogger.Log(e.Message);
+                Console.WriteLine(e.Message);
                 return  new Geometry[0];
                
             }
