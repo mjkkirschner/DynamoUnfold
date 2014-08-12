@@ -40,7 +40,8 @@ local.properties
 *.suo
 *.user
 *.sln.docstates
-
+TestResult.xml
+*.VisualState.xml
 # Build results
 
 [Dd]ebug/
