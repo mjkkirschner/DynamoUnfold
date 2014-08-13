@@ -27,12 +27,7 @@ namespace UnfoldTests
     {
         public class InitialGraphTests
         {
-            [Test]
-            public void HostSimpledue()
-            {
-                Solid testcube = UnfoldTestUtils.SetupCube();
-            }
-
+           
             [Test]
             public void GraphCanBeGeneratedFromCubeFaces()
             {
