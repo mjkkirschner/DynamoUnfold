@@ -17,7 +17,11 @@ namespace UnfoldTests
         public static void SetUpNamespace()
         {
             Console.WriteLine(" startup");
+            //string directory_name = @"C:\Program Files\Autodesk\Revit 2014\";
+            string directory_name = @"C:\Program Files\Autodesk\Revit 2015\";
            
+            Console.WriteLine("loading ASM from" + directory_name);
+            HostFactory.Instance.PreloadAsmLibraries(directory_name);
             HostFactory.Instance.StartUp();
         }
 
