@@ -10,8 +10,8 @@ Includes References to
 * Protogeometry
 
 ###Building / Installing###
-*Building this library requires that you have also cloned the Dynamo Project repo and DynamoText Project repo*
-**These projects must be located in the same directory as DynamoUnfold has been cloned to**
+Building this library requires that you have also cloned the Dynamo Project and DynamoText Project
+**These projects must be located in the same directory as DynamoUnfold has been cloned to.**
 ####Steps
 - Clone Dynamo [DynamoRepo](https://github.com/DynamoDS/Dynamo)
 - Build Dynamo
