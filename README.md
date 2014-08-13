@@ -9,6 +9,20 @@ Includes References to
 * DynamoText
 * Protogeometry
 
+###Building / Installing###
+*Building this library requires that you have also cloned the Dynamo Project repo and DynamoText Project repo*
+**These projects must be located in the same directory as DynamoUnfold has been cloned to**
+####Steps
+- Clone Dynamo [DynamoRepo](https://github.com/DynamoDS/Dynamo)
+- Build Dynamo
+- Clone DynamoText [DynamoTextRepo](https://github.com/DynamoDS/DynamoText)
+- Build DynamoText
+- Clone DynamoUnfold - *you are here*
+- Build DynamoUnfold
+
+The reason for this build order is to ensure that both DynamoText and DynamoUnfold are referencing the same version of the geometry library interfaces and the Dynamo Core.
+
+
 ## Dynamo License ##
 
 Those portions created by Ian are provided with the following copyright:
