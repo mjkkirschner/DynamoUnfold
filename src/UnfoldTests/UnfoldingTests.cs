@@ -13,12 +13,8 @@ using Unfold.Interfaces;
 
 namespace UnfoldTests
 {
-    //class UnfoldingTests : HostFactorySetup
-    //{
-    class UnfoldingTests// : HostFactorySetup
+    public class UnfoldingTests
     {
-
-        //[TestFixture]
         public class AlignPlanarTests
         {
             [Test]
@@ -229,8 +225,6 @@ namespace UnfoldTests
             [Test]
             public void UnfoldEachPairOfTriangularSurfacesInAConeWideParentAsRefFace()
             {
-
-
                 Solid testCone = UnfoldTestUtils.SetupLargeCone();
                 List<Face> faces = testCone.Faces.ToList();
                 List<Surface> surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
@@ -285,8 +279,6 @@ namespace UnfoldTests
             [Test]
             public void UnfoldEachPairOfTriangularSurfacesInAConeTallParentAsRefFace()
             {
-
-
                 Solid testCone = UnfoldTestUtils.SetupTallCone();
                 List<Face> faces = testCone.Faces.ToList();
                 List<Surface> surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
@@ -334,25 +326,17 @@ namespace UnfoldTests
                             UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace, parent.Face.SurfaceEntity);
 
                             UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace, parent.Face.SurfaceEntity);
-
                         }
-
                     }
-
-
                 }
-
             }
         }
 
-        //[TestFixture]
         public class FullUnfoldTests
         {
             [Test]
             public void FullyUnfoldCubeFromFaces()
             {
-
-
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
 
@@ -364,7 +348,6 @@ namespace UnfoldTests
 
                 foreach (var srf in unfoldsurfaces)
                 {
-
                     if (srf is PolySurface)
                     {
                         UnfoldTestUtils.AssertNoSurfaceIntersections(srf as PolySurface);
@@ -374,14 +357,11 @@ namespace UnfoldTests
                         UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srf as PolySurface, UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter);
                     }
                 }
-
             }
 
             [Test]
             public void FullyUnfoldCubeFromSurfaces()
             {
-
-
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
                 List<Surface> surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
@@ -409,8 +389,6 @@ namespace UnfoldTests
             [Test]
             public void FullyUnfoldCubeFromTriSurfaces()
             {
-
-
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
                 List<Surface> surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
@@ -439,14 +417,11 @@ namespace UnfoldTests
                         UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srf as PolySurface, UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter);
                     }
                 }
-
             }
 
             [Test]
             public void FullyUnfoldConeWideFromTriSurfaces()
             {
-
-
                 Solid testCone = UnfoldTestUtils.SetupLargeCone();
                 List<Face> faces = testCone.Faces.ToList();
                 List<Surface> surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
@@ -465,7 +440,6 @@ namespace UnfoldTests
 
                 foreach (var srf in unfoldsurfaces)
                 {
-
                     if (srf is PolySurface)
                     {
                         UnfoldTestUtils.AssertNoSurfaceIntersections(srf as PolySurface);
@@ -475,14 +449,11 @@ namespace UnfoldTests
                         UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srf as PolySurface, UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter);
                     }
                 }
-
             }
 
             [Test]
             public void FullyUnfoldConeTallFromTriSurfaces()
             {
-
-
                 Solid testCone = UnfoldTestUtils.SetupTallCone();
                 List<Face> faces = testCone.Faces.ToList();
                 List<Surface> surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
@@ -512,29 +483,18 @@ namespace UnfoldTests
                     }
                 }
             }
-
         }
 
-
-        //[TestFixture]
         public class MappingFaceTransformsTests
         {
             // not a test, may not belong in general utilities
             public void MapLabelsToFinalFaceLocations(List<Face> faces)
             {
-
-
             }
 
             public void MapLabelsToFinalFaceLocations(List<Surface> surfaces)
             {
-
-
             }
-
-
-
-
 
             public void AssertLabelsGoodFinalLocationAndOrientation(List<PlanarUnfolder.UnfoldableFaceLabel
                  <GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>> labels, List<List<Curve>>
@@ -595,9 +555,6 @@ namespace UnfoldTests
                         }
                     }
 
-
-
-
                     Console.WriteLine("index = " + index.ToString());
                     // assert that the box intersects with the bounding box of the surface
                     var bbcenter = bb.MinPoint.Add((bb.MaxPoint.Subtract(bb.MinPoint.AsVector()).AsVector().Scale(.5)));
@@ -613,19 +570,12 @@ namespace UnfoldTests
 
                     UnfoldTestUtils.AssertSurfacesAreCoplanar(triangleOfLabel, face);
                     Console.WriteLine("This label was in the right orientation at the start of the unfold");
-
                 }
-
-
-
-
             }
-
 
             [Test]
             public void UnfoldAndLabelCubeFromFaces()
             {
-
                 // unfold cube
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
@@ -653,7 +603,6 @@ namespace UnfoldTests
             [Test]
             public void UnfoldAndLabelCubeFromSurfacs()
             {
-
                 // unfold cube
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
@@ -707,7 +656,6 @@ namespace UnfoldTests
             [Test]
             public void UnfoldAndLabelTallCone()
             {
-
                 // unfold cube
                 Solid testcone = UnfoldTestUtils.SetupTallCone();
                 List<Face> faces = testcone.Faces.ToList();
@@ -735,13 +683,10 @@ namespace UnfoldTests
                 var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID(unfoldObject, x.AlignedLabelGeometry, x.ID)).ToList();
 
                 AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
-
-
             }
             [Test]
             public void UnfoldAndLabelWideCone()
             {
-
                 // unfold cube
                 Solid testcube = UnfoldTestUtils.SetupLargeCone();
                 List<Face> faces = testcube.Faces.ToList();
@@ -769,13 +714,7 @@ namespace UnfoldTests
                 var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID(unfoldObject, x.AlignedLabelGeometry, x.ID)).ToList();
 
                 AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
-
-
             }
-
-
-
         }
-
     }
 }

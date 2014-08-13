@@ -12,8 +12,6 @@ using Unfold.Interfaces;
 
 namespace UnfoldTests
 {
-    //public class UnfoldTestUtils : HostFactorySetup
-    //{
     public class UnfoldTestUtils
     {
         #region TestUtilities
@@ -44,7 +42,6 @@ namespace UnfoldTests
 
             Assert.AreEqual(expectedEdges, alledges.Count);
             Console.WriteLine("correct number of edges");
-
         }
 
         public static void IsOneStronglyConnectedGraph<K, T>(List<List<GeneratePlanarUnfold.GraphVertex<K, T>>> sccs)
@@ -76,7 +73,6 @@ namespace UnfoldTests
                 var originalface = vertex.Face.OriginalEntity;
                 Assert.Contains(originalface, faces);
             }
-
         }
 
         public static void AssertEdgeCoincidentWithBothFaces<K, T>(T face1, T face2, K edge)
@@ -160,10 +156,7 @@ namespace UnfoldTests
 
             Assert.IsFalse(center1.IsAlmostEqualTo(center2));
 
-
-
             Console.WriteLine("centers were not the same");
-
         }
 
 
@@ -174,11 +167,8 @@ namespace UnfoldTests
 
             foreach (var vert in graph)
             {
-
                 Assert.NotNull(vert.FinishTime);
-
             }
-
 
             Console.WriteLine("all nodes have been visited by BFS or acted as a root");
 
@@ -188,7 +178,6 @@ namespace UnfoldTests
         {
 
             var SubSurfaces = (TestPolysurface as PolySurface).Surfaces().ToList();
-
 
             // perfrom the intersection test
 
@@ -218,13 +207,9 @@ namespace UnfoldTests
         public delegate void Condition(Surface s1, Surface s2);
         public static void AssertConditionForEverySurfaceAgainstEverySurface(PolySurface TestPolysurface, Condition condition)
         {
-
-
             var SubSurfaces = (TestPolysurface as PolySurface).Surfaces().ToList();
 
-
             // perfrom the intersection test
-
 
             foreach (var surfaceToIntersect in SubSurfaces)
             {
@@ -236,10 +221,8 @@ namespace UnfoldTests
                         continue;
                     }
                     condition(surfaceToIntersect, rotsubface);
-
                 }
             }
-
         }
         #endregion
 

@@ -12,8 +12,6 @@ using Unfold.Interfaces;
 
 namespace UnfoldTests
 {
-
-
     public class HostSetupTest
     {
         [Test]
@@ -23,20 +21,12 @@ namespace UnfoldTests
 
             Assert.DoesNotThrow(() => HostFactory.Instance.ShutDown());
         }
-
     }
 
-    //public class TopologyTests : HostFactorySetup
-    //{
     public class TopologyTests
     {
-        //[TestFixture]
-        //public class InitialGraphTests
-        //{
-
         public class InitialGraphTests
         {
-
             [Test]
             public void HostSimpledue()
             {
@@ -85,7 +75,6 @@ namespace UnfoldTests
             }
         }
 
-        //[TestFixture]
         public class BFSTreeTests
         {
             [Test]

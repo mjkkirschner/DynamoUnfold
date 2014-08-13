@@ -28,8 +28,6 @@ namespace UnfoldTests
             Assert.IsNotNull(surf);
 
             Console.WriteLine(surf.Area);
-
         }
-
     }
 }
