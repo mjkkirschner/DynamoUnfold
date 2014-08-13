@@ -1,11 +1,11 @@
 DynamoUnfold
 ============
 
-Library for building topology from sets of surfaces and unfolding them using Protogeometry tools in Dynamo
+Library for building topology from sets of surfaces and unfolding them using Protogeometry tools in Dynamo.
 
-includes References to:
+This project includes references to:
 
-- DnamoCore
+- DynamoCore
 - Nunit
 - DynamoText
 - Protogeometry
@@ -16,25 +16,25 @@ includes References to:
 
 
 ###Building / Installing###
-Building this library requires that you have also cloned the Dynamo Project and DynamoText Project
+Building this library requires that you have also cloned the Dynamo Project and DynamoText Project.
 
-**These projects must be located in the same directory as DynamoUnfold has been cloned to.**
+**These projects (Dynamo,DynamoText) must be located in the same directory that DynamoUnfold has been cloned into.**
 
 #####Build Steps
-- **Clone** Dynamo [DynamoRepo](https://github.com/DynamoDS/Dynamo)
-- **Build** Dynamo
-- **Clone** DynamoText [DynamoTextRepo](https://github.com/DynamoDS/DynamoText)
-- **Build** DynamoText
-- **Clone** DynamoUnfold - *you are here*
-- **Build** DynamoUnfold
+1. **Clone** Dynamo [DynamoRepo](https://github.com/DynamoDS/Dynamo)
+2. **Build** Dynamo
+3. **Clone** DynamoText [DynamoTextRepo](https://github.com/DynamoDS/DynamoText)
+4. **Build** DynamoText
+5. **Clone** DynamoUnfold - *you are here*
+6. **Build** DynamoUnfold
 
-The reason for this build order is to ensure that both DynamoText and DynamoUnfold are referencing the same version of the geometry library interfaces and the Dynamo Core.
+The reason for this build order is to ensure that both DynamoText and DynamoUnfold are referencing the same version of the geometry library interfaces and the Dynamo Core.  You can actually clone all repos at the same time, but **Dynamo** must be built before the others.
 
 ###Importing Into Dynamo###
-Once DynamoUnfold is finished building, navigate to **DynamoUnfold/Bin/...** and import the DynamoUnfold.dll into Dynamo using library import.
+Once DynamoUnfold is finished building, navigate to **DynamoUnfold/bin/...** and import the DynamoUnfold.dll into Dynamo using library import.
 
 ###Pre-built###
-If you are looking for the necessary dlls to import through library import into Dynamo check the Pre-built folder. These .dlls will be updated periodically **but they may be out of snyc with the version of dynamo you are using!**
+If you are just looking for the necessary .dll's to import through **Zero-Touch Import** into Dynamo check the Pre-built folder. These .dll's will be updated periodically - **but they may be out of snyc with the version of dynamo you are using!**
 
 ###Running Unit Tests###
 

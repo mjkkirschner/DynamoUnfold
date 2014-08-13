@@ -270,7 +270,7 @@ namespace Unfold
             }
             catch (Exception e)
             {
-                Geometry.ExportToSAT((new List<Geometry>() { surf1, surf2 }), "C:\\Users\\Mike\\Desktop\\testdebug.SAT");
+                //Geometry.ExportToSAT((new List<Geometry>() { surf1, surf2 }), "C:\\Users\\Mike\\Desktop\\testdebug.SAT");
                 Console.WriteLine(e.Message);
                 return  new Geometry[0];
                
@@ -370,7 +370,7 @@ namespace Unfold
 
                 // perfrom the intersection test, from surfaces against all surfaces
 
-                bool overlapflag = srfList.SelectMany(a => rotFaceSubSurfaces.SelectMany(a.SafeIntersect)).OfType<Surface>().Any();
+                bool overlapflag = srfList.SelectMany(a => rotFaceSubSurfaces.SelectMany(a.Intersect)).OfType<Surface>().Any();
 
                 if (overlapflag)
                 {
