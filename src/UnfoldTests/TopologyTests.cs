@@ -20,26 +20,28 @@ namespace UnfoldTests
         public void HostSimple()
         {
             Assert.DoesNotThrow(() => HostFactory.Instance.StartUp());
-           
+
             Assert.DoesNotThrow(() => HostFactory.Instance.ShutDown());
         }
 
     }
 
-    public class TopologyTests : HostFactorySetup
+    //public class TopologyTests : HostFactorySetup
+    //{
+    public class TopologyTests
     {
-        
+        //[TestFixture]
+        //public class InitialGraphTests
+        //{
 
-
-        [TestFixture]
         public class InitialGraphTests
         {
 
-                [Test]
-                public void HostSimpledue()
-                {
-                    Solid testcube = UnfoldTestUtils.SetupCube();
-                }
+            [Test]
+            public void HostSimpledue()
+            {
+                Solid testcube = UnfoldTestUtils.SetupCube();
+            }
 
             [Test]
             public void GraphCanBeGeneratedFromCubeFaces()
@@ -60,7 +62,6 @@ namespace UnfoldTests
                 var sccs = GraphUtilities.tarjansAlgo<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>.CycleDetect(graph);
 
                 UnfoldTestUtils.IsOneStronglyConnectedGraph(sccs);
-                //
             }
 
 
@@ -81,17 +82,12 @@ namespace UnfoldTests
                 UnfoldTestUtils.GraphHasVertForEachFace(graph, face_objs);
 
                 UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
-
-
-                //
             }
-
         }
-        [TestFixture]
+
+        //[TestFixture]
         public class BFSTreeTests
         {
-
-
             [Test]
             public void GenBFSTreeFromCubeFaces()
             {
@@ -102,7 +98,6 @@ namespace UnfoldTests
                 var graph = GeneratePlanarUnfold.ModelTopology.GenerateTopologyFromFaces(faces);
 
                 List<Object> face_objs = faces.Select(x => x as Object).ToList();
-
 
                 UnfoldTestUtils.GraphHasVertForEachFace(graph, face_objs);
 
@@ -122,14 +117,6 @@ namespace UnfoldTests
                 UnfoldTestUtils.IsAcylic<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(sccs, casttree);
 
             }
-
-           
         }
-
-
-       
-
-
-
     }
 }

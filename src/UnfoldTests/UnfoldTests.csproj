@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="UnfoldDefects.cs" />
+    <Compile Include="GeometryTests.cs" />
     <Compile Include="UnfoldingTests.cs" />
     <Compile Include="GeometryLikeEntityTests.cs" />
     <Compile Include="HostFactorySteup.cs" />

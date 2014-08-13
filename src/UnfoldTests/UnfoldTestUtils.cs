@@ -12,7 +12,9 @@ using Unfold.Interfaces;
 
 namespace UnfoldTests
 {
-    public class  UnfoldTestUtils : HostFactorySetup
+    //public class UnfoldTestUtils : HostFactorySetup
+    //{
+    public class UnfoldTestUtils
     {
         #region TestUtilities
         public static Solid SetupCube()
@@ -184,10 +186,10 @@ namespace UnfoldTests
 
         public static void AssertNoSurfaceIntersections(PolySurface TestPolysurface)
         {
-            
-             var SubSurfaces = (TestPolysurface as PolySurface).Surfaces().ToList();
-            
-           
+
+            var SubSurfaces = (TestPolysurface as PolySurface).Surfaces().ToList();
+
+
             // perfrom the intersection test
 
             bool overlapflag = false;
@@ -195,7 +197,7 @@ namespace UnfoldTests
             {
                 foreach (var rotsubface in SubSurfaces)
                 {
-                   
+
                     if (surfaceToIntersect.Equals(rotsubface))
                     {
                         continue;
@@ -223,7 +225,7 @@ namespace UnfoldTests
 
             // perfrom the intersection test
 
-           
+
             foreach (var surfaceToIntersect in SubSurfaces)
             {
                 foreach (var rotsubface in SubSurfaces)
@@ -234,10 +236,10 @@ namespace UnfoldTests
                         continue;
                     }
                     condition(surfaceToIntersect, rotsubface);
-                    
+
                 }
             }
-            
+
         }
         #endregion
 
