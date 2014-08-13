@@ -10,7 +10,6 @@ using Unfold;
 using System.Threading;
 using Unfold.Interfaces;
 
-
 namespace UnfoldTests
 {
     public class UnfoldingTests
