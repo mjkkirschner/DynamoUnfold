@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
 using System.Threading;
+using System.Reflection;
 
 namespace UnfoldTests
 {
@@ -16,10 +17,14 @@ namespace UnfoldTests
         [SetUp]
         public static void SetUpNamespace()
         {
+            //Assembly.LoadFile(@"C:\dev\DynamoUnfold\bin\AnyCPU\Debug\LibG.ProtoInterface.dll");
+
             Console.WriteLine(" startup");
             //string directory_name = @"C:\Program Files\Autodesk\Revit 2014\";
-            string directory_name = @"C:\Program Files\Autodesk\Revit 2015\";
+            string directory_name = @"C:\Program Files\Autodesk\Revit MEP 2014\";
            
+
+
             Console.WriteLine("loading ASM from" + directory_name);
             HostFactory.Instance.PreloadAsmLibraries(directory_name);
             HostFactory.Instance.StartUp();
