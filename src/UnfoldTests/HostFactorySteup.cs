@@ -17,15 +17,10 @@ namespace UnfoldTests
         [SetUp]
         public static void SetUpNamespace()
         {
-            //Assembly.LoadFile(@"C:\dev\DynamoUnfold\bin\AnyCPU\Debug\LibG.ProtoInterface.dll");
-
-            Console.WriteLine(" startup");
+            //Console.WriteLine(" startup");
             //string directory_name = @"C:\Program Files\Autodesk\Revit 2014\";
             string directory_name = @"C:\Program Files\Autodesk\Revit MEP 2014\";
-           
 
-
-            Console.WriteLine("loading ASM from" + directory_name);
             HostFactory.Instance.PreloadAsmLibraries(directory_name);
             HostFactory.Instance.StartUp();
         }
@@ -34,14 +29,12 @@ namespace UnfoldTests
         public static void TearDownNamespace()
         {
             Console.WriteLine("shutting down");
-            
-           HostFactory.Instance.ShutDown();
-           GC.Collect();
-           GC.WaitForPendingFinalizers();
-           
+
+            HostFactory.Instance.ShutDown();
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
-
     }
-
 }
 
