@@ -35,6 +35,11 @@ Once DynamoUnfold is finished building, navigate to **DynamoUnfold/Bin/...** and
 ##Pre-built##
 If you are looking for the necessary dlls to import through library import into Dynamo check the Pre-built folder. These .dlls will be updated periodically **but they may be out of snyc with the version of dynamo you are using!**
 
+
+####Known Issues####
+- There is a speed issue when unfolding a tesselated surface with more than approximately 1000 faces, stems from the conversion of triangle data to surfaces.
+- There is an intersection bug that occurs intermittently - more so with large numbers of surfaces, this is being looked into. 
+
 ## Dynamo License ##
 
 Those portions created by Ian are provided with the following copyright:
