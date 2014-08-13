@@ -30,23 +30,27 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="DynamoCore">
-      <HintPath>..\..\extern\DynamoCore.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="DynamoText">
-      <HintPath>..\..\extern\DynamoText.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="ProtoGeometry">
-      <HintPath>..\..\extern\ProtoGeometry.dll</HintPath>
+<ItemGroup>
+  <Reference Include="DynamoCore">
+  <HintPath Condition="'$(Configuration)'=='Debug'">..\..\..\Dynamo\bin\AnyCPU\Debug\DynamoCore.dll</HintPath>
+  <HintPath Condition="'$(Configuration)'=='Release'">..\..\..\Dynamo\bin\AnyCPU\Release\DynamoCore.dll</HintPath>
+   <Private>False</Private>
+</Reference>
+
+<Reference Include="DynamoText">
+  <HintPath Condition="'$(Configuration)'=='Debug'">..\..\..\DynamoText\bin\Debug\DynamoText.dll</HintPath>
+  <HintPath Condition="'$(Configuration)'=='Release'">..\..\..\DynamoText\bin\Release\DynamoText.dll</HintPath>
+   <Private>True</Private>
+</Reference>
+
+<Reference Include="ProtoGeometry">
+      <HintPath>..\..\..\Dynamo\extern\ProtoGeometry\ProtoGeometry.dll</HintPath>
       <Private>True</Private>
-    </Reference>
+</Reference>
     <Reference Include="ProtoInterface">
-      <HintPath>..\..\extern\ProtoInterface.dll</HintPath>
+      <HintPath>..\..\..\Dynamo\extern\ProtoGeometry\ProtoInterface.dll</HintPath>
       <Private>True</Private>
-    </Reference>
+</Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -54,7 +58,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-  </ItemGroup>
+</ItemGroup>
   <ItemGroup>
     <Compile Include="AlignPlanarFaces.cs" />
     <Compile Include="GraphUtilities.cs" />

@@ -32,12 +32,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ProtoGeometry">
-      <HintPath>..\..\extern\ProtoGeometry.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\Dynamo\extern\ProtoGeometry\ProtoGeometry.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="ProtoInterface">
-      <HintPath>..\..\extern\ProtoInterface.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\Dynamo\extern\ProtoGeometry\ProtoInterface.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

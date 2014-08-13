@@ -68,11 +68,10 @@ namespace Unfold
 
             private IEnumerable<Curve> GenLabelGeometryFromId(int id){
 
-                List<List<Curve>> textgeo = Text.FromStringOriginAndScale(id.ToString(), Point.ByCoordinates(0, 0, 0), 1.0) as List<List<Curve>>;
+                List<Curve> textgeo = Text.FromStringOriginAndScale(id.ToString(), Point.ByCoordinates(0, 0, 0), 1.0) as List<Curve>;
 
-                List<Curve> flattextgeo = textgeo.SelectMany(x => x).ToList();
 
-                return flattextgeo;
+                return textgeo;
                 
                 
             }
