@@ -24,6 +24,8 @@ Building this library requires that you have also cloned the Dynamo Project and 
 
 The reason for this build order is to ensure that both DynamoText and DynamoUnfold are referencing the same version of the geometry library interfaces and the Dynamo Core.
 
+##Pre-built##
+If you are looking for the necessary dlls to import through library import into Dynamo check the Pre-built folder. These .dlls will be updated periodically **but they may be out of snyc with the version of dynamo you are using!**
 
 ## Dynamo License ##
 
