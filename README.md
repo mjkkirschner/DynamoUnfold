@@ -15,17 +15,17 @@ Building this library requires that you have also cloned the Dynamo Project and 
 **These projects must be located in the same directory as DynamoUnfold has been cloned to.**
 
 ####Steps
-- Clone Dynamo [DynamoRepo](https://github.com/DynamoDS/Dynamo)
-- Build Dynamo
-- Clone DynamoText [DynamoTextRepo](https://github.com/DynamoDS/DynamoText)
-- Build DynamoText
-- Clone DynamoUnfold - *you are here*
-- Build DynamoUnfold
+- **Clone** Dynamo [DynamoRepo](https://github.com/DynamoDS/Dynamo)
+- **Build** Dynamo
+- **Clone** DynamoText [DynamoTextRepo](https://github.com/DynamoDS/DynamoText)
+- **Build** DynamoText
+- **Clone** DynamoUnfold - *you are here*
+- **Build** DynamoUnfold
 
 The reason for this build order is to ensure that both DynamoText and DynamoUnfold are referencing the same version of the geometry library interfaces and the Dynamo Core.
 
 ###Importing Into Dynamo###
-Once DynamoUnfold is finished building, navigate to DynamoUnfold/Bin/... and import the DynamoUnfold.dll into Dynamo using library import.
+Once DynamoUnfold is finished building, navigate to **DynamoUnfold/Bin/...** and import the DynamoUnfold.dll into Dynamo using library import.
 
 ##Pre-built##
 If you are looking for the necessary dlls to import through library import into Dynamo check the Pre-built folder. These .dlls will be updated periodically **but they may be out of snyc with the version of dynamo you are using!**
