@@ -17,7 +17,7 @@ This project includes references to:
 
 
 ###Building / Installing###
-Building this library requires that you have also cloned the Dynamo Project and DynamoText Project.
+Building this library requires that you have also cloned Dynamo, DynamoText, and DynamoPack.
 
 **These projects (Dynamo,DynamoText) must be located in the same directory that DynamoUnfold has been cloned into.**
 
