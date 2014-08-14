@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-      <OutputPath>$(SolutionDir)../bin/$(Configuration)</OutputPath>
+    <OutputPath>$(SolutionDir)../bin/$(Configuration)</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-      <OutputPath>$(SolutionDir)../bin/$(Configuration)</OutputPath>
+    <OutputPath>$(SolutionDir)../bin/$(Configuration)</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -34,6 +34,11 @@
     <Reference Include="DynamoCore">
       <HintPath Condition="'$(Configuration)'=='Debug'">..\..\..\Dynamo\bin\AnyCPU\Debug\DynamoCore.dll</HintPath>
       <HintPath Condition="'$(Configuration)'=='Release'">..\..\..\Dynamo\bin\AnyCPU\Release\DynamoCore.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+     <Reference Include="DynamoPacking">
+      <HintPath Condition="'$(Configuration)'=='Debug'">..\..\..\DynamoPack\src\DynamoPacking\bin\Debug\DynamoPacking.dll</HintPath>
+      <HintPath Condition="'$(Configuration)'=='Release'">..\..\..\DynamoPack\src\DynamoPacking\bin\Release\DynamoPacking.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="DynamoText">
