@@ -42,13 +42,14 @@ namespace Unfold
             public List<Surface> UnfoldedSurfaceSet { get; set; }
             public List<FaceTransformMap> Maps { get; set; }
             public Dictionary<int, Point> StartingPoints { get; set; }
+            public List<T> UnfoldedFaces { get; set; }
 
-            public PlanarUnfolding(List<T> originalFaces, List<Surface> finalFaces, List<FaceTransformMap> transforms)
+            public PlanarUnfolding(List<T> originalFaces, List<Surface> finalFaces, List<FaceTransformMap> transforms, List<T> unfoldedfaces)
             {
                 StartingUnfoldableFaces = originalFaces;
                 UnfoldedSurfaceSet = finalFaces;
                 Maps = transforms;
-
+                UnfoldedFaces = unfoldedfaces;
                 StartingPoints = StartingUnfoldableFaces.ToDictionary(x => x.ID, x => Tesselation.MeshHelpers.SurfaceAsPolygonCenter(x.SurfaceEntity));
             }
 
@@ -240,26 +241,6 @@ namespace Unfold
         }
 
 
-        private static bool checkBoundingBoxIntersections(List<BoundingBox> bbs)
-        {
-            foreach (var bb in bbs)
-            {
-                foreach (var bb2 in bbs)
-                {
-                    if (bb != bb2)
-                    {
-                        if (bb.Intersects(bb2))
-                        {
-                            return true;
-                        }
-
-                    }
-                }
-            }
-            return false;
-        }
-
-
         private static IEnumerable<object> SafeIntersect(this Surface surf1, Surface surf2)
         {
 
@@ -272,7 +253,7 @@ namespace Unfold
             {
                 //Geometry.ExportToSAT((new List<Geometry>() { surf1, surf2 }), "C:\\Users\\Mike\\Desktop\\testdebug.SAT");
                 Console.WriteLine(e.Message);
-                return  new Geometry[0];
+                return  new Geometry[1]{surf1};
                
             }
            
@@ -370,7 +351,7 @@ namespace Unfold
 
                 // perfrom the intersection test, from surfaces against all surfaces
 
-                bool overlapflag = srfList.SelectMany(a => rotFaceSubSurfaces.SelectMany(a.Intersect)).OfType<Surface>().Any();
+                bool overlapflag = srfList.SelectMany(a => rotFaceSubSurfaces.SelectMany(a.SafeIntersect)).OfType<Surface>().Any();
 
                 if (overlapflag)
                 {
@@ -494,8 +475,8 @@ namespace Unfold
 
                 var randomPoint = Point.ByCoordinates(rnd.Next(2), rnd.Next(2), 0);
 
-                // transform surface to horizontal plane at 0,0,0
-                facelike.SurfaceEntity = surfaceToAlignDown.Transform(startCoordSystem,CoordinateSystem.ByPlane(Plane.ByOriginXAxisYAxis(randomPoint, Vector.XAxis(), Vector.YAxis()))) as Surface;
+                // transform surface to horizontal plane at x,y,0 of org surface
+                facelike.SurfaceEntity = surfaceToAlignDown.Transform(startCoordSystem,CoordinateSystem.ByPlane(Plane.ByOriginXAxisYAxis(Point.ByCoordinates(somepoint.X,somepoint.Y,0), Vector.XAxis(), Vector.YAxis()))) as Surface;
 
                 // save transformation for each set, this should have all the ids present
                 transforms.Add(new FaceTransformMap(
@@ -503,38 +484,12 @@ namespace Unfold
 
             }
            
-            // now begin loop
 
-            var bbs = masterFacelikeSet.Select(x=>BoundingBox.ByGeometry(x.SurfaceEntity)).ToList();
-
-
-            while (checkBoundingBoxIntersections(bbs))
-            {
-                var centers = bbs.Select(x => x.MinPoint.Add((x.MaxPoint.Subtract(x.MinPoint.AsVector()).AsVector().Scale(.5)))).ToList();
-
-                var centroid = centers.Aggregate((workingsum, next) =>
-                                                  workingsum.Add(next.AsVector())).Scale(1.0/centers.Count) as Point;
-                foreach(var facelike in masterFacelikeSet){
-
-                    var index = masterFacelikeSet.IndexOf(facelike);
-                    var displacement = Vector.ByTwoPoints(centroid,centers[index]);
-
-                    facelike.SurfaceEntity = facelike.SurfaceEntity.Translate(displacement) as Surface;
-
-                    transforms.Add(new FaceTransformMap(
-                        facelike.SurfaceEntity.ContextCoordinateSystem, facelike.IDS));
-
-                }
-
-                bbs = masterFacelikeSet.Select(x => BoundingBox.ByGeometry(x.SurfaceEntity)).ToList();
-            }
-
-
-
+           
             // merge the main trunk and the disconnected sets
             var maintree = sortedtree.Select(x => x.UnfoldPolySurface.SurfaceEntity).ToList();
             maintree.AddRange(disconnectedSet.Select(x => x.SurfaceEntity).ToList());
-            return new PlanarUnfolding<K, T>(allfaces, maintree, transforms);
+            return new PlanarUnfolding<K, T>(allfaces, maintree, transforms,masterFacelikeSet);
         }
 
     }

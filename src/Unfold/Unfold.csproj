@@ -36,7 +36,7 @@
       <HintPath Condition="'$(Configuration)'=='Release'">..\..\..\Dynamo\bin\AnyCPU\Release\DynamoCore.dll</HintPath>
       <Private>True</Private>
     </Reference>
-     <Reference Include="DynamoPacking">
+    <Reference Include="DynamoPacking">
       <HintPath Condition="'$(Configuration)'=='Debug'">..\..\..\DynamoPack\src\DynamoPacking\bin\Debug\DynamoPacking.dll</HintPath>
       <HintPath Condition="'$(Configuration)'=='Release'">..\..\..\DynamoPack\src\DynamoPacking\bin\Release\DynamoPacking.dll</HintPath>
       <Private>True</Private>
@@ -67,6 +67,7 @@
     <Compile Include="GraphUtilities.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="ModelToGraph.cs" />
+    <Compile Include="Packing.cs" />
     <Compile Include="PlanarUnfolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tessellate.cs" />
