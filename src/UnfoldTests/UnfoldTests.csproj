@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GeometryTests.cs" />
     <Compile Include="UnfoldDefects.cs" />
     <Compile Include="GeometryTests.cs" />
     <Compile Include="UnfoldingTests.cs" />
