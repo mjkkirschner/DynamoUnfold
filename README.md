@@ -8,6 +8,7 @@ This project includes references to:
 - DynamoCore
 - Nunit
 - DynamoText
+- DynamoPack
 - Protogeometry
 
 
@@ -21,12 +22,14 @@ Building this library requires that you have also cloned the Dynamo Project and 
 **These projects (Dynamo,DynamoText) must be located in the same directory that DynamoUnfold has been cloned into.**
 
 #####Build Steps
-1. **Clone** Dynamo [DynamoRepo](https://github.com/DynamoDS/Dynamo)
-2. **Build** Dynamo
-3. **Clone** DynamoText [DynamoTextRepo](https://github.com/DynamoDS/DynamoText)
+1. **Clone** Dynamo [Dynamo](https://github.com/DynamoDS/Dynamo)
+2. **Build** Dynamo 
+3. **Clone** DynamoText [DynamoText](https://github.com/holyjewsus/DynamoText/tree/fixnetversion)
 4. **Build** DynamoText
-5. **Clone** DynamoUnfold - *you are here*
-6. **Build** DynamoUnfold
+5. **Clone** DynamoPack [DynamoPack](https://github.com/holyjewsus/DynamoPack/tree/structurePackLikeDynamotext)
+6. **Build** DynamoPack 
+7. **Clone** DynamoUnfold - *you are here*
+8. **Build** DynamoUnfold
 
 The reason for this build order is to ensure that both DynamoText and DynamoUnfold are referencing the same version of the geometry library interfaces and the Dynamo Core.  You can actually clone all repos at the same time, but **Dynamo** must be built before the others.
 
@@ -34,10 +37,10 @@ The reason for this build order is to ensure that both DynamoText and DynamoUnfo
 Once DynamoUnfold is finished building, navigate to **DynamoUnfold/bin/...** and import the DynamoUnfold.dll into Dynamo using library import.
 
 ###Pre-built###
-If you are just looking for the necessary .dll's to import through **Zero-Touch Import** into Dynamo check the Pre-built folder. These .dll's will be updated periodically - **but they may be out of snyc with the version of dynamo you are using!**
+If you are just looking for the necessary .dll's to import through **Zero-Touch Import** into Dynamo check the Pre-built folder. These .dll's will be updated periodically - **but they may be out of snyc with the version of dynamo you are using!** Also Does Not Exist YET!
 
 ###Running Unit Tests###
-
+TODO
 
 
 ####Known Issues####
@@ -69,5 +72,12 @@ limitations under the License.
 
 
 ###NUnit####
-http://www.nunit.org/  
+
+http://www.nunit.org/
+
 http://www.nunit.org/index.php?p=license&r=2.6.2  
+
+###DynamoPack###
+This library makes use of the Nuclex Framework's [CygonRectanglePacker](https://devel.nuclex.org/framework/wiki/RectanglePacking).
+
+[Eclipse CPL](http://www.ibm.com/developerworks/library/os-cpl.html)

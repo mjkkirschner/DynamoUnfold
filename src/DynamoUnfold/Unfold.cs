@@ -124,6 +124,18 @@ namespace DynamoUnfold
         }
 
 
+        [MultiReturn(new[] { "packed surfaces", "unfoldObject" })]
+        public static Dictionary<string, object> PackUnfoldedSurfaces(
+            PlanarUnfolder.PlanarUnfolding<GeneratePlanarUnfold.EdgeLikeEntity,GeneratePlanarUnfold.FaceLikeEntity> unfolding,
+            double width =20,double height =20,double gap = .3)
+        {
+
+
+            return UnfoldPacking.PackUnfoldSurfaces(unfolding, width, height, gap);
+
+        }
+
+
         // The following methods may be removed from Import eventually
         # region  
         // method is for debugging the BFS output visually in dynamo, very useful
