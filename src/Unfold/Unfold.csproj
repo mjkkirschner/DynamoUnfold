@@ -36,9 +36,9 @@
       <HintPath Condition="'$(Configuration)'=='Release'">..\..\..\Dynamo\bin\AnyCPU\Release\DynamoCore.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DynamoPacking">
-      <HintPath Condition="'$(Configuration)'=='Debug'">..\..\..\DynamoPack\src\DynamoPacking\bin\Debug\DynamoPacking.dll</HintPath>
-      <HintPath Condition="'$(Configuration)'=='Release'">..\..\..\DynamoPack\src\DynamoPacking\bin\Release\DynamoPacking.dll</HintPath>
+    <Reference Include="DynamoPack">
+      <HintPath Condition="'$(Configuration)'=='Debug'">..\..\..\DynamoPack\src\DynamoPacking\bin\Debug\DynamoPack.dll</HintPath>
+      <HintPath Condition="'$(Configuration)'=='Release'">..\..\..\DynamoPack\src\DynamoPacking\bin\Release\DynamoPack.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="DynamoText">
