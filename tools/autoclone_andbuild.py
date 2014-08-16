@@ -8,8 +8,9 @@ import re
 import os
 import fnmatch
 from optparse import OptionParser
-
-
+#quick and dirty auto clone and build script
+#clones dynamo,dynamotext,dynamopack,and dynamounfold into a new folder and builds them all in order.
+#majority of this code was taken from Peter Boyer's Autobuild script
 def main():
 
 	parser = OptionParser()
@@ -49,8 +50,9 @@ def main():
 		cur_solution_path = form_path( [cur_repo_root, depSolRelPaths[index]] ) 
 		depSolFullPaths.append(cur_solution_path)
 	
-	print "justbuildbool was false, cloning",options.justbuildbool
+	
 	if options.justbuildbool == False:
+		print "about to clone"
 		dynamo_pull = clone_single_branch( depUris[0], sandbox_path, depNames[0],"master" ) 
 		# for now grab specific branches of these repos
 		dynamotext_pull = clone_single_branch( depUris[1], sandbox_path, depNames[1], "fixnetversion") 
