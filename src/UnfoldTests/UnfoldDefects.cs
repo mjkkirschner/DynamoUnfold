@@ -54,6 +54,7 @@ namespace UnfoldTests
             }
 
             [Test]
+            [Repeat(25)]
             public void UnfoldOf300TriSurface()
             {
                 var pt1 = Point.ByCoordinates(0, 0, 4);
@@ -78,6 +79,53 @@ namespace UnfoldTests
 
 
               Assert.DoesNotThrow(() => PlanarUnfolder.DSPLanarUnfold(trisurfaces));
+
+
+            }
+
+
+            [Test]
+            public void Tri300SurfacePolysurfaceIntersectionTest()
+            {
+                var pt1 = Point.ByCoordinates(0, 0, 4);
+                var pt2 = Point.ByCoordinates(1, 1, 4);
+                var pt3 = Point.ByCoordinates(0, 4, 4);
+
+                var pt4 = Point.ByCoordinates(0, 0, 0);
+                var pt5 = Point.ByCoordinates(2, 2, 0);
+                var pt6 = Point.ByCoordinates(0, 4, 0);
+
+                var top = Arc.ByThreePoints(pt1, pt2, pt3);
+                var bottom = Arc.ByThreePoints(pt4, pt5, pt6);
+
+                var surface = Surface.ByLoft(new List<Curve>() { top, bottom });
+
+                var surfaces = new List<Surface>() { surface };
+
+                //handle tesselation here
+                var pointtuples = Tesselation.Tessellate(surfaces);
+                //convert triangles to surfaces
+                List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
+
+                Surface aggregateSurf = trisurfaces[0];
+                trisurfaces.RemoveAt(0);
+
+                foreach(Surface trisurf in trisurfaces)
+                
+                {
+                    //aggregate a polysurface
+                    var tempSurf = PolySurface.ByJoinedSurfaces(new List<Surface>() { trisurf, aggregateSurf });
+                    aggregateSurf = tempSurf;
+
+                    foreach (Surface trisurf2 in trisurfaces)
+                    {
+                        Console.WriteLine(trisurfaces.IndexOf(trisurf));
+                        Console.WriteLine(trisurfaces.IndexOf(trisurf2));
+                       Assert.DoesNotThrow(()  => aggregateSurf.Intersect(trisurf2));
+                        
+                    }
+
+                }
 
 
             }
