@@ -7,11 +7,13 @@ USAGE
 
 At the command line, you should be able to run:
 
-	autoclone_andbuild.py
+	autoclone_andbuild.py or python autoclone_andbuild.py
 
 You can get help by typing:
 
 	autoclone_andbuild.py –h
+
+	autoclone_andbuild.py -j will just build all the libraries and skip the cloning step.
 
 This will print out additional command line arguments.  
 
