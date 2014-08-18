@@ -33,6 +33,9 @@ Building this library requires that you have also cloned Dynamo, DynamoText, and
 
 The reason for this build order is to ensure that both DynamoText and DynamoUnfold are referencing the same version of the geometry library interfaces and the Dynamo Core.  You can actually clone all repos at the same time, but **Dynamo** must be built before the others.
 
+###OR###
+Skip all of these steps and use the **auto clone and build** script in the tools folder.  This python script will clone all the projects and build them in the correct order for you.
+
 ###Importing Into Dynamo###
 Once DynamoUnfold is finished building, navigate to **DynamoUnfold/bin/...** and import the DynamoUnfold.dll into Dynamo using library import.
 
