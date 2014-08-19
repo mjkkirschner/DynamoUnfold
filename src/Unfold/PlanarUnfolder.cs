@@ -7,6 +7,7 @@ using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
 using Unfold.Interfaces;
+using Unfold.Topology;
 using DynamoText;
 
 
@@ -115,7 +116,7 @@ namespace Unfold
                 var myBox =  BoundingBox.ByGeometry(geometryToTransform);
 
                   // find the center of this box and use as start point
-                  var geoStartPoint = myBox.MinPoint.Add((myBox.MaxPoint.Subtract(myBox.MinPoint.AsVector()).AsVector().Scale(.5)));
+                  var geoStartPoint = myBox.MinPoint.Add((myBox.MaxPoint.Subtract(myBox.MinPoint.AsVector()).AsVector().Scale(5)));
              
               // transform each curve using this new center as an offset so it ends up translated correctly to the surface center
          var  transformedgeo = geometryToTransform.Select(x => MapGeometryToUnfoldingByID(unfolding, x, id, geoStartPoint)).ToList();
@@ -143,7 +144,7 @@ namespace Unfold
               // get bb of geo to transform
               var myBox = geometryToTransform.BoundingBox;
               // find the center of this box and use as start point
-              var geoStartPoint = myBox.MinPoint.Add((myBox.MaxPoint.Subtract(myBox.MinPoint.AsVector()).AsVector().Scale(.5)));
+              var geoStartPoint = myBox.MinPoint.Add((myBox.MaxPoint.Subtract(myBox.MinPoint.AsVector()).AsVector().Scale(5)));
               //create vector from unfold surface center startpoint and the current geo center and translate to this start position
               geometryToTransform = geometryToTransform.Translate(Vector.ByTwoPoints(geoStartPoint, unfolding.StartingPoints[id])) as G;
 
@@ -210,30 +211,30 @@ namespace Unfold
         // might be able to make the rest of these methods generic now....
 
 
-        public static PlanarUnfolding<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity> DSPLanarUnfold(List<Face> faces)
+        public static PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity> Unfold(List<Face> faces)
         {
-            var graph = GeneratePlanarUnfold.ModelTopology.GenerateTopologyFromFaces(faces);
+            var graph = ModelTopology.GenerateTopologyFromFaces(faces);
 
             //perform BFS on the graph and get back the tree
-            var nodereturn = GeneratePlanarUnfold.ModelGraph.BFS<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(graph);
+            var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
             object tree = nodereturn["BFS finished"];
 
-            var casttree = tree as List<GeneratePlanarUnfold.GraphVertex<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>>;
+            var casttree = tree as List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>>;
 
 
             return PlanarUnfold(casttree);
 
         }
 
-        public static PlanarUnfolding<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity> DSPLanarUnfold(List<Surface> surfaces)
+        public static PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity> Unfold(List<Surface> surfaces)
         {
-            var graph = GeneratePlanarUnfold.ModelTopology.GenerateTopologyFromSurfaces(surfaces);
+            var graph =ModelTopology.GenerateTopologyFromSurfaces(surfaces);
 
             //perform BFS on the graph and get back the tree
-            var nodereturn = GeneratePlanarUnfold.ModelGraph.BFS<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(graph);
+            var nodereturn =ModelGraph.BFS<EdgeLikeEntity,FaceLikeEntity>(graph);
             object tree = nodereturn["BFS finished"];
 
-            var casttree = tree as List<GeneratePlanarUnfold.GraphVertex<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>>;
+            var casttree = tree as List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>>;
 
 
             return PlanarUnfold(casttree);
@@ -266,7 +267,7 @@ namespace Unfold
         /// <param name="tree"></param>
         /// <returns></returns>
         public static PlanarUnfolding<K, T>
-            PlanarUnfold<K,T>(List<GeneratePlanarUnfold.GraphVertex<K, T>> tree)
+            PlanarUnfold<K,T>(List<GraphVertex<K, T>> tree)
         where K:IUnfoldableEdge
         where T : IUnfoldablePlanarFace<K>, new()
         
@@ -324,7 +325,7 @@ namespace Unfold
 
                 // the srflist is either a single surface or all surfaces containeed in the polysurface, if any of these
                 // surfaces intersected with the rotatedface returns a new surface then there is a real overlap and 
-                // we need to move the rotated face away .. it will need to be oriented horizontal later
+                // we need to move the rotated face away. it will need to be oriented horizontal later
 
                 List<Surface> srfList = null;
                 if (parent.UnfoldPolySurface.SurfaceEntity is PolySurface)
@@ -466,8 +467,8 @@ namespace Unfold
                 var surfaceToAlignDown = facelike.SurfaceEntity;
                 
                 // get the coordinate system defined by the face normal
-                var somepoint = facelike.SurfaceEntity.PointAtParameter(.5, .5);
-                var norm = facelike.SurfaceEntity.NormalAtParameter(.5,.5);
+                var somepoint = facelike.SurfaceEntity.PointAtParameter(5,5);
+                var norm = facelike.SurfaceEntity.NormalAtParameter(5,5);
 
                 var facePlane = Plane.ByOriginNormal(somepoint, norm);
 

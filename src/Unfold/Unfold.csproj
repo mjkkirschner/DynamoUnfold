@@ -66,11 +66,15 @@
     <Compile Include="AlignPlanarFaces.cs" />
     <Compile Include="GraphUtilities.cs" />
     <Compile Include="Interfaces.cs" />
-    <Compile Include="ModelToGraph.cs" />
+    <Compile Include="Topology\GraphVertex.cs" />
+    <Compile Include="Topology\ModelToGraph.cs" />
     <Compile Include="Packing.cs" />
+    <Compile Include="Topology\EdgeLikeEntity.cs" />
+    <Compile Include="Topology\FaceLikeEntity.cs" />
+    <Compile Include="Topology\GraphEdge.cs" />
     <Compile Include="PlanarUnfolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tessellate.cs" />
+    <Compile Include="Topology\Tessellate.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

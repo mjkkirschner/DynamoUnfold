@@ -9,6 +9,7 @@ using Autodesk.DesignScript.Interfaces;
 using Unfold;
 using System.Threading;
 using Unfold.Interfaces;
+using Unfold.Topology;
 
 namespace UnfoldTests
 {
@@ -23,19 +24,19 @@ namespace UnfoldTests
                 List<Face> faces = testcube.Faces.ToList();
 
                 //generate a graph of the cube
-                var graph = GeneratePlanarUnfold.ModelTopology.GenerateTopologyFromFaces(faces);
+                var graph =ModelTopology.GenerateTopologyFromFaces(faces);
 
                 List<Object> faceobjs = faces.Select(x => x as Object).ToList();
 
                 //perform BFS on the graph and get back the tree
-                var nodereturn = GeneratePlanarUnfold.ModelGraph.BFS<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(graph);
+                var nodereturn =ModelGraph.BFS<EdgeLikeEntity,FaceLikeEntity>(graph);
                 object tree = nodereturn["BFS finished"];
 
-                var casttree = tree as List<GeneratePlanarUnfold.GraphVertex<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>>;
-                //perform tarjans algo and make sure that the tree is acylic before unfold
-                var sccs = GraphUtilities.tarjansAlgo<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>.CycleDetect(casttree);
+                var casttree = tree as List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>>;
+                //perform Tarjans algo and make sure that the tree is acylic before unfold
+                var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity,FaceLikeEntity>.CycleDetect(casttree);
 
-                UnfoldTestUtils.IsAcylic<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(sccs, casttree);
+                UnfoldTestUtils.IsAcylic<EdgeLikeEntity,FaceLikeEntity>(sccs, casttree);
 
                 // iterate through each vertex in the tree
                 // make sure that the parent/child is not null (depends which direction we're traversing)
@@ -71,19 +72,19 @@ namespace UnfoldTests
                 List<Face> faces = testcube.Faces.ToList();
 
                 //generate a graph of the cube
-                var graph = GeneratePlanarUnfold.ModelTopology.GenerateTopologyFromFaces(faces);
+                var graph =ModelTopology.GenerateTopologyFromFaces(faces);
 
                 List<Object> faceobjs = faces.Select(x => x as Object).ToList();
 
                 //perform BFS on the graph and get back the tree
-                var nodereturn = GeneratePlanarUnfold.ModelGraph.BFS<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(graph);
+                var nodereturn =ModelGraph.BFS<EdgeLikeEntity,FaceLikeEntity>(graph);
                 object tree = nodereturn["BFS finished"];
 
-                var casttree = tree as List<GeneratePlanarUnfold.GraphVertex<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>>;
-                //perform tarjans algo and make sure that the tree is acylic before unfold
-                var sccs = GraphUtilities.tarjansAlgo<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>.CycleDetect(casttree);
+                var casttree = tree as List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>>;
+                //perform Tarjans algo and make sure that the tree is acylic before unfold
+                var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity,FaceLikeEntity>.CycleDetect(casttree);
 
-                UnfoldTestUtils.IsAcylic<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(sccs, casttree);
+                UnfoldTestUtils.IsAcylic<EdgeLikeEntity,FaceLikeEntity>(sccs, casttree);
 
                 // iterate through each vertex in the tree
                 // make sure that the parent/child is not null (depends which direction we're traversing)
@@ -120,18 +121,18 @@ namespace UnfoldTests
                 List<Face> faces = testcube.Faces.ToList();
                 List<Surface> surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
                 //generate a graph of the cube
-                var graph = GeneratePlanarUnfold.ModelTopology.GenerateTopologyFromSurfaces(surfaces);
+                var graph =ModelTopology.GenerateTopologyFromSurfaces(surfaces);
 
 
                 //perform BFS on the graph and get back the tree
-                var nodereturn = GeneratePlanarUnfold.ModelGraph.BFS<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(graph);
+                var nodereturn =ModelGraph.BFS<EdgeLikeEntity,FaceLikeEntity>(graph);
                 object tree = nodereturn["BFS finished"];
 
-                var casttree = tree as List<GeneratePlanarUnfold.GraphVertex<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>>;
-                //perform tarjans algo and make sure that the tree is acylic before unfold
-                var sccs = GraphUtilities.tarjansAlgo<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>.CycleDetect(casttree);
+                var casttree = tree as List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>>;
+                //perform Tarjans algo and make sure that the tree is acylic before unfold
+                var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity,FaceLikeEntity>.CycleDetect(casttree);
 
-                UnfoldTestUtils.IsAcylic<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(sccs, casttree);
+                UnfoldTestUtils.IsAcylic<EdgeLikeEntity,FaceLikeEntity>(sccs, casttree);
 
                 // iterate through each vertex in the tree
                 // make sure that the parent/child is not null (depends which direction we're traversing)
@@ -148,7 +149,7 @@ namespace UnfoldTests
 
                             var child = edge.Head;
 
-                            UnfoldTestUtils.AssertEdgeCoincidentWithBothFaces<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(parent.Face, child.Face, edge.GeometryEdge);
+                            UnfoldTestUtils.AssertEdgeCoincidentWithBothFaces<EdgeLikeEntity,FaceLikeEntity>(parent.Face, child.Face, edge.GeometryEdge);
 
 
                             double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
@@ -178,18 +179,18 @@ namespace UnfoldTests
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
                 //generate a graph of the cube
-                var graph = GeneratePlanarUnfold.ModelTopology.GenerateTopologyFromSurfaces(trisurfaces);
+                var graph =ModelTopology.GenerateTopologyFromSurfaces(trisurfaces);
 
 
                 //perform BFS on the graph and get back the tree
-                var nodereturn = GeneratePlanarUnfold.ModelGraph.BFS<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(graph);
+                var nodereturn =ModelGraph.BFS<EdgeLikeEntity,FaceLikeEntity>(graph);
                 object tree = nodereturn["BFS finished"];
 
-                var casttree = tree as List<GeneratePlanarUnfold.GraphVertex<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>>;
-                //perform tarjans algo and make sure that the tree is acylic before unfold
-                var sccs = GraphUtilities.tarjansAlgo<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>.CycleDetect(casttree);
+                var casttree = tree as List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>>;
+                //perform Tarjans algo and make sure that the tree is acylic before unfold
+                var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity,FaceLikeEntity>.CycleDetect(casttree);
 
-                UnfoldTestUtils.IsAcylic<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(sccs, casttree);
+                UnfoldTestUtils.IsAcylic<EdgeLikeEntity,FaceLikeEntity>(sccs, casttree);
 
                 // iterate through each vertex in the tree
                 // make sure that the parent/child is not null (depends which direction we're traversing)
@@ -206,7 +207,7 @@ namespace UnfoldTests
 
                             var child = edge.Head;
 
-                            UnfoldTestUtils.AssertEdgeCoincidentWithBothFaces<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(parent.Face, child.Face, edge.GeometryEdge);
+                            UnfoldTestUtils.AssertEdgeCoincidentWithBothFaces<EdgeLikeEntity,FaceLikeEntity>(parent.Face, child.Face, edge.GeometryEdge);
 
 
                             double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
@@ -234,18 +235,18 @@ namespace UnfoldTests
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
                 //generate a graph of the cube
-                var graph = GeneratePlanarUnfold.ModelTopology.GenerateTopologyFromSurfaces(trisurfaces);
+                var graph =ModelTopology.GenerateTopologyFromSurfaces(trisurfaces);
 
 
                 //perform BFS on the graph and get back the tree
-                var nodereturn = GeneratePlanarUnfold.ModelGraph.BFS<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(graph);
+                var nodereturn =ModelGraph.BFS<EdgeLikeEntity,FaceLikeEntity>(graph);
                 object tree = nodereturn["BFS finished"];
 
-                var casttree = tree as List<GeneratePlanarUnfold.GraphVertex<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>>;
-                //perform tarjans algo and make sure that the tree is acylic before unfold
-                var sccs = GraphUtilities.tarjansAlgo<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>.CycleDetect(casttree);
+                var casttree = tree as List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>>;
+                //perform Tarjans algo and make sure that the tree is acylic before unfold
+                var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity,FaceLikeEntity>.CycleDetect(casttree);
 
-                UnfoldTestUtils.IsAcylic<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(sccs, casttree);
+                UnfoldTestUtils.IsAcylic<EdgeLikeEntity,FaceLikeEntity>(sccs, casttree);
 
                 // iterate through each vertex in the tree
                 // make sure that the parent/child is not null (depends which direction we're traversing)
@@ -261,7 +262,7 @@ namespace UnfoldTests
                         {
                             var child = edge.Head;
 
-                            UnfoldTestUtils.AssertEdgeCoincidentWithBothFaces<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(parent.Face, child.Face, edge.GeometryEdge);
+                            UnfoldTestUtils.AssertEdgeCoincidentWithBothFaces<EdgeLikeEntity,FaceLikeEntity>(parent.Face, child.Face, edge.GeometryEdge);
 
 
                             double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
@@ -288,18 +289,18 @@ namespace UnfoldTests
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
                 //generate a graph of the cube
-                var graph = GeneratePlanarUnfold.ModelTopology.GenerateTopologyFromSurfaces(trisurfaces);
+                var graph =ModelTopology.GenerateTopologyFromSurfaces(trisurfaces);
 
 
                 //perform BFS on the graph and get back the tree
-                var nodereturn = GeneratePlanarUnfold.ModelGraph.BFS<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(graph);
+                var nodereturn =ModelGraph.BFS<EdgeLikeEntity,FaceLikeEntity>(graph);
                 object tree = nodereturn["BFS finished"];
 
-                var casttree = tree as List<GeneratePlanarUnfold.GraphVertex<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>>;
-                //perform tarjans algo and make sure that the tree is acylic before unfold
-                var sccs = GraphUtilities.tarjansAlgo<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>.CycleDetect(casttree);
+                var casttree = tree as List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>>;
+                //perform Tarjans algo and make sure that the tree is acylic before unfold
+                var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity,FaceLikeEntity>.CycleDetect(casttree);
 
-                UnfoldTestUtils.IsAcylic<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(sccs, casttree);
+                UnfoldTestUtils.IsAcylic<EdgeLikeEntity,FaceLikeEntity>(sccs, casttree);
 
                 // iterate through each vertex in the tree
                 // make sure that the parent/child is not null (depends which direction we're traversing)
@@ -316,7 +317,7 @@ namespace UnfoldTests
 
                             var child = edge.Head;
 
-                            UnfoldTestUtils.AssertEdgeCoincidentWithBothFaces<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(parent.Face, child.Face, edge.GeometryEdge);
+                            UnfoldTestUtils.AssertEdgeCoincidentWithBothFaces<EdgeLikeEntity,FaceLikeEntity>(parent.Face, child.Face, edge.GeometryEdge);
 
 
                             double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
@@ -339,7 +340,7 @@ namespace UnfoldTests
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
 
-                var unfoldsurfaces = PlanarUnfolder.DSPLanarUnfold(faces).UnfoldedSurfaceSet;
+                var unfoldsurfaces = PlanarUnfolder.Unfold(faces).UnfoldedSurfaceSet;
 
                 // must check each surface in each polysurface
                 // against everyother surface inside this polysurface and check coplanarity and centers
@@ -364,7 +365,7 @@ namespace UnfoldTests
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
                 List<Surface> surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
-                var unfoldsurfaces = PlanarUnfolder.DSPLanarUnfold(surfaces).UnfoldedSurfaceSet;
+                var unfoldsurfaces = PlanarUnfolder.Unfold(surfaces).UnfoldedSurfaceSet;
 
                 // must check each surface in each polysurface
                 // against everyother surface inside this polysurface and check coplanarity and centers
@@ -398,7 +399,7 @@ namespace UnfoldTests
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
 
-                var unfoldsurfaces = PlanarUnfolder.DSPLanarUnfold(trisurfaces).UnfoldedSurfaceSet;
+                var unfoldsurfaces = PlanarUnfolder.Unfold(trisurfaces).UnfoldedSurfaceSet;
 
                 // must check each surface in each polysurface
                 // against everyother surface inside this polysurface and check coplanarity and centers
@@ -431,7 +432,7 @@ namespace UnfoldTests
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
 
-                var unfoldsurfaces = PlanarUnfolder.DSPLanarUnfold(trisurfaces).UnfoldedSurfaceSet;
+                var unfoldsurfaces = PlanarUnfolder.Unfold(trisurfaces).UnfoldedSurfaceSet;
 
                 // must check each surface in each polysurface
                 // against everyother surface inside this polysurface and check coplanarity and centers
@@ -463,7 +464,7 @@ namespace UnfoldTests
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
 
-                var unfoldsurfaces = PlanarUnfolder.DSPLanarUnfold(trisurfaces).UnfoldedSurfaceSet;
+                var unfoldsurfaces = PlanarUnfolder.Unfold(trisurfaces).UnfoldedSurfaceSet;
 
                 // must check each surface in each polysurface
                 // against everyother surface inside this polysurface and check coplanarity and centers
@@ -496,8 +497,8 @@ namespace UnfoldTests
             }
 
             public void AssertLabelsGoodFinalLocationAndOrientation(List<PlanarUnfolder.UnfoldableFaceLabel
-                 <GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>> labels, List<List<Curve>>
-                translatedgeo, PlanarUnfolder.PlanarUnfolding<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity> unfoldingObject)
+                 <EdgeLikeEntity,FaceLikeEntity>> labels, List<List<Curve>>
+                translatedgeo, PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity> unfoldingObject)
             {
 
                 // assert that the final geometry bounding boxes intersect with the 
@@ -511,7 +512,7 @@ namespace UnfoldTests
                     //transform the  inital surface by its transform map
 
                     var transformedInitialSurfaceToFinal = PlanarUnfolder.MapGeometryToUnfoldingByID
-                        <GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity, Surface>
+                        <EdgeLikeEntity,FaceLikeEntity, Surface>
                         (unfoldingObject, label.UnfoldableFace.SurfaceEntity, label.ID);
 
                     Assert.IsTrue(bb.Intersects(BoundingBox.ByGeometry(transformedInitialSurfaceToFinal)));
@@ -521,7 +522,7 @@ namespace UnfoldTests
             }
 
             public void AssertLabelsGoodStartingLocationAndOrientation(List<PlanarUnfolder.UnfoldableFaceLabel
-                <GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>> labels)
+                <EdgeLikeEntity,FaceLikeEntity>> labels)
             {
                 // get aligned geometry
                 var alignedGeo = labels.Select(x => x.AlignedLabelGeometry).ToList();
@@ -556,8 +557,8 @@ namespace UnfoldTests
 
                     Console.WriteLine("index = " + index.ToString());
                     // assert that the box intersects with the bounding box of the surface
-                    var bbcenter = bb.MinPoint.Add((bb.MaxPoint.Subtract(bb.MinPoint.AsVector()).AsVector().Scale(.5)));
-                    var surfacebbcenter = surfacebb.MinPoint.Add((surfacebb.MaxPoint.Subtract(surfacebb.MinPoint.AsVector()).AsVector().Scale(.5)));
+                    var bbcenter = bb.MinPoint.Add((bb.MaxPoint.Subtract(bb.MinPoint.AsVector()).AsVector().Scale(5)));
+                    var surfacebbcenter = surfacebb.MinPoint.Add((surfacebb.MaxPoint.Subtract(surfacebb.MinPoint.AsVector()).AsVector().Scale(5)));
 
                     var distance = bbcenter.DistanceTo(surfacebbcenter);
 
@@ -579,7 +580,7 @@ namespace UnfoldTests
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
 
-                var unfoldObject = PlanarUnfolder.DSPLanarUnfold(faces);
+                var unfoldObject = PlanarUnfolder.Unfold(faces);
 
                 var unfoldsurfaces = unfoldObject.UnfoldedSurfaceSet;
 
@@ -587,7 +588,7 @@ namespace UnfoldTests
 
                 // generate labels
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
-               new PlanarUnfolder.UnfoldableFaceLabel<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(x)).ToList();
+               new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity,FaceLikeEntity>(x)).ToList();
 
                 AssertLabelsGoodStartingLocationAndOrientation(labels);
 
@@ -606,7 +607,7 @@ namespace UnfoldTests
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
                 var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
-                var unfoldObject = PlanarUnfolder.DSPLanarUnfold(surfaces);
+                var unfoldObject = PlanarUnfolder.Unfold(surfaces);
 
                 var unfoldsurfaces = unfoldObject.UnfoldedSurfaceSet;
 
@@ -614,7 +615,7 @@ namespace UnfoldTests
 
                 // generate labels
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
-               new PlanarUnfolder.UnfoldableFaceLabel<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(x)).ToList();
+               new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity,FaceLikeEntity>(x)).ToList();
 
                 AssertLabelsGoodStartingLocationAndOrientation(labels);
 
@@ -633,7 +634,7 @@ namespace UnfoldTests
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
 
-                var unfoldObject = PlanarUnfolder.DSPLanarUnfold(faces);
+                var unfoldObject = PlanarUnfolder.Unfold(faces);
 
                 var unfoldsurfaces = unfoldObject.UnfoldedSurfaceSet;
 
@@ -641,7 +642,7 @@ namespace UnfoldTests
 
                 // generate labels
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
-               new PlanarUnfolder.UnfoldableFaceLabel<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(x)).ToList();
+               new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity,FaceLikeEntity>(x)).ToList();
 
                 AssertLabelsGoodStartingLocationAndOrientation(labels);
 
@@ -665,7 +666,7 @@ namespace UnfoldTests
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
 
-                var unfoldObject = PlanarUnfolder.DSPLanarUnfold(trisurfaces);
+                var unfoldObject = PlanarUnfolder.Unfold(trisurfaces);
 
                 var unfoldsurfaces = unfoldObject.UnfoldedSurfaceSet;
 
@@ -673,7 +674,7 @@ namespace UnfoldTests
 
                 // generate labels
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
-               new PlanarUnfolder.UnfoldableFaceLabel<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(x)).ToList();
+               new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity,FaceLikeEntity>(x)).ToList();
 
                 AssertLabelsGoodStartingLocationAndOrientation(labels);
 
@@ -696,7 +697,7 @@ namespace UnfoldTests
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
 
-                var unfoldObject = PlanarUnfolder.DSPLanarUnfold(trisurfaces);
+                var unfoldObject = PlanarUnfolder.Unfold(trisurfaces);
 
                 var unfoldsurfaces = unfoldObject.UnfoldedSurfaceSet;
 
@@ -704,7 +705,7 @@ namespace UnfoldTests
 
                 // generate labels
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
-               new PlanarUnfolder.UnfoldableFaceLabel<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(x)).ToList();
+               new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity,FaceLikeEntity>(x)).ToList();
 
                 AssertLabelsGoodStartingLocationAndOrientation(labels);
 

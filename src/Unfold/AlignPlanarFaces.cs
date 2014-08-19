@@ -13,7 +13,7 @@ namespace Unfold
 {
     public static class AlignPlanarFaces
     {
-
+        public static double epsilon =.0001;
         /// <summary>
         /// method that searches for an edge in a set of edges that shares the same start point as another edge but is not that edge
         /// </summary>
@@ -21,18 +21,18 @@ namespace Unfold
         /// <param name="StartPointOnSharedEdge"></param>
         /// <param name="sharedEdge"></param>
         /// <returns></returns>
-        public static List<Point> FindPointsOfEdgeStartingAtPoint<K,T>(List<K> edges, 
+        public static List<Point> FindPointsOfEdgeStartingAtPoint<K, T>(List<K> edges,
             Point StartPointOnSharedEdge, K sharedEdge)
             where K : IUnfoldableEdge
             where T : IUnfoldablePlanarFace<K>
         {
             K foundEdge = default(K);
 
-            Point Start = null;
-            Point End = null;
+            Point start = null;
+            Point end = null;
 
             // we are searching for an edge that has the same start point as the shared edge, but is not the shared edge
-            
+
             // TODO(mike) replace this with spatialEquals comparisons
             foreach (var edge in edges)
             {
@@ -50,30 +50,30 @@ namespace Unfold
             if (!foundEdge.Start.IsAlmostEqualTo(sharedEdge.Start))
             {
 
-                Start = foundEdge.End;
-                End = foundEdge.Start;
+                start = foundEdge.End;
+                end = foundEdge.Start;
             }
             else
             {
-                Start = foundEdge.Start;
-                End = foundEdge.End;
+                start = foundEdge.Start;
+                end = foundEdge.End;
             }
-            return new List<Point>() { Start, End };
+            return new List<Point>() { start, end };
 
         }
-        
+
         /// <summary>
-        /// Method that returns and integer signifying if the normals between the two faces were as expected or if they were facing opposite directions as defined by the
+        /// Method that returns a double signifying if the normals between the two faces were as expected or if they were facing opposite directions as defined by the
         /// shared edge betweeen them
         /// </summary>
         /// <param name="facetoRotate"></param>
         /// <param name="referenceFace"></param>
         /// <param name="sharedEdge"></param>
         /// <returns></returns>
-        public static double CheckNormalConsistency<K,T>(T facetoRotate, 
+        public static double CheckNormalConsistency<K, T>(T facetoRotate,
             T referenceFace, K sharedEdge)
-            where K:IUnfoldableEdge
-            where T:IUnfoldablePlanarFace<K>
+            where K : IUnfoldableEdge
+            where T : IUnfoldablePlanarFace<K>
         {
             // assumption that face A is rotation face
             // and face B is reference face.
@@ -81,69 +81,69 @@ namespace Unfold
             //C is a vert on B
             //Point A is the start point of the shared edge
 
-            double rotFaceNormalOK = -1.0;
-            double refFaceNormalOK = -1.0;
+            var rotFaceNormalOK = -1.0;
+            var refFaceNormalOK = -1.0;
 
 
-            Curve sharedcurve = sharedEdge.Curve;
+            var sharedcurve = sharedEdge.Curve;
 
-            Surface refsurface = referenceFace.SurfaceEntity;
-            Surface rotsurface = facetoRotate.SurfaceEntity;
+            var refsurface = referenceFace.SurfaceEntity;
+            var rotsurface = facetoRotate.SurfaceEntity;
 
             List<K> refedegs = referenceFace.EdgeLikeEntities;
             List<K> rotedges = facetoRotate.EdgeLikeEntities;
 
-            Vector AB = Vector.ByTwoPoints(sharedcurve.StartPoint, sharedcurve.EndPoint); //Edge from A TO B// this is the shared edge
-            Vector ABnorm = AB.Normalized();
+            var ab = Vector.ByTwoPoints(sharedcurve.StartPoint, sharedcurve.EndPoint); //Edge from A TO B// this is the shared edge
+            var abnorm = ab.Normalized();
 
-            List<Point> ADedgePoints = AlignPlanarFaces.FindPointsOfEdgeStartingAtPoint<K,T>(rotedges,sharedEdge.Start,sharedEdge);
+            List<Point> adedgePoints = AlignPlanarFaces.FindPointsOfEdgeStartingAtPoint<K, T>(rotedges, sharedEdge.Start, sharedEdge);
 
-            Point ADstart = ADedgePoints[0];
-            Point ADend = ADedgePoints[1];
+            var ADstart = adedgePoints[0];
+            var ADend = adedgePoints[1];
 
-           Vector ADVector =  Vector.ByTwoPoints(ADstart,ADend);
-           Vector ADnorm = ADVector.Normalized();
+            var adVector = Vector.ByTwoPoints(ADstart, ADend);
+            var adnorm = adVector.Normalized();
 
-           Vector firstCross = ABnorm.Cross(ADnorm).Normalized();
-           
-         
-            Vector  rotFaceNormal = rotsurface.NormalAtParameter(.5, .5);
-        
+            Vector firstCross = abnorm.Cross(adnorm).Normalized();
 
-           double abxadDotNormalRotFace =  firstCross.Dot(rotFaceNormal);
-           
-           
-           
+
+            var rotFaceNormal = rotsurface.NormalAtParameter(5,5);
+
+
+            double abxadDotNormalRotFace = firstCross.Dot(rotFaceNormal);
+
+
+
             // replace this with almost equal
-          
-           if (Math.Abs(abxadDotNormalRotFace -1.0) < .0001)
-           {
-               rotFaceNormalOK = 1.0;
-           }
 
-           List<Point> ACedgePoints = AlignPlanarFaces.FindPointsOfEdgeStartingAtPoint<K,T>(refedegs,sharedEdge.Start , sharedEdge);
-           Point ACstart = ACedgePoints[0];
-           Point ACend = ACedgePoints[1];
+            if (Math.Abs(abxadDotNormalRotFace - 1.0) < epsilon)
+            {
+                rotFaceNormalOK = 1.0;
+            }
 
-           Vector ACVector = Vector.ByTwoPoints(ACstart, ACend);
-           Vector ACnorm = ACVector.Normalized();
+            List<Point> ACedgePoints = AlignPlanarFaces.FindPointsOfEdgeStartingAtPoint<K, T>(refedegs, sharedEdge.Start, sharedEdge);
+            var acstart = ACedgePoints[0];
+            var acend = ACedgePoints[1];
 
-           Vector secondCross = ACnorm.Cross(ABnorm).Normalized();
+            var acVector = Vector.ByTwoPoints(acstart, acend);
+            var acnorm = acVector.Normalized();
 
-          
+            Vector secondCross = acnorm.Cross(abnorm).Normalized();
 
-           Vector refFaceNormal = refsurface.NormalAtParameter(.5, .5);
-           
-          
+
+
+            var refFaceNormal = refsurface.NormalAtParameter(5,5);
+
+
             double acxabDotNormalRefFace = secondCross.Dot(refFaceNormal);
-           
-          
-           //Console.WriteLine(acxabDotNormalRefFace);
-           
-            if (Math.Abs(acxabDotNormalRefFace -1)<.0001)
-           {
-               refFaceNormalOK = 1.0;
-           }
+
+
+            //Console.WriteLine(acxabDotNormalRefFace);
+
+            if (Math.Abs(acxabDotNormalRefFace - 1) < epsilon)
+            {
+                refFaceNormalOK = 1.0;
+            }
             /*
             //debug section
 #if DEBUG
@@ -170,9 +170,9 @@ namespace Unfold
 #endif
 
             */
-           double result = refFaceNormalOK * rotFaceNormalOK;
+            double result = refFaceNormalOK * rotFaceNormalOK;
 
-           return result;
+            return result;
 
         }
         /// <summary>
@@ -183,37 +183,37 @@ namespace Unfold
         /// <param name="referenceFace"></param>
         /// <param name="sharedEdge"></param>
         /// <returns></returns>
-        public static Geometry MakeGeometryCoPlanarAroundEdge<K,T>( double normalconsistency, T facetoRotate,
+        public static Geometry MakeGeometryCoPlanarAroundEdge<K, T>(double normalconsistency, T facetoRotate,
            T referenceFace, K sharedEdge)
-            where K:IUnfoldableEdge
-            where T:IUnfoldablePlanarFace<K>
+            where K : IUnfoldableEdge
+            where T : IUnfoldablePlanarFace<K>
         {
-            
-            Vector rotFaceNorm = facetoRotate.SurfaceEntity.NormalAtParameter(.5,.5);
-            Vector refFaceNorm = referenceFace.SurfaceEntity.NormalAtParameter(.5,.5);
-            
-            Vector BXACrossedNormals = refFaceNorm.Cross(rotFaceNorm);
+
+            Vector rotFaceNorm = facetoRotate.SurfaceEntity.NormalAtParameter(5,5);
+            Vector refFaceNorm = referenceFace.SurfaceEntity.NormalAtParameter(5,5);
+
+            Vector bxaCrossedNormals = refFaceNorm.Cross(rotFaceNorm);
 
 
-            var PlaneRotOrigin = Plane.ByOriginNormal(sharedEdge.End,BXACrossedNormals);
+            var planeRotOrigin = Plane.ByOriginNormal(sharedEdge.End, bxaCrossedNormals);
 
-            var s = (BXACrossedNormals.Length) * -1.0 * normalconsistency;
+            var s = (bxaCrossedNormals.Length) * -1.0 * normalconsistency;
 
-            var c = rotFaceNorm.Dot(refFaceNorm)*-1.0 * normalconsistency;
+            var c = rotFaceNorm.Dot(refFaceNorm) * -1.0 * normalconsistency;
 
             var radians = Math.Atan2(s, c);
 
-            var degrees = radians * (180.0 / Math.PI) ;
-            
+            var degrees = radians * (180.0 / Math.PI);
+
             degrees = 180.0 - degrees;
 # if DEBUG
             Console.WriteLine(" about to to rotate");
             Console.WriteLine(degrees);
 # endif
-            Geometry rotatedFace = facetoRotate.SurfaceEntity.Rotate(PlaneRotOrigin, degrees);
+            Geometry rotatedFace = facetoRotate.SurfaceEntity.Rotate(planeRotOrigin, degrees);
 
             return rotatedFace;
-                
+
         }
     }
 }

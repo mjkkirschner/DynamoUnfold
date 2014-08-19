@@ -9,6 +9,7 @@ using Autodesk.DesignScript.Interfaces;
 using Unfold;
 using System.Threading;
 using Unfold.Interfaces;
+using Unfold.Topology;
 
 namespace UnfoldTests
 {
@@ -33,7 +34,7 @@ namespace UnfoldTests
             return cone;
         }
 
-        public static void GraphHasCorrectNumberOfEdges<K, T>(int expectedEdges, List<GeneratePlanarUnfold.GraphVertex<K, T>> graph)
+        public static void GraphHasCorrectNumberOfEdges<K, T>(int expectedEdges, List<GraphVertex<K, T>> graph)
             where K : IUnfoldableEdge
             where T : IUnfoldablePlanarFace<K>
         {
@@ -44,7 +45,7 @@ namespace UnfoldTests
             Console.WriteLine("correct number of edges");
         }
 
-        public static void IsOneStronglyConnectedGraph<K, T>(List<List<GeneratePlanarUnfold.GraphVertex<K, T>>> sccs)
+        public static void IsOneStronglyConnectedGraph<K, T>(List<List<GraphVertex<K, T>>> sccs)
             where K : IUnfoldableEdge
             where T : IUnfoldablePlanarFace<K>
         {
@@ -52,7 +53,7 @@ namespace UnfoldTests
             Console.WriteLine("This graph is one strongly connected component");
         }
 
-        public static void IsAcylic<K, T>(List<List<GeneratePlanarUnfold.GraphVertex<K, T>>> sccs, List<GeneratePlanarUnfold.GraphVertex<K, T>> graph)
+        public static void IsAcylic<K, T>(List<List<GraphVertex<K, T>>> sccs, List<GraphVertex<K, T>> graph)
             where K : IUnfoldableEdge
             where T : IUnfoldablePlanarFace<K>
         {
@@ -61,7 +62,7 @@ namespace UnfoldTests
             Console.WriteLine(" This graph is acyclic, each vertex is its own strongly connected comp");
         }
 
-        public static void GraphHasVertForEachFace<K, T>(List<GeneratePlanarUnfold.GraphVertex<K, T>> graph, List<Object> faces)
+        public static void GraphHasVertForEachFace<K, T>(List<GraphVertex<K, T>> graph, List<Object> faces)
             where T : IUnfoldablePlanarFace<K>
             where K : IUnfoldableEdge
         {
@@ -87,7 +88,7 @@ namespace UnfoldTests
                 if (geo is Curve)
                 {
                     Curve geoAsCurve = geo as Curve;
-                    var edgeLikeRepresentation = new GeneratePlanarUnfold.EdgeLikeEntity(geoAsCurve);
+                    var edgeLikeRepresentation = new EdgeLikeEntity(geoAsCurve);
 
                     if (edgeLikeRepresentation.SpatialEquals(edge))
                     {
@@ -132,7 +133,7 @@ namespace UnfoldTests
 
             Console.WriteLine(dotpro);
 
-            Assert.IsTrue(Math.Abs(Math.Abs(dotpro) - 1) < .0001);
+            Assert.IsTrue(Math.Abs(Math.Abs(dotpro) - 1) <0001);
             Console.WriteLine(dotpro);
             Console.WriteLine("was parallel");
             Console.WriteLine(cross1);
@@ -144,8 +145,8 @@ namespace UnfoldTests
         {
 
 
-            //var center1 = surf1.PointAtParameter(.5, .5);
-            //var center2 = surf2.PointAtParameter(.5, .5);
+            //var center1 = surf1.PointAtParameter(5,5);
+            //var center2 = surf2.PointAtParameter(5,5);
 
             //solution to fnding centers of of trimmed surfaces like triangles as polygon projections
             var center1 = Tesselation.MeshHelpers.SurfaceAsPolygonCenter(surf1);
@@ -160,7 +161,7 @@ namespace UnfoldTests
         }
 
 
-        public static void AssertAllFinishingTimesSet<K, T>(List<GeneratePlanarUnfold.GraphVertex<K, T>> graph)
+        public static void AssertAllFinishingTimesSet<K, T>(List<GraphVertex<K, T>> graph)
             where K : IUnfoldableEdge
             where T : IUnfoldablePlanarFace<K>
         {

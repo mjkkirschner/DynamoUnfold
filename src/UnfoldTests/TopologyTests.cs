@@ -9,6 +9,7 @@ using Autodesk.DesignScript.Interfaces;
 using Unfold;
 using System.Threading;
 using Unfold.Interfaces;
+using Unfold.Topology;
 
 namespace UnfoldTests
 {
@@ -36,7 +37,7 @@ namespace UnfoldTests
 
                 Assert.AreEqual(faces.Count, 6);
 
-                var graph = GeneratePlanarUnfold.ModelTopology.GenerateTopologyFromFaces(faces);
+                var graph =ModelTopology.GenerateTopologyFromFaces(faces);
 
                 List<Object> face_objs = faces.Select(x => x as Object).ToList();
 
@@ -44,7 +45,7 @@ namespace UnfoldTests
 
                 UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
 
-                var sccs = GraphUtilities.tarjansAlgo<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>.CycleDetect(graph);
+                var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity,FaceLikeEntity>.CycleDetect(graph);
 
                 UnfoldTestUtils.IsOneStronglyConnectedGraph(sccs);
             }
@@ -60,7 +61,7 @@ namespace UnfoldTests
 
                 Assert.AreEqual(surfaces.Count, 6);
 
-                var graph = GeneratePlanarUnfold.ModelTopology.GenerateTopologyFromSurfaces(surfaces);
+                var graph =ModelTopology.GenerateTopologyFromSurfaces(surfaces);
 
                 List<Object> face_objs = surfaces.Select(x => x as Object).ToList();
 
@@ -79,7 +80,7 @@ namespace UnfoldTests
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
 
-                var graph = GeneratePlanarUnfold.ModelTopology.GenerateTopologyFromFaces(faces);
+                var graph =ModelTopology.GenerateTopologyFromFaces(faces);
 
                 List<Object> face_objs = faces.Select(x => x as Object).ToList();
 
@@ -87,18 +88,18 @@ namespace UnfoldTests
 
                 UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
 
-                var nodereturn = GeneratePlanarUnfold.ModelGraph.BFS<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(graph);
+                var nodereturn =ModelGraph.BFS<EdgeLikeEntity,FaceLikeEntity>(graph);
                 object tree = nodereturn["BFS finished"];
 
-                var casttree = tree as List<GeneratePlanarUnfold.GraphVertex<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>>;
+                var casttree = tree as List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>>;
 
                 UnfoldTestUtils.GraphHasVertForEachFace(casttree, face_objs);
                 UnfoldTestUtils.GraphHasCorrectNumberOfEdges(5, casttree);
                 UnfoldTestUtils.AssertAllFinishingTimesSet(graph);
 
-                var sccs = GraphUtilities.tarjansAlgo<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>.CycleDetect(casttree);
+                var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity,FaceLikeEntity>.CycleDetect(casttree);
 
-                UnfoldTestUtils.IsAcylic<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(sccs, casttree);
+                UnfoldTestUtils.IsAcylic<EdgeLikeEntity,FaceLikeEntity>(sccs, casttree);
 
             }
         }

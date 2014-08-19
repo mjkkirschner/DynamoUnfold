@@ -9,7 +9,7 @@ using Autodesk.DesignScript.Interfaces;
 using Unfold;
 using System.Threading;
 using Unfold.Interfaces;
-
+using Unfold.Topology;
 
 namespace UnfoldTests
 {
@@ -48,7 +48,7 @@ namespace UnfoldTests
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
 
-                Assert.DoesNotThrow(() => PlanarUnfolder.DSPLanarUnfold(trisurfaces));
+                Assert.DoesNotThrow(() => PlanarUnfolder.Unfold(trisurfaces));
 
 
             }
@@ -77,7 +77,7 @@ namespace UnfoldTests
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
 
-              Assert.DoesNotThrow(() => PlanarUnfolder.DSPLanarUnfold(trisurfaces));
+              Assert.DoesNotThrow(() => PlanarUnfolder.Unfold(trisurfaces));
 
 
             }

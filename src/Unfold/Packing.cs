@@ -15,7 +15,7 @@ namespace Unfold
    public class UnfoldPacking
     {
           [MultiReturn(new[] { "packed surfaces", "unfoldObject" })]
-        public static Dictionary<string,object> PackUnfoldSurfaces<K,T>(PlanarUnfolder.PlanarUnfolding<K,T>unfold, double width = 20, double height = 20, double gap = .3)
+        public static Dictionary<string,object> PackUnfoldSurfaces<K,T>(PlanarUnfolder.PlanarUnfolding<K,T>unfold, double width = 20, double height = 20, double gap =3)
                 where T : IUnfoldablePlanarFace<K>, new()
                 where K : IUnfoldableEdge
           {
@@ -25,7 +25,7 @@ namespace Unfold
              var bbs = facelikes.Select(x=>BoundingBox.ByGeometry(x.SurfaceEntity)).ToList();
 
              var newcenters = DynamoPack.Packing.ByCoordinateSystems(bbs, width, height, gap);
-             var centers = bbs.Select(x => x.MinPoint.Add((x.MaxPoint.Subtract(x.MinPoint.AsVector()).AsVector().Scale(.5)))).ToList();
+             var centers = bbs.Select(x => x.MinPoint.Add((x.MaxPoint.Subtract(x.MinPoint.AsVector()).AsVector().Scale(5)))).ToList();
 
               var packedfinalsurfaces = new List<Surface>();
               var packedfinalfacelikes = new List<T>();

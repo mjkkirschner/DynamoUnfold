@@ -6,7 +6,7 @@ using Unfold;
 using Autodesk.DesignScript.Runtime;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
-
+using Unfold.Topology;
 
 namespace DynamoUnfold
 {
@@ -18,7 +18,7 @@ namespace DynamoUnfold
         [MultiReturn(new[] { "surfaces", "unfoldingObject" })]
        public static Dictionary<string, object> UnfoldListOfFacesAndReturnTransforms(List<Face> faces)
        {
-           var unfolding = PlanarUnfolder.DSPLanarUnfold(faces);
+           var unfolding = PlanarUnfolder.Unfold(faces);
            return new Dictionary<string, object> 
                 {   
                     { "surfaces", (unfolding.UnfoldedSurfaceSet)},
@@ -31,7 +31,7 @@ namespace DynamoUnfold
         [MultiReturn(new[] { "surfaces", "unfoldingObject" })]
         public static Dictionary<string, object> UnfoldListOfSurfacesAndReturnTransforms(List<Surface> surfaces)
         {
-            var unfolding = PlanarUnfolder.DSPLanarUnfold(surfaces);
+            var unfolding = PlanarUnfolder.Unfold(surfaces);
             return new Dictionary<string, object> 
                 {   
                     { "surfaces", (unfolding.UnfoldedSurfaceSet)},
@@ -50,7 +50,7 @@ namespace DynamoUnfold
             //convert triangles to surfaces
             List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
-            var unfolding = PlanarUnfolder.DSPLanarUnfold(trisurfaces);
+            var unfolding = PlanarUnfolder.Unfold(trisurfaces);
             return new Dictionary<string, object> 
                 {   
                     { "surfaces", (unfolding.UnfoldedSurfaceSet)},
@@ -64,11 +64,11 @@ namespace DynamoUnfold
 
 
         public static List<List<Curve>> GenerateLabels
-           (PlanarUnfolder.PlanarUnfolding<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity> unfoldingObject)
+           (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity> unfoldingObject)
         {
 
             var labels = unfoldingObject.StartingUnfoldableFaces.Select(x =>
-              new PlanarUnfolder.UnfoldableFaceLabel<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(x)).ToList();
+              new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity,FaceLikeEntity>(x)).ToList();
 
             return labels.Select(x => x.AlignedLabelGeometry).ToList();
 
@@ -78,10 +78,10 @@ namespace DynamoUnfold
 
 
        public static List<List<Curve>> GenerateLabelsAndTransformToUnfold
-           (PlanarUnfolder.PlanarUnfolding<GeneratePlanarUnfold.EdgeLikeEntity,GeneratePlanarUnfold.FaceLikeEntity> unfoldingObject){
+           (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity> unfoldingObject){
         
            var labels =   unfoldingObject.StartingUnfoldableFaces.Select(x=>
-             new PlanarUnfolder.UnfoldableFaceLabel<GeneratePlanarUnfold.EdgeLikeEntity,GeneratePlanarUnfold.FaceLikeEntity>(x)).ToList();
+             new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity,FaceLikeEntity>(x)).ToList();
         
            // need to make one piece of geometry from list of geo...
            var transformedGeo = labels.Select(x=> PlanarUnfolder.MapGeometryToUnfoldingByID(unfoldingObject,x.AlignedLabelGeometry,x.ID)).ToList();
@@ -99,7 +99,7 @@ namespace DynamoUnfold
         public static List<Surface> UnfoldListOfFaces(List<Face> faces){
 
 
-          var unfoldsurfaces =  PlanarUnfolder.DSPLanarUnfold(faces);
+          var unfoldsurfaces =  PlanarUnfolder.Unfold(faces);
           return unfoldsurfaces.UnfoldedSurfaceSet;
         }
 
@@ -107,7 +107,7 @@ namespace DynamoUnfold
         {
 
 
-            var unfoldsurfaces = PlanarUnfolder.DSPLanarUnfold(surfaces);
+            var unfoldsurfaces = PlanarUnfolder.Unfold(surfaces);
             return unfoldsurfaces.UnfoldedSurfaceSet;
         }
 
@@ -119,15 +119,15 @@ namespace DynamoUnfold
             //convert triangles to surfaces
             List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>(){x[0], x[1], x[2]})).ToList();
 
-            var unfoldsurfaces = PlanarUnfolder.DSPLanarUnfold(trisurfaces);
+            var unfoldsurfaces = PlanarUnfolder.Unfold(trisurfaces);
             return unfoldsurfaces.UnfoldedSurfaceSet;
         }
 
 
         [MultiReturn(new[] { "packed surfaces", "unfoldObject" })]
         public static Dictionary<string, object> PackUnfoldedSurfaces(
-            PlanarUnfolder.PlanarUnfolding<GeneratePlanarUnfold.EdgeLikeEntity,GeneratePlanarUnfold.FaceLikeEntity> unfolding,
-            double width =20,double height =20,double gap = .3)
+            PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity> unfolding,
+            double width =20,double height =20,double gap =3)
         {
 
 
@@ -147,33 +147,33 @@ namespace DynamoUnfold
             //convert triangles to surfaces
             List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
-            var graph = GeneratePlanarUnfold.ModelTopology.GenerateTopologyFromSurfaces(trisurfaces);
+            var graph =ModelTopology.GenerateTopologyFromSurfaces(trisurfaces);
 
             //perform BFS on the graph and get back the tree
-            var nodereturn = GeneratePlanarUnfold.ModelGraph.BFS<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(graph);
+            var nodereturn =ModelGraph.BFS<EdgeLikeEntity,FaceLikeEntity>(graph);
             var tree = nodereturn["BFS finished"];
             
-            var treegeo = GeneratePlanarUnfold.ModelGraph.ProduceGeometryFromGraph<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>
-                (tree as  List<GeneratePlanarUnfold.GraphVertex<GeneratePlanarUnfold.EdgeLikeEntity,GeneratePlanarUnfold.FaceLikeEntity>>);
+            var treegeo =ModelGraph.ProduceGeometryFromGraph<EdgeLikeEntity,FaceLikeEntity>
+                (tree as  List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>>);
 
 
             return treegeo;
         }
 
 
-        public static object DebugGeoFromGraph(List<GeneratePlanarUnfold.GraphVertex<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>> graph)
+        public static object DebugGeoFromGraph(List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>> graph)
         {
-            var output = GeneratePlanarUnfold.ModelGraph.ProduceGeometryFromGraph<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(graph);
+            var output =ModelGraph.ProduceGeometryFromGraph<EdgeLikeEntity,FaceLikeEntity>(graph);
             return output;
         } 
 
         public static object BFSTestNoGeometryGeneration(List<Surface> surfaces)
         {
 
-            var graph = GeneratePlanarUnfold.ModelTopology.GenerateTopologyFromSurfaces(surfaces);
+            var graph =ModelTopology.GenerateTopologyFromSurfaces(surfaces);
 
             //perform BFS on the graph and get back the tree
-            var nodereturn = GeneratePlanarUnfold.ModelGraph.BFS<GeneratePlanarUnfold.EdgeLikeEntity, GeneratePlanarUnfold.FaceLikeEntity>(graph);
+            var nodereturn =ModelGraph.BFS<EdgeLikeEntity,FaceLikeEntity>(graph);
             return nodereturn["BFS finished"];
         }
 

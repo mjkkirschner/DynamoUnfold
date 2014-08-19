@@ -14,7 +14,7 @@ namespace Unfold.Interfaces
         // we want to use these equals and hashcode methods
         // this is done so we do not need to override the equals and hashcode methods on the orignal objects
       [SupressImportIntoVM]
-        public class SpatiallyEquatableComparer<S> : IEqualityComparer<S> where S:ISpatialEquatable
+        public class SpatialEqualityComparer<S> : IEqualityComparer<S> where S:ISpatiallyEquatable
         {
 
             public bool Equals(S x, S y)
@@ -31,11 +31,11 @@ namespace Unfold.Interfaces
         }
 
         // this interface forces objects to implement the spatial equals + hashcode methods that the comparator asks for
-        public interface ISpatialEquatable
+        public interface ISpatiallyEquatable
         {
             int GetSpatialHashCode();
 
-            bool SpatialEquals(ISpatialEquatable y);
+            bool SpatialEquals(ISpatiallyEquatable y);
 
         }
 
@@ -51,7 +51,7 @@ namespace Unfold.Interfaces
         
         }
      [SupressImportIntoVM]
-      public  interface IUnfoldableEdge : ISpatialEquatable
+      public  interface IUnfoldableEdge : ISpatiallyEquatable
         {
             Point Start { get; set; }
             Point End { get; set; }

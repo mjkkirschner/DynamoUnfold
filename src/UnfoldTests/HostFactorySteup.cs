@@ -19,8 +19,8 @@ namespace UnfoldTests
         {   
             Console.WriteLine("startup");
             // Currently to run tests must manually specify where to look for ASM dlls
-            // and then copy over the correct libG .dlls from Dynamo/bin/ to DynamoUnfold/Bin 
-            //directory, LibG .dlls must be located with the test dll in the same directory.
+            // and then copy over the correct libGdlls from Dynamo/bin/ to DynamoUnfold/Bin 
+            //directory, LibGdlls must be located with the test dll in the same directory.
 
             //libg 219 is for 2014 versions, libg220 is for 2015 host applications
 

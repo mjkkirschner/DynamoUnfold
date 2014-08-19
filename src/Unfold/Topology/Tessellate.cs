@@ -9,7 +9,7 @@ using Autodesk.DesignScript.Runtime;
 
 
 
-namespace Unfold
+namespace Unfold.Topology
 {
     public class Tesselation
     {
@@ -18,11 +18,11 @@ namespace Unfold
         {
             public static List<List<T>> Split<T>(List<T> source, int subListLength)
             {
-                return source
-                    .Select((x, i) => new { Index = i, Value = x })
-                    .GroupBy(x => x.Index / subListLength)
-                    .Select(x => x.Select(v => v.Value).ToList())
-                    .ToList();
+                return source.
+                   Select((x, i) => new { Index = i, Value = x })
+                   .GroupBy(x => x.Index / subListLength)
+                   .Select(x => x.Select(v => v.Value).ToList())
+                   .ToList();
             }
 
             public static Point SurfaceAsPolygonCenter(Surface surface){
