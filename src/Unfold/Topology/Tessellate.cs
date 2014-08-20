@@ -41,22 +41,22 @@ namespace Unfold.Topology
             }
 
         }
-        public static List<List<Point>> Tessellate(List<Face> faces)
+        public static List<List<Point>> Tessellate(List<Face> faces,double tolerance,int maxGridLines)
         {
             var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
 
-            var result = Tessellate(surfaces);
+            var result = Tessellate(surfaces,tolerance,maxGridLines);
             return result;
 
         }
 
-        public static List<List<Point>> Tessellate(List<Surface> surfaces)
+        public static List<List<Point>> Tessellate(List<Surface> surfaces,double tolerance,int maxGridLines)
         {
             var rp = new RenderPackage();
             
             foreach (var surface in surfaces)
             {
-                surface.Tessellate(rp);
+                surface.Tessellate(rp,tolerance,maxGridLines);
                 rp.ItemsCount++;
 
             }
