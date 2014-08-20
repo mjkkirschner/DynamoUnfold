@@ -174,7 +174,7 @@ namespace UnfoldTests
                 List<Surface> surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
 
                 //handle tesselation here
-                var pointtuples = Tesselation.Tessellate(surfaces);
+                var pointtuples = Tesselation.Tessellate(surfaces,-1,512);
                 //convert triangles to surfaces
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
@@ -230,7 +230,7 @@ namespace UnfoldTests
                 List<Surface> surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
 
                 //handle tesselation here
-                var pointtuples = Tesselation.Tessellate(surfaces);
+                var pointtuples = Tesselation.Tessellate(surfaces,-1,512);
                 //convert triangles to surfaces
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
@@ -284,7 +284,7 @@ namespace UnfoldTests
                 List<Surface> surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
 
                 //handle tesselation here
-                var pointtuples = Tesselation.Tessellate(surfaces);
+                var pointtuples = Tesselation.Tessellate(surfaces,-1,512);
                 //convert triangles to surfaces
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
@@ -394,7 +394,7 @@ namespace UnfoldTests
                 List<Surface> surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
 
                 //handle tesselation here
-                var pointtuples = Tesselation.Tessellate(surfaces);
+                var pointtuples = Tesselation.Tessellate(surfaces,-1,512);
                 //convert triangles to surfaces
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
@@ -427,7 +427,7 @@ namespace UnfoldTests
                 List<Surface> surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
 
                 //handle tesselation here
-                var pointtuples = Tesselation.Tessellate(surfaces);
+                var pointtuples = Tesselation.Tessellate(surfaces,-1,512);
                 //convert triangles to surfaces
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
@@ -459,7 +459,7 @@ namespace UnfoldTests
                 List<Surface> surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
 
                 //handle tesselation here
-                var pointtuples = Tesselation.Tessellate(surfaces);
+                var pointtuples = Tesselation.Tessellate(surfaces,-1,512);
                 //convert triangles to surfaces
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
@@ -661,7 +661,7 @@ namespace UnfoldTests
                 List<Face> faces = testcone.Faces.ToList();
                 var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
                 //handle tesselation here
-                var pointtuples = Tesselation.Tessellate(surfaces);
+                var pointtuples = Tesselation.Tessellate(surfaces,-1,512);
                 //convert triangles to surfaces
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
@@ -692,7 +692,7 @@ namespace UnfoldTests
                 List<Face> faces = testcube.Faces.ToList();
                 var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
                 //handle tesselation here
-                var pointtuples = Tesselation.Tessellate(surfaces);
+                var pointtuples = Tesselation.Tessellate(surfaces,-1,512);
                 //convert triangles to surfaces
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 

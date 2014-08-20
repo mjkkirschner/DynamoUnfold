@@ -43,7 +43,7 @@ namespace UnfoldTests
                 var surfaces = new List<Surface>() { surface };
 
                 //handle tesselation here
-                var pointtuples = Tesselation.Tessellate(surfaces);
+                var pointtuples = Tesselation.Tessellate(surfaces,-1,512);
                 //convert triangles to surfaces
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
@@ -72,7 +72,7 @@ namespace UnfoldTests
                 var surfaces = new List<Surface>() { surface };
 
                 //handle tesselation here
-                var pointtuples = Tesselation.Tessellate(surfaces);
+                var pointtuples = Tesselation.Tessellate(surfaces,-1,512);
                 //convert triangles to surfaces
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
