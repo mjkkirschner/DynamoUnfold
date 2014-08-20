@@ -133,7 +133,7 @@ namespace UnfoldTests
 
             Console.WriteLine(dotpro);
 
-            Assert.IsTrue(Math.Abs(Math.Abs(dotpro) - 1) <0001);
+            Assert.IsTrue(Math.Abs(Math.Abs(dotpro) - 1) <.0001);
             Console.WriteLine(dotpro);
             Console.WriteLine("was parallel");
             Console.WriteLine(cross1);
@@ -145,8 +145,8 @@ namespace UnfoldTests
         {
 
 
-            //var center1 = surf1.PointAtParameter(5,5);
-            //var center2 = surf2.PointAtParameter(5,5);
+            //var center1 = surf1.PointAtParameter(.5,.5);
+            //var center2 = surf2.PointAtParameter(.5,.5);
 
             //solution to fnding centers of of trimmed surfaces like triangles as polygon projections
             var center1 = Tesselation.MeshHelpers.SurfaceAsPolygonCenter(surf1);

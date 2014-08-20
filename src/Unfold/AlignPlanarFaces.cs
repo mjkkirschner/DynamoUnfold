@@ -107,7 +107,7 @@ namespace Unfold
             Vector firstCross = abnorm.Cross(adnorm).Normalized();
 
 
-            var rotFaceNormal = rotsurface.NormalAtParameter(5,5);
+            var rotFaceNormal = rotsurface.NormalAtParameter(.5,.5);
 
 
             double abxadDotNormalRotFace = firstCross.Dot(rotFaceNormal);
@@ -132,7 +132,7 @@ namespace Unfold
 
 
 
-            var refFaceNormal = refsurface.NormalAtParameter(5,5);
+            var refFaceNormal = refsurface.NormalAtParameter(.5,.5);
 
 
             double acxabDotNormalRefFace = secondCross.Dot(refFaceNormal);
@@ -189,8 +189,8 @@ namespace Unfold
             where T : IUnfoldablePlanarFace<K>
         {
 
-            Vector rotFaceNorm = facetoRotate.SurfaceEntity.NormalAtParameter(5,5);
-            Vector refFaceNorm = referenceFace.SurfaceEntity.NormalAtParameter(5,5);
+            Vector rotFaceNorm = facetoRotate.SurfaceEntity.NormalAtParameter(.5,.5);
+            Vector refFaceNorm = referenceFace.SurfaceEntity.NormalAtParameter(.5,.5);
 
             Vector bxaCrossedNormals = refFaceNorm.Cross(rotFaceNorm);
 

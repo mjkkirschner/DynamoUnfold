@@ -116,7 +116,7 @@ namespace Unfold
                 var myBox =  BoundingBox.ByGeometry(geometryToTransform);
 
                   // find the center of this box and use as start point
-                  var geoStartPoint = myBox.MinPoint.Add((myBox.MaxPoint.Subtract(myBox.MinPoint.AsVector()).AsVector().Scale(5)));
+                  var geoStartPoint = myBox.MinPoint.Add((myBox.MaxPoint.Subtract(myBox.MinPoint.AsVector()).AsVector().Scale(.5)));
              
               // transform each curve using this new center as an offset so it ends up translated correctly to the surface center
          var  transformedgeo = geometryToTransform.Select(x => MapGeometryToUnfoldingByID(unfolding, x, id, geoStartPoint)).ToList();
@@ -144,7 +144,7 @@ namespace Unfold
               // get bb of geo to transform
               var myBox = geometryToTransform.BoundingBox;
               // find the center of this box and use as start point
-              var geoStartPoint = myBox.MinPoint.Add((myBox.MaxPoint.Subtract(myBox.MinPoint.AsVector()).AsVector().Scale(5)));
+              var geoStartPoint = myBox.MinPoint.Add((myBox.MaxPoint.Subtract(myBox.MinPoint.AsVector()).AsVector().Scale(.5)));
               //create vector from unfold surface center startpoint and the current geo center and translate to this start position
               geometryToTransform = geometryToTransform.Translate(Vector.ByTwoPoints(geoStartPoint, unfolding.StartingPoints[id])) as G;
 
@@ -467,8 +467,8 @@ namespace Unfold
                 var surfaceToAlignDown = facelike.SurfaceEntity;
                 
                 // get the coordinate system defined by the face normal
-                var somepoint = facelike.SurfaceEntity.PointAtParameter(5,5);
-                var norm = facelike.SurfaceEntity.NormalAtParameter(5,5);
+                var somepoint = facelike.SurfaceEntity.PointAtParameter(.5,.5);
+                var norm = facelike.SurfaceEntity.NormalAtParameter(.5,.5);
 
                 var facePlane = Plane.ByOriginNormal(somepoint, norm);
 

@@ -557,8 +557,8 @@ namespace UnfoldTests
 
                     Console.WriteLine("index = " + index.ToString());
                     // assert that the box intersects with the bounding box of the surface
-                    var bbcenter = bb.MinPoint.Add((bb.MaxPoint.Subtract(bb.MinPoint.AsVector()).AsVector().Scale(5)));
-                    var surfacebbcenter = surfacebb.MinPoint.Add((surfacebb.MaxPoint.Subtract(surfacebb.MinPoint.AsVector()).AsVector().Scale(5)));
+                    var bbcenter = bb.MinPoint.Add((bb.MaxPoint.Subtract(bb.MinPoint.AsVector()).AsVector().Scale(.5)));
+                    var surfacebbcenter = surfacebb.MinPoint.Add((surfacebb.MaxPoint.Subtract(surfacebb.MinPoint.AsVector()).AsVector().Scale(.5)));
 
                     var distance = bbcenter.DistanceTo(surfacebbcenter);
 
