@@ -11,7 +11,7 @@ using Unfold.Topology;
 namespace DynamoUnfold
 {
     
-   public class Unfolding
+   public static class Unfolding
     {
 
        /// <summary>
@@ -21,8 +21,8 @@ namespace DynamoUnfold
        /// labels
        /// </summary>
        /// <param name="faces"> the faces to be unfolded</param>
-       /// <returns name = "surfaces"> the unfolded surfaces </returns>
-       /// <returns name = "unfoldingObject"> the unfolding object that contains the
+       /// <returns name="surfaces"> the unfolded surfaces </returns>
+       /// <returns name="unfoldingObject"> the unfolding object that contains the
        /// transformations that were applied to the original 
        /// surfaces to create the unfolding </returns>
         [MultiReturn(new[] { "surfaces", "unfoldingObject" })]
