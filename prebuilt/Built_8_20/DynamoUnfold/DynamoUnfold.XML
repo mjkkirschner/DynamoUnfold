@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DynamoUnfold</name>
+    </assembly>
+    <members>
+        <member name="M:DynamoUnfold.Unfolding.UnfoldListOfFaces_AndReturnTransforms(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Face})">
+            <summary>
+            Method for taking a list of planar faces and unfolding them, 
+            also returns an unfolding object that stores the starting
+            and final locations of unfolded faces, this is used for generating 
+            labels
+            </summary>
+            <param name="faces"> the faces to be unfolded</param>
+            <returns name="surfaces"> the unfolded surfaces </returns>
+            <returns name="unfoldingObject"> the unfolding object that contains the
+            transformations that were applied to the original 
+            surfaces to create the unfolding </returns>
+        </member>
+        <member name="M:DynamoUnfold.Unfolding.UnfoldListOfSurfaces_AndReturnTransforms(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Surface})">
+            <summary>
+            Method for taking a list of planar surfaces and unfolding them, 
+            also returns an unfolding object that stores the starting
+            and final locations of unfolded faces, this is used for generating 
+            labels
+            </summary>
+            <param name="surfaces"> the surfaces to be unfolded</param>
+            <returns name = "surfaces"> the unfolded surfaces </returns>
+            <returns name = "unfoldingObject"> the unfolding object that contains the
+            transformations that were applied to the original 
+            surfaces to create the unfolding </returns>
+        </member>
+        <member name="M:DynamoUnfold.Unfolding._UnfoldCurvedSurfacesByTessellation_AndReturnTransforms(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Surface})">
+            <summary>
+            Method for taking a list of surfaces,tesselating them at the 
+            highest tessellation level,and then unfolding them, 
+            also returns an unfolding object that stores the starting
+            and final locations of unfolded surfaces, this is used for generating 
+            labels
+            </summary>
+            <param name="surfaces"> the surfaces to be tesselated and unfolded</param>
+            <returns name = "surfaces"> the unfolded surfaces </returns>
+            <returns name = "unfoldingObject"> the unfolding object that contains the
+            transformations that were applied to the original 
+            surfaces to create the unfolding </returns>
+        </member>
+        <member name="M:DynamoUnfold.Unfolding.GenerateInitialLabels(Unfold.PlanarUnfolder.PlanarUnfolding{Unfold.Topology.EdgeLikeEntity,Unfold.Topology.FaceLikeEntity})">
+            <summary>
+            method that generates labels on the orginal model before being unfolded
+            </summary>
+            <param name="unfoldingObject"> requires an unfolding object 
+            that represents an unfolding operation</param>
+            <returns name = "labels"> labels composed of curve geometry </returns>
+        </member>
+        <member name="M:DynamoUnfold.Unfolding.GenerateUnfoldedLabels(Unfold.PlanarUnfolder.PlanarUnfolding{Unfold.Topology.EdgeLikeEntity,Unfold.Topology.FaceLikeEntity})">
+            <summary>
+            method that generates labels on the unfolded faces
+            </summary>
+            <param name="unfoldingObject"> requires an unfolding object 
+            that represents an unfolding operation</param>
+            <returns name = "labels"> labels composed of curve geometry </returns>
+        </member>
+        <member name="M:DynamoUnfold.Unfolding.UnfoldListOfFaces(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Face})">
+            <summary>
+            Method for taking a list of planar faces and unfolding them, 
+            </summary>
+            <param name="faces"> the faces to be unfolded</param>
+            <returns name = "surfaces"> the unfolded surfaces </returns>
+        </member>
+        <member name="M:DynamoUnfold.Unfolding.UnfoldListOfSurfaces(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Surface})">
+            <summary>
+            Method for taking a list of planar surfaces and unfolding them, 
+            </summary>
+            <param name="surfaces"> the surfaces to be unfolded</param>
+            <returns name = "surfaces"> the unfolded surfaces </returns>
+        </member>
+        <member name="M:DynamoUnfold.Unfolding._UnfoldCurvedSurfacesByTesselation(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Surface})">
+            <summary>
+            Method for taking a list of surfaces,tesselating them at max tesselation level,
+            and then unfolding them.
+            </summary>
+            <param name="surfaces"> the surfaces to be tesselated and unfolded</param>
+            <returns name = "surfaces"> the unfolded surfaces </returns>
+        </member>
+        <member name="M:DynamoUnfold.Unfolding.PackUnfoldedSurfaces(Unfold.PlanarUnfolder.PlanarUnfolding{Unfold.Topology.EdgeLikeEntity,Unfold.Topology.FaceLikeEntity},System.Double,System.Double,System.Double)">
+            <summary>
+            method for packing a list of surfaces
+            </summary>
+            <param name="unfolding"> an unfolding transformation object 
+            that represents an unfold operation, will return an exception if 
+            bounding box was too small to pack all of the required surfaces in</param>
+            <param name="width"> width of bounding box to pack into</param>
+            <param name="height">height of bounding box to pack into</param>
+            <param name="gap">gap between bounding boxes of surfaces being packed</param>
+            <returns></returns>
+        </member>
+        <member name="M:DynamoUnfold.Unfolding._TesselateSurfaces(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Surface},System.Double,System.Int32)">
+            <summary>
+            This method exposes the tessellation algorithm that is used to display 
+            geometry in Dynamo's watch3d and background preview displays as a node.
+            It is possible this node and all dependent code in the unfolding library
+            will be replaced by faster triangle representation that does not require
+            conversion to a surface.
+            </summary>
+            <param name="surfaces"></param>
+            <param name="tolerance"> tolerance between the surface and mesh representation</param>
+            <param name="maxGridLines">maximum number of surface divisons that define one direction of the mesh </param>
+            <returns> a list of trimmed planar surfaces that define triangles</returns>
+        </member>
+    </members>
+</doc>
