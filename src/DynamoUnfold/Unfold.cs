@@ -96,15 +96,15 @@ namespace DynamoUnfold
        /// <summary>
        /// method that generates labels on the orginal model before being unfolded
        /// </summary>
-       /// <param name="unfoldingObject"> requires an unfolding object 
-       /// that represents an unfolding operation</param>
+        /// <param name="unfoldingObject"> requires an unfolding object that represents an unfolding operation</param>
+        /// <param name="labelScale"> scale for the text labels</param>
        /// <returns name = "labels"> labels composed of curve geometry </returns>
         public static List<List<Curve>> GenerateInitialLabels
-           (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity> unfoldingObject)
+           (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity> unfoldingObject,double labelScale = 1.0)
         {
 
             var labels = unfoldingObject.StartingUnfoldableFaces.Select(x =>
-              new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity,FaceLikeEntity>(x)).ToList();
+              new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity,FaceLikeEntity>(x,labelScale)).ToList();
 
             return labels.Select(x => x.AlignedLabelGeometry).ToList();
 
@@ -117,12 +117,13 @@ namespace DynamoUnfold
         /// </summary>
         /// <param name="unfoldingObject"> requires an unfolding object 
         /// that represents an unfolding operation</param>
+        /// /// <param name="labelScale"> scale for the text labels</param>
         /// <returns name = "labels"> labels composed of curve geometry </returns>
        public static List<List<Curve>> GenerateUnfoldedLabels
-           (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity> unfoldingObject){
+           (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity> unfoldingObject,double labelScale =1.0){
         
            var labels =   unfoldingObject.StartingUnfoldableFaces.Select(x=>
-             new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity,FaceLikeEntity>(x)).ToList();
+             new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity,FaceLikeEntity>(x,labelScale)).ToList();
         
            // need to make one piece of geometry from list of geo...
            var transformedGeo = labels.Select(x=> PlanarUnfolder.MapGeometryToUnfoldingByID(unfoldingObject,x.AlignedLabelGeometry,x.ID)).ToList();

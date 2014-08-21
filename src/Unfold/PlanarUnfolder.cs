@@ -68,9 +68,9 @@ namespace Unfold
             public T UnfoldableFace { get; set; }
 
 
-            private IEnumerable<Curve> GenLabelGeometryFromId(int id){
+            private IEnumerable<Curve> GenLabelGeometryFromId(int id,double scale = 1.0){
 
-                List<Curve> textgeo = Text.FromStringOriginAndScale(id.ToString(), Point.ByCoordinates(0, 0, 0), 1.0) as List<Curve>;
+                List<Curve> textgeo = Text.FromStringOriginAndScale(id.ToString(), Point.ByCoordinates(0, 0, 0), scale) as List<Curve>;
 
 
                 return textgeo;
@@ -91,10 +91,10 @@ namespace Unfold
 
             }
 
-            public UnfoldableFaceLabel(T face)
+            public UnfoldableFaceLabel(T face, double labelscale = 1.0)
             {
                 ID = face.ID;
-                LabelGeometry = GenLabelGeometryFromId(ID).ToList();
+                LabelGeometry = GenLabelGeometryFromId(ID,labelscale).ToList();
                 Label = ID.ToString();
                 UnfoldableFace = face;
                 AlignedLabelGeometry = AlignGeoToFace(LabelGeometry).ToList();
