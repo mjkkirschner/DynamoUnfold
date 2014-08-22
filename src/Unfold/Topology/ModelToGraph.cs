@@ -183,7 +183,7 @@ namespace Unfold.Topology
                 //generate some geometry to visualize the BFS tree
 
                 //create a polygon from verts, grab center, project center towards 
-                Point center = Tesselation.MeshHelpers.SurfaceAsPolygonCenter(CurrentVertex.Face.SurfaceEntity);
+                Point center = Tesselation.MeshHelpers.SurfaceAsPolygonCenter(CurrentVertex.Face.SurfaceEntity.First());
 
                 Sphere nodecenter = Sphere.ByCenterPointRadius(center,1);
                 OutputGeo.Add(nodecenter);
@@ -191,7 +191,7 @@ namespace Unfold.Topology
                 foreach (var CurrentEdge in CurrentVertex.GraphEdges)
                 {
 
-                    Point childCenter = Tesselation.MeshHelpers.SurfaceAsPolygonCenter(CurrentEdge.Head.Face.SurfaceEntity);
+                    Point childCenter = Tesselation.MeshHelpers.SurfaceAsPolygonCenter(CurrentEdge.Head.Face.SurfaceEntity.First());
                     Line line = Line.ByStartPointEndPoint(center, childCenter);
                     OutputGeo.Add(line);
                 }

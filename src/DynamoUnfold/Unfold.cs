@@ -146,7 +146,7 @@ namespace DynamoUnfold
 
 
           var unfoldsurfaces =  PlanarUnfolder.Unfold(faces);
-          return unfoldsurfaces.UnfoldedSurfaceSet;
+          return unfoldsurfaces.UnfoldedSurfaceSet.Select(x=>PolySurface.ByJoinedSurfaces(x) as Surface).ToList();
         }
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace DynamoUnfold
 
 
             var unfoldsurfaces = PlanarUnfolder.Unfold(surfaces);
-            return unfoldsurfaces.UnfoldedSurfaceSet;
+            return unfoldsurfaces.UnfoldedSurfaceSet.Select(x => PolySurface.ByJoinedSurfaces(x) as Surface).ToList();
         }
 
 
@@ -178,7 +178,7 @@ namespace DynamoUnfold
             List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>(){x[0], x[1], x[2]})).ToList();
 
             var unfoldsurfaces = PlanarUnfolder.Unfold(trisurfaces);
-            return unfoldsurfaces.UnfoldedSurfaceSet;
+            return unfoldsurfaces.UnfoldedSurfaceSet.Select(x => PolySurface.ByJoinedSurfaces(x) as Surface).ToList();
         }
 
        /// <summary>

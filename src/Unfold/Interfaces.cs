@@ -43,7 +43,7 @@ namespace Unfold.Interfaces
        public interface IUnfoldablePlanarFace<K> where K:IUnfoldableEdge 
         {
              Object OriginalEntity { get; set; }
-             Surface SurfaceEntity { get; set; }
+             List<Surface> SurfaceEntity { get; set; }
              List<K> EdgeLikeEntities { get; set; }
               int ID { get; set; }
               List<int> IDS { get; set; }

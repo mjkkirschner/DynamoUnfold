@@ -54,11 +54,11 @@ namespace UnfoldTests
                             var child = edge.Head;
 
                             double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
-                            Surface rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.Face, parent.Face, edge.GeometryEdge) as Surface;
+                            var rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.Face, parent.Face, edge.GeometryEdge);
 
-                            UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace, parent.Face.SurfaceEntity);
+                            UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace.First(), parent.Face.SurfaceEntity.First());
 
-                            UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace, parent.Face.SurfaceEntity);
+                            UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace.First(), parent.Face.SurfaceEntity.First());
                         }
                     }
                 }
@@ -100,12 +100,12 @@ namespace UnfoldTests
                         {
                             var child = edge.Head;
 
-                            double nc = AlignPlanarFaces.CheckNormalConsistency(parent.Face, child.Face, edge.GeometryEdge);
-                            Surface rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, parent.Face, child.Face, edge.GeometryEdge) as Surface;
+                            double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
+                            var rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.Face, parent.Face, edge.GeometryEdge);
 
-                            UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace, child.Face.SurfaceEntity);
+                            UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace.First(), parent.Face.SurfaceEntity.First());
 
-                            UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace, child.Face.SurfaceEntity);
+                            UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace.First(), parent.Face.SurfaceEntity.First());
 
                         }
                     }
@@ -153,11 +153,11 @@ namespace UnfoldTests
 
 
                             double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
-                            Surface rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.Face, parent.Face, edge.GeometryEdge) as Surface;
+                            var rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.Face, parent.Face, edge.GeometryEdge);
 
-                            UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace, parent.Face.SurfaceEntity);
+                            UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace.First(), parent.Face.SurfaceEntity.First());
 
-                            UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace, parent.Face.SurfaceEntity);
+                            UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace.First(), parent.Face.SurfaceEntity.First());
 
                         }
                     }
@@ -211,11 +211,11 @@ namespace UnfoldTests
 
 
                             double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
-                            Surface rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.Face, parent.Face, edge.GeometryEdge) as Surface;
+                            var rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.Face, parent.Face, edge.GeometryEdge);
 
-                            UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace, parent.Face.SurfaceEntity);
+                            UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace.First(), parent.Face.SurfaceEntity.First());
 
-                            UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace, parent.Face.SurfaceEntity);
+                            UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace.First(), parent.Face.SurfaceEntity.First());
 
                         }
                     }
@@ -266,11 +266,11 @@ namespace UnfoldTests
 
 
                             double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
-                            Surface rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.Face, parent.Face, edge.GeometryEdge) as Surface;
+                            var rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.Face, parent.Face, edge.GeometryEdge);
 
-                            UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace, parent.Face.SurfaceEntity);
+                            UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace.First(), parent.Face.SurfaceEntity.First());
 
-                            UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace, parent.Face.SurfaceEntity);
+                            UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace.First(), parent.Face.SurfaceEntity.First());
                         }
                     }
                 }
@@ -321,11 +321,11 @@ namespace UnfoldTests
 
 
                             double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
-                            Surface rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.Face, parent.Face, edge.GeometryEdge) as Surface;
+                            var rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.Face, parent.Face, edge.GeometryEdge);
 
-                            UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace, parent.Face.SurfaceEntity);
+                            UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace.First(), parent.Face.SurfaceEntity.First());
 
-                            UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace, parent.Face.SurfaceEntity);
+                            UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace.First(), parent.Face.SurfaceEntity.First());
                         }
                     }
                 }
@@ -346,18 +346,18 @@ namespace UnfoldTests
                 // against everyother surface inside this polysurface and check coplanarity and centers
                 // can also test intersections, and make sure no overlaps
 
-                foreach (var srf in unfoldsurfaces)
+                foreach (var srflist in unfoldsurfaces)
                 {
-                    if (srf is PolySurface)
-                    {
-                        UnfoldTestUtils.AssertNoSurfaceIntersections(srf as PolySurface);
+                   
+                        UnfoldTestUtils.AssertNoSurfaceIntersections(srflist);
 
-                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srf as PolySurface, UnfoldTestUtils.AssertSurfacesAreCoplanar);
+                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srflist, UnfoldTestUtils.AssertSurfacesAreCoplanar);
 
-                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srf as PolySurface, UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter);
+                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srflist, UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter);
+                    
                     }
                 }
-            }
+            
 
             [Test]
             public void FullyUnfoldCubeFromSurfaces()
@@ -371,20 +371,19 @@ namespace UnfoldTests
                 // against everyother surface inside this polysurface and check coplanarity and centers
                 // can also test intersections, and make sure no overlaps
 
-                foreach (var srf in unfoldsurfaces)
+               foreach (var srflist in unfoldsurfaces)
                 {
+                   
+                        UnfoldTestUtils.AssertNoSurfaceIntersections(srflist);
 
-                    if (srf is PolySurface)
-                    {
-                        UnfoldTestUtils.AssertNoSurfaceIntersections(srf as PolySurface);
+                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srflist, UnfoldTestUtils.AssertSurfacesAreCoplanar);
 
-                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srf as PolySurface, UnfoldTestUtils.AssertSurfacesAreCoplanar);
-
-                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srf as PolySurface, UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter);
+                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srflist, UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter);
+                    
                     }
                 }
-
-            }
+        
+            
 
             [Test]
             public void FullyUnfoldCubeFromTriSurfaces()
@@ -405,18 +404,16 @@ namespace UnfoldTests
                 // against everyother surface inside this polysurface and check coplanarity and centers
                 // can also test intersections, and make sure no overlaps
 
-                foreach (var srf in unfoldsurfaces)
+               foreach (var srflist in unfoldsurfaces)
                 {
+                   
+                        UnfoldTestUtils.AssertNoSurfaceIntersections(srflist);
 
-                    if (srf is PolySurface)
-                    {
-                        UnfoldTestUtils.AssertNoSurfaceIntersections(srf as PolySurface);
+                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srflist, UnfoldTestUtils.AssertSurfacesAreCoplanar);
 
-                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srf as PolySurface, UnfoldTestUtils.AssertSurfacesAreCoplanar);
-
-                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srf as PolySurface, UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter);
+                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srflist, UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter);
+                    
                     }
-                }
             }
 
             [Test]
@@ -438,17 +435,16 @@ namespace UnfoldTests
                 // against everyother surface inside this polysurface and check coplanarity and centers
                 // can also test intersections, and make sure no overlaps
 
-                foreach (var srf in unfoldsurfaces)
+               foreach (var srflist in unfoldsurfaces)
                 {
-                    if (srf is PolySurface)
-                    {
-                        UnfoldTestUtils.AssertNoSurfaceIntersections(srf as PolySurface);
+                   
+                        UnfoldTestUtils.AssertNoSurfaceIntersections(srflist);
 
-                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srf as PolySurface, UnfoldTestUtils.AssertSurfacesAreCoplanar);
+                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srflist, UnfoldTestUtils.AssertSurfacesAreCoplanar);
 
-                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srf as PolySurface, UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter);
+                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srflist, UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter);
+                    
                     }
-                }
             }
 
             [Test]
@@ -470,18 +466,16 @@ namespace UnfoldTests
                 // against everyother surface inside this polysurface and check coplanarity and centers
                 // can also test intersections, and make sure no overlaps
 
-                foreach (var srf in unfoldsurfaces)
+               foreach (var srflist in unfoldsurfaces)
                 {
+                   
+                        UnfoldTestUtils.AssertNoSurfaceIntersections(srflist);
 
-                    if (srf is PolySurface)
-                    {
-                        UnfoldTestUtils.AssertNoSurfaceIntersections(srf as PolySurface);
+                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srflist, UnfoldTestUtils.AssertSurfacesAreCoplanar);
 
-                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srf as PolySurface, UnfoldTestUtils.AssertSurfacesAreCoplanar);
-
-                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srf as PolySurface, UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter);
+                        UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srflist, UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter);
+                    
                     }
-                }
             }
         }
 
@@ -568,7 +562,7 @@ namespace UnfoldTests
 
                     var face = labels[index].UnfoldableFace.SurfaceEntity;
 
-                    UnfoldTestUtils.AssertSurfacesAreCoplanar(triangleOfLabel, face);
+                    UnfoldTestUtils.AssertSurfacesAreCoplanar(triangleOfLabel, face.First());
                     Console.WriteLine("This label was in the right orientation at the start of the unfold");
                 }
             }

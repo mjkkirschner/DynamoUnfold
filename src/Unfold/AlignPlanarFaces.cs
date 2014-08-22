@@ -87,8 +87,8 @@ namespace Unfold
 
             var sharedcurve = sharedEdge.Curve;
 
-            var refsurface = referenceFace.SurfaceEntity;
-            var rotsurface = facetoRotate.SurfaceEntity;
+            var refsurface = referenceFace.SurfaceEntity.First();
+            var rotsurface = facetoRotate.SurfaceEntity.First();
 
             List<K> refedegs = referenceFace.EdgeLikeEntities;
             List<K> rotedges = facetoRotate.EdgeLikeEntities;
@@ -183,14 +183,14 @@ namespace Unfold
         /// <param name="referenceFace"></param>
         /// <param name="sharedEdge"></param>
         /// <returns></returns>
-        public static Geometry MakeGeometryCoPlanarAroundEdge<K, T>(double normalconsistency, T facetoRotate,
+        public static List<Surface> MakeGeometryCoPlanarAroundEdge<K, T>(double normalconsistency, T facetoRotate,
            T referenceFace, K sharedEdge)
             where K : IUnfoldableEdge
             where T : IUnfoldablePlanarFace<K>
         {
 
-            Vector rotFaceNorm = facetoRotate.SurfaceEntity.NormalAtParameter(.5,.5);
-            Vector refFaceNorm = referenceFace.SurfaceEntity.NormalAtParameter(.5,.5);
+            Vector rotFaceNorm = facetoRotate.SurfaceEntity.First().NormalAtParameter(.5,.5);
+            Vector refFaceNorm = referenceFace.SurfaceEntity.First().NormalAtParameter(.5,.5);
 
             Vector bxaCrossedNormals = refFaceNorm.Cross(rotFaceNorm);
 
@@ -210,10 +210,11 @@ namespace Unfold
             Console.WriteLine(" about to to rotate");
             Console.WriteLine(degrees);
 # endif
-            Geometry rotatedFace = facetoRotate.SurfaceEntity.Rotate(planeRotOrigin, degrees);
+            List<Surface> rotatedFace = facetoRotate.SurfaceEntity.Select(x=>x.Rotate(planeRotOrigin, degrees)).Cast<Surface>().ToList();
 
             return rotatedFace;
 
         }
+
     }
 }

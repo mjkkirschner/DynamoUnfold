@@ -20,7 +20,7 @@ namespace Unfold.Topology
         where T : IUnfoldablePlanarFace<K>
         where K : IUnfoldableEdge
     {
-        public T UnfoldPolySurface { get; set; }
+        public T UnfoldSurfaceSet { get; set; }
         public T Face { get; set; }
         public HashSet<GraphEdge<K, T>> GraphEdges { get; set; }
         public GraphVertex<K, T> Parent { get; set; }
@@ -36,13 +36,13 @@ namespace Unfold.Topology
         public GraphVertex(T face)
         {
             Face = face;
-            UnfoldPolySurface = face;
+            UnfoldSurfaceSet = face;
             GraphEdges = new HashSet<GraphEdge<K, T>>();
             TreeEdges = new HashSet<GraphEdge<K, T>>();
         }
 
         // Method to remove this graphvertex from graph and to remove all edges which point to it
-        // from other nodes in the graph
+        // from other nodes in the graphT
         public void RemoveFromGraph(List<GraphVertex<K, T>> graph)
         {
 

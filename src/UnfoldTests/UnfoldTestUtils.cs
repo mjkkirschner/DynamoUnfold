@@ -80,7 +80,7 @@ namespace UnfoldTests
             where T : IUnfoldablePlanarFace<K>
             where K : IUnfoldableEdge
         {
-            var intersected = face1.SurfaceEntity.Intersect(face2.SurfaceEntity).ToList();
+            var intersected = face1.SurfaceEntity.SelectMany(a=>face2.SurfaceEntity.SelectMany(a.Intersect).ToList());
 
             bool foundflag = false;
             foreach (var geo in intersected)
@@ -205,6 +205,39 @@ namespace UnfoldTests
             Assert.IsFalse(overlapflag);
         }
 
+        public static void AssertNoSurfaceIntersections(List<Surface> testSurfaces)
+        {
+
+            var SubSurfaces = testSurfaces;
+
+            // perfrom the intersection test
+
+            bool overlapflag = false;
+            foreach (var surfaceToIntersect in SubSurfaces)
+            {
+                foreach (var rotsubface in SubSurfaces)
+                {
+
+                    if (surfaceToIntersect.Equals(rotsubface))
+                    {
+                        continue;
+                    }
+                    var resultantGeo = surfaceToIntersect.Intersect(rotsubface);
+                    foreach (var geo in resultantGeo)
+                    {
+                        if (geo is Surface)
+                        {
+                            overlapflag = true;
+                        }
+                    }
+                }
+            }
+            Assert.IsFalse(overlapflag);
+        }
+
+
+
+
         public delegate void Condition(Surface s1, Surface s2);
         public static void AssertConditionForEverySurfaceAgainstEverySurface(PolySurface TestPolysurface, Condition condition)
         {
@@ -225,6 +258,29 @@ namespace UnfoldTests
                 }
             }
         }
+
+        public static void AssertConditionForEverySurfaceAgainstEverySurface(List<Surface> testsurfaces, Condition condition)
+        {
+            var SubSurfaces = testsurfaces;
+
+            // perfrom the intersection test
+
+            foreach (var surfaceToIntersect in SubSurfaces)
+            {
+                foreach (var rotsubface in SubSurfaces)
+                {
+
+                    if (surfaceToIntersect.Equals(rotsubface))
+                    {
+                        continue;
+                    }
+                    condition(surfaceToIntersect, rotsubface);
+                }
+            }
+        }
+
+
+
         #endregion
 
     }

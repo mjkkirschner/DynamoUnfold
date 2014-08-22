@@ -20,9 +20,8 @@ namespace Unfold.Topology
 
         public Object OriginalEntity { get; set; }
 
-        private Surface _surface;
-
-        public Surface SurfaceEntity
+        private List<Surface> _surface;
+        public List<Surface> SurfaceEntity
         {
             get { return _surface; }
             set
@@ -36,17 +35,13 @@ namespace Unfold.Topology
         public List<int> IDS { get; set; }
 
 
-        private List<EdgeLikeEntity> ExtractSurfaceEdges(Surface surface)
+        private List<EdgeLikeEntity> ExtractSurfaceEdges(List<Surface> surfaces)
         {
             List<Curve> pericurves = null;
-            if (surface is PolySurface)
-            {
-                pericurves = (surface as PolySurface).PerimeterCurves().ToList();
-            }
-            else
-            {
-                pericurves = surface.PerimeterCurves().ToList();
-            }
+         
+            pericurves = surfaces.SelectMany(x => x.PerimeterCurves()).ToList();
+            
+           
             //wrap them
             List<EdgeLikeEntity> ees = pericurves.Select(x => new EdgeLikeEntity(x)).ToList();
             return ees;
@@ -57,7 +52,7 @@ namespace Unfold.Topology
         {
 
             //store the surface
-            SurfaceEntity = surface;
+            SurfaceEntity = new List<Surface>(){surface};
             //store surface
             OriginalEntity = surface;
             // new blank ids
@@ -68,7 +63,7 @@ namespace Unfold.Topology
         public FaceLikeEntity(Face face)
         {
             //grab the surface from the face
-            SurfaceEntity = face.SurfaceGeometry();
+            SurfaceEntity = new List<Surface>{face.SurfaceGeometry()};
             // org entity is the face
             OriginalEntity = face;
             // grab edges
