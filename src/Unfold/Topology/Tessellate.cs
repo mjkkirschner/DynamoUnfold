@@ -39,6 +39,24 @@ namespace Unfold.Topology
                 return surface.GetClosestPoint(polygon.Center()); 
             
             }
+           
+            public static Point SurfaceAsPolygonCenter(List<Surface> surfaces)
+            {
+                var surface = PolySurface.ByJoinedSurfaces(surfaces);
+                List<Point> ptlist = new List<Point>();
+                foreach (var curve in surface.PerimeterCurves())
+                {
+                    ptlist.Add(curve.StartPoint);
+                    ptlist.Add(curve.EndPoint);
+                }
+
+                var polygon = Polygon.ByPoints(ptlist);
+
+                return surface.GetClosestPoint(polygon.Center());
+
+            }
+
+
 
         }
         public static List<List<Point>> Tessellate(List<Face> faces,double tolerance,int maxGridLines)

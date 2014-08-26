@@ -16,6 +16,60 @@ namespace UnfoldTests
     public class UnfoldTestUtils
     {
         #region TestUtilities
+
+        public static void CheckAllUnfoldedFacesForCorrectUnfold(List<List<Surface>> unfoldsurfaces)
+        {
+            foreach (var srflist in unfoldsurfaces)
+            {
+
+                UnfoldTestUtils.AssertNoSurfaceIntersections(srflist);
+
+                UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srflist, UnfoldTestUtils.AssertSurfacesAreCoplanar);
+
+                UnfoldTestUtils.AssertConditionForEverySurfaceAgainstEverySurface(srflist, UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter);
+
+            }
+        }
+
+        public static void AssertEachFacePairUnfoldsCorrectly(List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>> graph)
+        {
+            //perform BFS on the graph and get back the tree
+            var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
+            object tree = nodereturn["BFS finished"];
+
+            var casttree = tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>;
+            //perform Tarjans algo and make sure that the tree is acylic before unfold
+            var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(casttree);
+
+            UnfoldTestUtils.IsAcylic<EdgeLikeEntity, FaceLikeEntity>(sccs, casttree);
+
+            // iterate through each vertex in the tree
+            // make sure that the parent/child is not null (depends which direction we're traversing)
+            // if not null, grab the next node and the tree edge
+            // pass these to check normal consistencey and align.
+            // be careful about the order of passed faces
+
+            foreach (var parent in casttree)
+            {
+                if (parent.GraphEdges.Count > 0)
+                {
+                    foreach (var edge in parent.GraphEdges)
+                    {
+
+                        var child = edge.Head;
+
+                        double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
+                        var rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.Face, parent.Face, edge.GeometryEdge);
+
+                        UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace.First(), parent.Face.SurfaceEntity.First());
+
+                        UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace.First(), parent.Face.SurfaceEntity.First());
+                    }
+                }
+            }
+        }
+
+
         public static Solid SetupCube()
         {
             var rect = Rectangle.ByWidthHeight(1, 1);
