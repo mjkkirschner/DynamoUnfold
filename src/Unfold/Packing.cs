@@ -22,7 +22,7 @@ namespace Unfold
               List<PlanarUnfolder.FaceTransformMap> packingtransforms = new List<PlanarUnfolder.FaceTransformMap>();
 
              var facelikes = unfold.UnfoldedFaces;
-             var bbs = facelikes.Select(x=>BoundingBox.ByGeometry(x.SurfaceEntity)).ToList();
+             var bbs = facelikes.Select(x=>BoundingBox.ByGeometry(x.SurfaceEntities)).ToList();
 
              var newcenters = DynamoPack.Packing.ByCoordinateSystems(bbs, width, height, gap);
              var centers = bbs.Select(x => x.MinPoint.Add((x.MaxPoint.Subtract(x.MinPoint.AsVector()).AsVector().Scale(.5)))).ToList();
@@ -35,7 +35,7 @@ namespace Unfold
              {
                  var index = facelikes.IndexOf(surftotrans);
                  var transvec = Vector.ByTwoPoints(centers[index], newcenters[index]);
-                 var newsurface =  surftotrans.SurfaceEntity.Select(x=>x.Translate(transvec)).Cast<Surface>().ToList();
+                 var newsurface =  surftotrans.SurfaceEntities.Select(x=>x.Translate(transvec)).Cast<Surface>().ToList();
                  var ids = unfold.UnfoldedFaces[index].IDS;
 
                  // keep track of where all the newsurfaces end up in the packing and what labels where moved
@@ -45,7 +45,7 @@ namespace Unfold
                  // create a copy of the old facelike, but update the surface
                  var newfacelike = new T(); 
                  newfacelike.OriginalEntity = surftotrans.OriginalEntity;
-                 newfacelike.SurfaceEntity = newsurface as List<Surface>;
+                 newfacelike.SurfaceEntities = newsurface as List<Surface>;
                  newfacelike.ID = surftotrans.ID;
                  newfacelike.IDS = surftotrans.IDS;
                  newfacelike.EdgeLikeEntities = surftotrans.EdgeLikeEntities;

@@ -57,16 +57,16 @@ namespace Unfold
             /// constructor
             /// </summary>
             /// <param name="originalFaces"> the starting IunfoldableFaces</param>
-            /// <param name="finalFaces"> the unfolded surfaces</param>
+            /// <param name="finalSurfaces"> the unfolded surfaces</param>
             /// <param name="transforms"> the transforms that track all surfaces</param>
             /// <param name="unfoldedfaces">the unfolded IunfoldableFaces</param>
-            public PlanarUnfolding(List<T> originalFaces, List<List<Surface>> finalFaces, List<FaceTransformMap> transforms, List<T> unfoldedfaces)
+            public PlanarUnfolding(List<T> originalFaces, List<List<Surface>> finalSurfaces, List<FaceTransformMap> transforms, List<T> unfoldedfaces)
             {
                 StartingUnfoldableFaces = originalFaces;
                 Maps = transforms;
                 UnfoldedFaces = unfoldedfaces;
-                StartingPoints = StartingUnfoldableFaces.ToDictionary(x => x.ID, x => Tesselation.MeshHelpers.SurfaceAsPolygonCenter(x.SurfaceEntity.First()));
-                UnfoldedSurfaceSet = finalFaces;
+                StartingPoints = StartingUnfoldableFaces.ToDictionary(x => x.ID, x => Tesselation.MeshHelpers.SurfaceAsPolygonCenter(x.SurfaceEntities.First()));
+                UnfoldedSurfaceSet = finalSurfaces;
             }
 
         }
@@ -103,8 +103,8 @@ namespace Unfold
 
             private IEnumerable<Curve> AlignGeoToFace(IEnumerable<Curve> geo)
             {
-                var approxCenter = Tesselation.MeshHelpers.SurfaceAsPolygonCenter(UnfoldableFace.SurfaceEntity.First());
-                var norm = UnfoldableFace.SurfaceEntity.First().NormalAtPoint(approxCenter);
+                var approxCenter = Tesselation.MeshHelpers.SurfaceAsPolygonCenter(UnfoldableFace.SurfaceEntities.First());
+                var norm = UnfoldableFace.SurfaceEntities.First().NormalAtPoint(approxCenter);
                 var facePlane = Plane.ByOriginNormal(approxCenter, norm);
                 var finalCordSystem = CoordinateSystem.ByPlane(facePlane);
 
@@ -376,7 +376,7 @@ namespace Unfold
 
 
             // as an initial set, we'll record the starting coordinate system of each surface
-            transforms.AddRange(allfaces.Select(x => new FaceTransformMap(x.SurfaceEntity.First().ContextCoordinateSystem, x.IDS)).ToList());
+            transforms.AddRange(allfaces.Select(x => new FaceTransformMap(x.SurfaceEntities.First().ContextCoordinateSystem, x.IDS)).ToList());
 
 
             while (sortedtree.Count > 1)
@@ -391,6 +391,9 @@ namespace Unfold
 
                 // child is the highest finish time remaining in the list.
                 var child = sortedtree.Last();
+#if DEBUG
+                Console.WriteLine("finish time of current child is " + child.FinishTime);
+#endif
                 var parent = child.Parent;
                 //weak code, shoould have a method for this - find edge that leads to
                 var edge = parent.GraphEdges.Where(x => x.Head.Equals(child)).First();
@@ -412,8 +415,29 @@ namespace Unfold
 
                 // perfrom the intersection test, from surfaces in the parent unfoldset against all surfaces in rotatedFaceset
 
-                bool overlapflag = parent.UnfoldSurfaceSet.SurfaceEntity.SelectMany(a => rotatedFace.SelectMany(a.Intersect)).OfType<Surface>().Any();
+                // this linq statement was not releasing memory until the very end
+                // so all intersection results were kept in memory
+                //with 2000 surfaces this was 1 gig of memory
+                //  bool overlapflag = parent.UnfoldSurfaceSet.SurfaceEntities.SelectMany(a => rotatedFace.SelectMany(a.Intersect)).OfType<Surface>().Any();
 
+                var overlapflag = false;
+                foreach (var surf1 in parent.UnfoldSurfaceSet.SurfaceEntities)
+                {
+                    foreach (var surf2 in rotatedFace)
+                    {
+                        if (surf1.DoesIntersect(surf2))
+                        {
+                            var resultGeo = surf1.Intersect(surf2);
+                            if (resultGeo.OfType<Surface>().Any())
+                            {
+                                overlapflag = true;
+                                goto exitloops;
+                                // thats right, goto!
+                            }
+                        }
+                    }
+                }
+            exitloops:
                 if (overlapflag)
                 {
                     // this random code may be removed and tested - it only confues packing code at this point
@@ -425,8 +449,8 @@ namespace Unfold
                     // wrap up the translated geometry as a new facelike
                     // when this transformation occurs we need to save the coordinate system as well to the transformation map
                     var translatedGeoContainer = new T();
-                    translatedGeoContainer.SurfaceEntity = (child.UnfoldSurfaceSet.SurfaceEntity.Select(x => x.Translate((randomx * 10) + 5, 0, 0) as Surface).ToList());
-                    translatedGeoContainer.OriginalEntity = translatedGeoContainer.SurfaceEntity;
+                    translatedGeoContainer.SurfaceEntities = (child.UnfoldSurfaceSet.SurfaceEntities.Select(x => x.Translate((randomx * 10) + 5, 0, 0) as Surface).ToList());
+                    translatedGeoContainer.OriginalEntity = translatedGeoContainer.SurfaceEntities;
 
 
                     var movedUnfoldBranch = translatedGeoContainer;
@@ -440,7 +464,7 @@ namespace Unfold
                     //****
                     //****watch out this may be incorrect... might need multiple transform entries, one for each ID....
                     transforms.Add(new FaceTransformMap(
-                   translatedGeoContainer.SurfaceEntity.First().ContextCoordinateSystem, translatedGeoContainer.IDS));
+                   translatedGeoContainer.SurfaceEntities.First().ContextCoordinateSystem, translatedGeoContainer.IDS));
 
                 }
 
@@ -450,14 +474,14 @@ namespace Unfold
 
                     List<Surface> subsurblist = new List<Surface>(rotatedFace);
 
-                    //below section is in flux - the idea is to push the rotatedface - which might be a list of surfaces or surface into
+                    // idea is to push the rotatedface - which might be a list of surfaces or surface into
                     // the parent vertex's unfoldSurfaceSet property, then to contract the graph, removing the child node.
                     // at the same time we are trying to build a map of all the rotation transformations we are producing
                     // and to which faces they have been applied, we must push the intermediate coordinate systems
                     // as well as the ids to which they apply through the graph as well.
 
                     // add the parent surfaces into this list of surfaces we'll use to create a new facelike
-                    subsurblist.AddRange(parent.UnfoldSurfaceSet.SurfaceEntity);
+                    subsurblist.AddRange(parent.UnfoldSurfaceSet.SurfaceEntities);
 
                     // need to extract the parentIDchain, this is previous faces that been made coplanar with the parent
                     // we need to grab them before the parent unfoldchain is replaced
@@ -466,8 +490,8 @@ namespace Unfold
 
                     // replace the surface in the parent with the wrapped chain of surfaces
                     var wrappedChainOfUnfolds = new T();
-                    wrappedChainOfUnfolds.SurfaceEntity = newParentSurface;
-                    wrappedChainOfUnfolds.OriginalEntity = wrappedChainOfUnfolds.SurfaceEntity;
+                    wrappedChainOfUnfolds.SurfaceEntities = newParentSurface;
+                    wrappedChainOfUnfolds.OriginalEntity = wrappedChainOfUnfolds.SurfaceEntities;
 
                     parent.UnfoldSurfaceSet = wrappedChainOfUnfolds;
 
@@ -503,7 +527,7 @@ namespace Unfold
             }
             // at this point we may have a main trunk with y nodes in it, and x disconnected branches
             //step 1 is to align all sets down to horizontal plane and record this transform
-            
+
 
             // collect all surface lists
             var masterFacelikeSet = sortedtree.Select(x => x.UnfoldSurfaceSet).ToList();
@@ -512,29 +536,30 @@ namespace Unfold
             //align all surfaces down
             foreach (var facelike in masterFacelikeSet)
             {
-                var surfaceToAlignDown = facelike.SurfaceEntity;
+                var surfaceToAlignDown = facelike.SurfaceEntities;
 
                 // get the coordinate system defined by the face normal
-                var somePointOnSurface = facelike.SurfaceEntity.First().PointAtParameter(.5, .5);
-                var norm = facelike.SurfaceEntity.First().NormalAtParameter(.5, .5);
+                var somePointOnSurface = facelike.SurfaceEntities.First().PointAtParameter(.5, .5);
+                var norm = facelike.SurfaceEntities.First().NormalAtParameter(.5, .5);
                 var facePlane = Plane.ByOriginNormal(somePointOnSurface, norm);
                 var startCoordSystem = CoordinateSystem.ByPlane(facePlane);
 
                 // transform surface to horizontal plane at x,y,0 of org surface
-                facelike.SurfaceEntity = surfaceToAlignDown.Select(x => x.Transform(startCoordSystem, 
+                facelike.SurfaceEntities = surfaceToAlignDown.Select(x => x.Transform(startCoordSystem,
                     CoordinateSystem.ByPlane(Plane.ByOriginXAxisYAxis(
-                    Point.ByCoordinates(somePointOnSurface.X, somePointOnSurface.Y, 0), 
+                    Point.ByCoordinates(somePointOnSurface.X, somePointOnSurface.Y, 0),
                     Vector.XAxis(), Vector.YAxis()))) as Surface).ToList();
 
                 // save transformation for each set, this should have all the ids present
                 transforms.Add(new FaceTransformMap(
-                        facelike.SurfaceEntity.First().ContextCoordinateSystem, facelike.IDS));
+                        facelike.SurfaceEntities.First().ContextCoordinateSystem, facelike.IDS));
 
             }
 
             // merge the main trunk and the disconnected sets
-            var maintree = sortedtree.Select(x => x.UnfoldSurfaceSet.SurfaceEntity).ToList();
-            maintree.AddRange(disconnectedSet.Select(x => x.SurfaceEntity).ToList());
+            var maintree = sortedtree.Select(x => x.UnfoldSurfaceSet.SurfaceEntities).ToList();
+            maintree.AddRange(disconnectedSet.Select(x => x.SurfaceEntities).ToList());
+            // return a planarUnfolding that represents this unfolding
             return new PlanarUnfolding<K, T>(allfaces, maintree, transforms, masterFacelikeSet);
         }
 

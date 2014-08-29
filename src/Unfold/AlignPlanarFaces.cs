@@ -87,8 +87,8 @@ namespace Unfold
 
             var sharedcurve = sharedEdge.Curve;
 
-            var refsurface = referenceFace.SurfaceEntity.First();
-            var rotsurface = facetoRotate.SurfaceEntity.First();
+            var refsurface = referenceFace.SurfaceEntities.First();
+            var rotsurface = facetoRotate.SurfaceEntities.First();
 
             List<K> refedegs = referenceFace.EdgeLikeEntities;
             List<K> rotedges = facetoRotate.EdgeLikeEntities;
@@ -160,13 +160,13 @@ namespace Unfold
 
             Console.WriteLine("printing points of surfaces - two should match");
 
-            Console.WriteLine(facetoRotate.SurfaceEntity.PerimeterCurves()[0]);
-            Console.WriteLine(facetoRotate.SurfaceEntity.PerimeterCurves()[1]);
-            Console.WriteLine(facetoRotate.SurfaceEntity.PerimeterCurves()[2]);
+            Console.WriteLine(facetoRotate.SurfaceEntities.PerimeterCurves()[0]);
+            Console.WriteLine(facetoRotate.SurfaceEntities.PerimeterCurves()[1]);
+            Console.WriteLine(facetoRotate.SurfaceEntities.PerimeterCurves()[2]);
 
-            Console.WriteLine(referenceFace.SurfaceEntity.PerimeterCurves()[0]);
-            Console.WriteLine(referenceFace.SurfaceEntity.PerimeterCurves()[1]);
-            Console.WriteLine(referenceFace.SurfaceEntity.PerimeterCurves()[2]);
+            Console.WriteLine(referenceFace.SurfaceEntities.PerimeterCurves()[0]);
+            Console.WriteLine(referenceFace.SurfaceEntities.PerimeterCurves()[1]);
+            Console.WriteLine(referenceFace.SurfaceEntities.PerimeterCurves()[2]);
 #endif
 
             */
@@ -189,8 +189,8 @@ namespace Unfold
             where T : IUnfoldablePlanarFace<K>
         {
 
-            Vector rotFaceNorm = facetoRotate.SurfaceEntity.First().NormalAtParameter(.5,.5);
-            Vector refFaceNorm = referenceFace.SurfaceEntity.First().NormalAtParameter(.5,.5);
+            Vector rotFaceNorm = facetoRotate.SurfaceEntities.First().NormalAtParameter(.5,.5);
+            Vector refFaceNorm = referenceFace.SurfaceEntities.First().NormalAtParameter(.5,.5);
 
             Vector bxaCrossedNormals = refFaceNorm.Cross(rotFaceNorm);
 
@@ -207,10 +207,10 @@ namespace Unfold
 
             degrees = 180.0 - degrees;
 # if DEBUG
-            Console.WriteLine(" about to to rotate");
-            Console.WriteLine(degrees);
+            
+            Console.WriteLine("about to to rotate"+ degrees);
 # endif
-            List<Surface> rotatedFace = facetoRotate.SurfaceEntity.Select(x=>x.Rotate(planeRotOrigin, degrees)).Cast<Surface>().ToList();
+            List<Surface> rotatedFace = facetoRotate.SurfaceEntities.Select(x=>x.Rotate(planeRotOrigin, degrees)).Cast<Surface>().ToList();
 
             return rotatedFace;
 

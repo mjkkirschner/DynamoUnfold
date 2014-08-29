@@ -21,7 +21,7 @@ namespace Unfold.Topology
         public Object OriginalEntity { get; set; }
 
         private List<Surface> _surface;
-        public List<Surface> SurfaceEntity
+        public List<Surface> SurfaceEntities
         {
             get { return _surface; }
             set
@@ -52,7 +52,7 @@ namespace Unfold.Topology
         {
 
             //store the surface
-            SurfaceEntity = new List<Surface>(){surface};
+            SurfaceEntities = new List<Surface>(){surface};
             //store surface
             OriginalEntity = surface;
             // new blank ids
@@ -63,13 +63,13 @@ namespace Unfold.Topology
         public FaceLikeEntity(Face face)
         {
             //grab the surface from the face
-            SurfaceEntity = new List<Surface>{face.SurfaceGeometry()};
+            SurfaceEntities = new List<Surface>{face.SurfaceGeometry()};
             // org entity is the face
             OriginalEntity = face;
             // grab edges
             List<Edge> orgedges = face.Edges.ToList();
             //wrap edges
-            EdgeLikeEntities = orgedges.ConvertAll(x => new EdgeLikeEntity(x)).ToList();
+            EdgeLikeEntities = orgedges.ConvertAll(x => new EdgeLikeEntity(x));
             // new blank ids list
             IDS = new List<int>();
 

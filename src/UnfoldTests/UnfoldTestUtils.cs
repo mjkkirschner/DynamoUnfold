@@ -17,6 +17,9 @@ namespace UnfoldTests
     {
         #region TestUtilities
 
+
+
+
         public static void CheckAllUnfoldedFacesForCorrectUnfold(List<List<Surface>> unfoldsurfaces)
         {
             foreach (var srflist in unfoldsurfaces)
@@ -61,14 +64,53 @@ namespace UnfoldTests
                         double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
                         var rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.Face, parent.Face, edge.GeometryEdge);
 
-                        UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace.First(), parent.Face.SurfaceEntity.First());
+                        UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace.First(), parent.Face.SurfaceEntities.First());
 
-                        UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace.First(), parent.Face.SurfaceEntity.First());
+                        UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace.First(), parent.Face.SurfaceEntities.First());
                     }
                 }
             }
         }
 
+
+        public static Surface SetupArcLoft()
+        {
+            var pt1 = Point.ByCoordinates(0, 0, 4);
+            var pt2 = Point.ByCoordinates(1, 1, 4);
+            var pt3 = Point.ByCoordinates(0, 4, 4);
+
+            var pt4 = Point.ByCoordinates(0, 0, 0);
+            var pt5 = Point.ByCoordinates(2, 2, 0);
+            var pt6 = Point.ByCoordinates(0, 4, 0);
+
+            var top = Arc.ByThreePoints(pt1, pt2, pt3);
+            var bottom = Arc.ByThreePoints(pt4, pt5, pt6);
+
+            var surface = Surface.ByLoft(new List<Curve>() { top, bottom });
+            return surface;
+        }
+
+        public static Surface SetupArcCurveSweep()
+        {
+            var pt1 = Point.ByCoordinates(0, 0, 0);
+            var pt2 = Point.ByCoordinates(0, 0, 5);
+            var pt3 = Point.ByCoordinates(10, 0, 0);
+
+            var pt4 = Point.ByCoordinates(-5, 5, 0);
+            var pt5 = Point.ByCoordinates(0, 10, 0);
+
+            var pt6 = Point.ByCoordinates(5, 10, 10);
+            var pt7 = Point.ByCoordinates(15, 15, 0);
+
+
+
+            var rail1 = Arc.ByThreePoints(pt5, pt6, pt7);
+            var rail2 = Arc.ByThreePoints(pt1, pt2, pt3);
+            var profile = Arc.ByThreePoints(pt1, pt4, pt5);
+
+            var surface = Surface.BySweep2Rails(rail1, rail2, profile);
+            return surface;
+        }
 
         public static Solid SetupCube()
         {
@@ -134,7 +176,7 @@ namespace UnfoldTests
             where T : IUnfoldablePlanarFace<K>
             where K : IUnfoldableEdge
         {
-            var intersected = face1.SurfaceEntity.SelectMany(a=>face2.SurfaceEntity.SelectMany(a.Intersect).ToList());
+            var intersected = face1.SurfaceEntities.SelectMany(a => face2.SurfaceEntities.SelectMany(a.Intersect).ToList());
 
             bool foundflag = false;
             foreach (var geo in intersected)
@@ -185,13 +227,13 @@ namespace UnfoldTests
 
             var dotpro = cross1.Dot(cross2);
 
-            Console.WriteLine(dotpro);
+            //Console.WriteLine(dotpro);
 
-            Assert.IsTrue(Math.Abs(Math.Abs(dotpro) - 1) <.0001);
-            Console.WriteLine(dotpro);
+            Assert.IsTrue(Math.Abs(Math.Abs(dotpro) - 1) < .0001);
+          //  Console.WriteLine(dotpro);
             Console.WriteLine("was parallel");
-            Console.WriteLine(cross1);
-            Console.WriteLine(cross2);
+            //Console.WriteLine(cross1);
+            //Console.WriteLine(cross2);
 
         }
 
@@ -206,8 +248,8 @@ namespace UnfoldTests
             var center1 = Tesselation.MeshHelpers.SurfaceAsPolygonCenter(surf1);
             var center2 = Tesselation.MeshHelpers.SurfaceAsPolygonCenter(surf2);
 
-            Console.WriteLine(center1);
-            Console.WriteLine(center2);
+            // Console.WriteLine(center1);
+            // Console.WriteLine(center2);
 
             Assert.IsFalse(center1.IsAlmostEqualTo(center2));
 
