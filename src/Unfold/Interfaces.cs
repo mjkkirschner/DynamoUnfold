@@ -47,8 +47,10 @@ namespace Unfold.Interfaces
              List<K> EdgeLikeEntities { get; set; }
               int ID { get; set; }
               List<int> IDS { get; set; }
-           
-        
+               Surface PerimeterSurface { get; set; }
+               Dictionary<K, int> EdgeCount { get; set; }
+               void UpdatePerimeterSurface(Dictionary<K,int> edgedictToMerge );
+
         }
      [SupressImportIntoVM]
       public  interface IUnfoldableEdge : ISpatiallyEquatable

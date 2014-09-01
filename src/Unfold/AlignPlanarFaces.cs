@@ -106,7 +106,6 @@ namespace Unfold
 
             Vector firstCross = abnorm.Cross(adnorm).Normalized();
 
-
             var rotFaceNormal = rotsurface.NormalAtParameter(.5,.5);
 
 
@@ -171,7 +170,7 @@ namespace Unfold
 
             */
             double result = refFaceNormalOK * rotFaceNormalOK;
-
+            Console.WriteLine("nc was " + result);
             return result;
 
         }

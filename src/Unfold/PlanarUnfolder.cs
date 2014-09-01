@@ -320,6 +320,41 @@ namespace Unfold
 
         }
 
+
+
+
+        private static Dictionary<K, int> GenerateEdgeCountDict<K>(List<Curve> perimeterCurves) where K : IUnfoldableEdge
+        {
+            
+            //just count instances of edges that equate to the
+            //same edge using spatialequalitycomparer
+            // we should never have a count greater than 2 if
+            // this method is used correctly
+            var edgelikeEnts = perimeterCurves.Select(x => (K)Activator.CreateInstance(typeof(K), new Object[] { x })).ToList();
+            var edgecount = new Dictionary<K, int>(new SpatialEqualityComparer<K>());
+            foreach (var edgelike in edgelikeEnts)
+            {
+
+                var edgekey = edgelike;
+
+                if (edgecount.ContainsKey(edgekey))
+                {
+                    edgecount[edgekey] = edgecount[edgekey] + 1;
+                }
+                else
+                {
+                    edgecount.Add(edgekey, 1);
+                }
+            }
+
+
+
+            return edgecount;
+
+        }
+
+
+
         /// <summary>
         /// method to avoid access exceptions
         /// in the case one occurs return a new surface
@@ -402,6 +437,24 @@ namespace Unfold
                 //need to run this method on every surface contained in the UnfoldedSurfaceSet and collect them in a new list
                 List<Surface> rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.UnfoldSurfaceSet, parent.Face, edge.GeometryEdge) as List<Surface>;
 
+                //before checking the intersection between the rotatedface and the parent, we need to transform
+                //the stored perimeterSurface
+
+                var rotatedCS = rotatedFace.First().ContextCoordinateSystem;
+                var rotatedPeriFace = child.UnfoldSurfaceSet.PerimeterSurface.Transform(
+                parent.Face.SurfaceEntities.First().ContextCoordinateSystem,rotatedCS) as Surface;
+                // seems an intersection is occuring when it should not, either surface is being rotated incorrectly
+                // or is not being generated correctly...
+
+            
+                //var perimeterFace =  (T)Activator.CreateInstance(typeof(T), new object[] {child.UnfoldSurfaceSet.PerimeterSurface});
+                //double ncps = AlignPlanarFaces.CheckNormalConsistency(perimeterFace, parent.Face, edge.GeometryEdge);
+                //List<Surface> rotatedPeriFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(ncps, perimeterFace, parent.Face, edge.GeometryEdge) as List<Surface>;
+
+                
+                // should be able to grab the two perimetersurfaces and do a simple intersection test
+                var parentperisurf = parent.UnfoldSurfaceSet.PerimeterSurface;
+                var overlapflag = rotatedPeriFace.Intersect(parentperisurf).OfType<Surface>().Any();
 
 
                 //at this point need to check if the rotated face has intersected with any other face that has been been
@@ -420,7 +473,7 @@ namespace Unfold
                 //with 2000 surfaces this was 1 gig of memory
                 //  bool overlapflag = parent.UnfoldSurfaceSet.SurfaceEntities.SelectMany(a => rotatedFace.SelectMany(a.Intersect)).OfType<Surface>().Any();
 
-                var overlapflag = false;
+              /*  var overlapflag = false;
                 foreach (var surf1 in parent.UnfoldSurfaceSet.SurfaceEntities)
                 {
                     foreach (var surf2 in rotatedFace)
@@ -438,6 +491,7 @@ namespace Unfold
                     }
                 }
             exitloops:
+               */
                 if (overlapflag)
                 {
                     // this random code may be removed and tested - it only confues packing code at this point
@@ -489,9 +543,11 @@ namespace Unfold
                     var newParentSurface = subsurblist;
 
                     // replace the surface in the parent with the wrapped chain of surfaces
+                    //TODO(MIKE) should replace this with a clone method on facelike
                     var wrappedChainOfUnfolds = new T();
                     wrappedChainOfUnfolds.SurfaceEntities = newParentSurface;
                     wrappedChainOfUnfolds.OriginalEntity = wrappedChainOfUnfolds.SurfaceEntities;
+                    wrappedChainOfUnfolds.EdgeCount = parent.UnfoldSurfaceSet.EdgeCount;
 
                     parent.UnfoldSurfaceSet = wrappedChainOfUnfolds;
 
@@ -518,7 +574,13 @@ namespace Unfold
                     transforms.Add(new FaceTransformMap(
                     rotatedFace.First().ContextCoordinateSystem, currentIDsToStoreTransforms));
 
-
+                    // last we need to rehash the edges in the rotatedFacePerimeterSurface (so they are in the right spot)
+                    // create a new dictionary from these new edgelikes, merge that dictionary with the dictionary of our parent facelike
+                    // create a new perimsurface from that dict, and store it on the parentfacelike...
+                    var newpericurves = rotatedPeriFace.PerimeterCurves().ToList();
+                    var hashedpericurves = GenerateEdgeCountDict<K>(newpericurves);
+                    parent.UnfoldSurfaceSet.UpdatePerimeterSurface(hashedpericurves);
+                
                 }
                 // shrink the tree
                 child.RemoveFromGraph(sortedtree);
