@@ -340,6 +340,7 @@ namespace Unfold
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                //Geometry.ExportToSAT(new List<Geometry>{surf1,surf2},"C:\\Users\\Mike\\Desktop\\debugGeo");
                 return new Geometry[1] { surf1 };
 
             }
@@ -408,7 +409,7 @@ namespace Unfold
                 // folded already, all of these already folded faces should exist either in the parent unfoldedSurfaceSet
                 // or they should have been moved away, we should only need to check if the rotated face hits the unfoldedSurfaceSet.
 
-                // the srflist is either a single surface or all surfaces containeed in the polysurface, if any of these
+                // the srflist is either a single surface or all surfaces containeed in the set, if any of these
                 // surfaces intersected with the rotatedface returns a new surface then there is a real overlap and 
                 // we need to move the rotated face away. it will need to be oriented horizontal later
 
@@ -427,7 +428,7 @@ namespace Unfold
                     {
                         if (surf1.DoesIntersect(surf2))
                         {
-                            var resultGeo = surf1.Intersect(surf2);
+                            var resultGeo = surf1.SafeIntersect(surf2);
                             if (resultGeo.OfType<Surface>().Any())
                             {
                                 overlapflag = true;
@@ -471,17 +472,22 @@ namespace Unfold
                 else
                 {
                     // if there is no overlap we need to merge the rotated chain into the parent
-
-                    List<Surface> subsurblist = new List<Surface>(rotatedFace);
-
+                    // add the parent surfaces into this list of surfaces we'll use to create a new facelike
+                    List<Surface> subsurblist = new List<Surface>(parent.UnfoldSurfaceSet.SurfaceEntities);
+                    // then push the rotatedFace surfaces so these are after the parent's surfaces... 
+                    // this order is important since all the algorithms use the first surface in the list
+                    // for calculations of rotation etc.... needs to be hardened and either moved all out of
+                    // classes and into algorithm or vice versa...
+                    subsurblist.AddRange(rotatedFace);
+                    
+                    
                     // idea is to push the rotatedface - which might be a list of surfaces or surface into
                     // the parent vertex's unfoldSurfaceSet property, then to contract the graph, removing the child node.
                     // at the same time we are trying to build a map of all the rotation transformations we are producing
                     // and to which faces they have been applied, we must push the intermediate coordinate systems
                     // as well as the ids to which they apply through the graph as well.
 
-                    // add the parent surfaces into this list of surfaces we'll use to create a new facelike
-                    subsurblist.AddRange(parent.UnfoldSurfaceSet.SurfaceEntities);
+                    
 
                     // need to extract the parentIDchain, this is previous faces that been made coplanar with the parent
                     // we need to grab them before the parent unfoldchain is replaced
