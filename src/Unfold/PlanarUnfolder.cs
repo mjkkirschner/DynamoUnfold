@@ -422,6 +422,48 @@ namespace Unfold
                 //  bool overlapflag = parent.UnfoldSurfaceSet.SurfaceEntities.SelectMany(a => rotatedFace.SelectMany(a.Intersect)).OfType<Surface>().Any();
 
                 var overlapflag = false;
+
+
+                List<Surface> outerloop;
+                List<Surface> innerloop;
+
+                if (parent.UnfoldSurfaceSet.SurfaceEntities.Count > rotatedFace.Count)
+                {
+                    outerloop = parent.UnfoldSurfaceSet.SurfaceEntities;
+                    innerloop = rotatedFace;
+                }
+                else
+                {
+                    outerloop = rotatedFace;
+                    innerloop = parent.UnfoldSurfaceSet.SurfaceEntities;
+                }
+
+                Parallel.ForEach(outerloop, (surf1, state) =>
+                {
+                    if (overlapflag)
+                    {
+                     state.Stop();  
+                    }
+
+                    foreach (var surf2 in innerloop)
+                    {
+
+                        if (surf1.DoesIntersect(surf2))
+                        {
+                            var resultGeo = surf1.Intersect(surf2);
+                            if (resultGeo.OfType<Surface>().Any())
+                            {
+                                overlapflag = true;
+                                break;
+                            }
+                        }
+                    }
+
+                });
+
+
+
+/*
                 foreach (var surf1 in parent.UnfoldSurfaceSet.SurfaceEntities)
                 {
                     foreach (var surf2 in rotatedFace)
@@ -438,7 +480,7 @@ namespace Unfold
                         }
                     }
                 }
-            exitloops:
+            exitloops: */
                 if (overlapflag)
                 {
                     // this random code may be removed and tested - it only confues packing code at this point
