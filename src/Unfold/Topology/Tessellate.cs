@@ -36,7 +36,7 @@ namespace Unfold.Topology
 
                 var polygon = Polygon.ByPoints(ptlist);
 
-                return surface.GetClosestPoint(polygon.Center()); 
+                return surface.ClosestPointTo(polygon.Center()); 
             
             }
            
@@ -52,7 +52,7 @@ namespace Unfold.Topology
 
                 var polygon = Polygon.ByPoints(ptlist);
 
-                return surface.GetClosestPoint(polygon.Center());
+                return surface.ClosestPointTo(polygon.Center());
 
             }
 
