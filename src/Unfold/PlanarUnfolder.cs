@@ -341,6 +341,8 @@ namespace Unfold
             {
                 Console.WriteLine(e.Message);
                 //Geometry.ExportToSAT(new List<Geometry>{surf1,surf2},"C:\\Users\\Mike\\Desktop\\debugGeo");
+                // we return a surface since it's unknown if two surfaces really intersected
+                // in the worst case they may have and we do not want an overlap
                 return new Geometry[1] { surf1 };
 
             }
@@ -450,7 +452,7 @@ namespace Unfold
 
                         if (surf1.DoesIntersect(surf2))
                         {
-                            var resultGeo = surf1.Intersect(surf2);
+                            var resultGeo = surf1.SafeIntersect(surf2);
                             if (resultGeo.OfType<Surface>().Any())
                             {
                                 overlapflag = true;
