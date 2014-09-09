@@ -425,26 +425,17 @@ namespace Unfold
 
                 var overlapflag = false;
 
-
                 List<Surface> outerloop;
                 List<Surface> innerloop;
 
-                if (parent.UnfoldSurfaceSet.SurfaceEntities.Count > rotatedFace.Count)
-                {
-                    outerloop = parent.UnfoldSurfaceSet.SurfaceEntities;
-                    innerloop = rotatedFace;
-                }
-                else
-                {
-                    outerloop = rotatedFace;
-                    innerloop = parent.UnfoldSurfaceSet.SurfaceEntities;
-                }
+                outerloop = rotatedFace;
+                innerloop = parent.UnfoldSurfaceSet.SurfaceEntities;
 
                 Parallel.ForEach(outerloop, (surf1, state) =>
                 {
                     if (overlapflag)
                     {
-                     state.Stop();  
+                        state.Stop();
                     }
 
                     foreach (var surf2 in innerloop)
@@ -465,24 +456,24 @@ namespace Unfold
 
 
 
-/*
-                foreach (var surf1 in parent.UnfoldSurfaceSet.SurfaceEntities)
-                {
-                    foreach (var surf2 in rotatedFace)
-                    {
-                        if (surf1.DoesIntersect(surf2))
-                        {
-                            var resultGeo = surf1.SafeIntersect(surf2);
-                            if (resultGeo.OfType<Surface>().Any())
-                            {
-                                overlapflag = true;
-                                goto exitloops;
-                                // thats right, goto!
-                            }
-                        }
-                    }
-                }
-            exitloops: */
+                /*
+                                foreach (var surf1 in parent.UnfoldSurfaceSet.SurfaceEntities)
+                                {
+                                    foreach (var surf2 in rotatedFace)
+                                    {
+                                        if (surf1.DoesIntersect(surf2))
+                                        {
+                                            var resultGeo = surf1.SafeIntersect(surf2);
+                                            if (resultGeo.OfType<Surface>().Any())
+                                            {
+                                                overlapflag = true;
+                                                goto exitloops;
+                                                // thats right, goto!
+                                            }
+                                        }
+                                    }
+                                }
+                            exitloops: */
                 if (overlapflag)
                 {
                     // this random code may be removed and tested - it only confues packing code at this point
@@ -523,15 +514,15 @@ namespace Unfold
                     // for calculations of rotation etc.... needs to be hardened and either moved all out of
                     // classes and into algorithm or vice versa...
                     subsurblist.AddRange(rotatedFace);
-                    
-                    
+
+
                     // idea is to push the rotatedface - which might be a list of surfaces or surface into
                     // the parent vertex's unfoldSurfaceSet property, then to contract the graph, removing the child node.
                     // at the same time we are trying to build a map of all the rotation transformations we are producing
                     // and to which faces they have been applied, we must push the intermediate coordinate systems
                     // as well as the ids to which they apply through the graph as well.
 
-                    
+
 
                     // need to extract the parentIDchain, this is previous faces that been made coplanar with the parent
                     // we need to grab them before the parent unfoldchain is replaced
