@@ -138,7 +138,7 @@ namespace DynamoUnfold
         public static List<Surface> UnfoldListOfFaces(List<Face> faces)
         {
 
-
+            faces.RemoveAll(item => item == null);
             var unfoldsurfaces = PlanarUnfolder.Unfold(faces);
             return unfoldsurfaces.UnfoldedSurfaceSet.Select(x => PolySurface.ByJoinedSurfaces(x) as Surface).ToList();
         }
@@ -151,7 +151,7 @@ namespace DynamoUnfold
         public static List<Surface> UnfoldListOfSurfaces(List<Surface> surfaces)
         {
 
-
+            surfaces.RemoveAll(item => item == null);
             var unfoldsurfaces = PlanarUnfolder.Unfold(surfaces);
             return unfoldsurfaces.UnfoldedSurfaceSet.Select(x => PolySurface.ByJoinedSurfaces(x) as Surface).ToList();
         }
@@ -165,7 +165,7 @@ namespace DynamoUnfold
         /// <returns name = "surfaces"> the unfolded surfaces </returns>
         public static List<Surface> _UnfoldCurvedSurfacesByTesselation(List<Surface> surfaces)
         {
-
+            surfaces.RemoveAll(item => item == null);
             //handle tesselation here
             var pointtuples = Tesselation.Tessellate(surfaces, -1, 512);
             //convert triangles to surfaces
