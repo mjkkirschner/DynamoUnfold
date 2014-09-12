@@ -69,6 +69,44 @@ namespace Unfold
                 UnfoldedSurfaceSet = finalSurfaces;
             }
 
+            public static PlanarUnfolding<K,T> MergeUnfoldings<K,T>(List<PlanarUnfolding<K,T>> unfoldingstomerge)
+                where T : IUnfoldablePlanarFace<K>
+            where K : IUnfoldableEdge
+            {
+                // iterate each unfolding
+                var mergedOrgFaces = new List<T>();
+                var mergefFinalSurfaces = new List<List<Surface>>();
+                var mergedTransformMaps = new List<FaceTransformMap>();
+                var mergedUnfoldedFaces = new List<T>();
+
+
+                for (int i = 0; i < unfoldingstomerge.Count; i++)
+                {
+                    var currentUnfolding = unfoldingstomerge[i];
+                   var modifiedfaces = currentUnfolding.StartingUnfoldableFaces.Select(x => x.ID + unfoldingstomerge[Math.Min(i-1,0)].StartingUnfoldableFaces.Count).ToList() as List<T>;
+                   mergedOrgFaces.AddRange(modifiedfaces);
+
+                   var currentfinalsurfaces = currentUnfolding.StartingUnfoldableFaces.Select(x => x.SurfaceEntities).ToList();
+                   mergefFinalSurfaces.AddRange(currentfinalsurfaces);
+
+                    var modifiedmaps = new List<FaceTransformMap>();
+                   foreach (var currentmap in currentUnfolding.Maps)
+                   {
+                       for (int j = 0; j < currentmap.IDS.Count; j++ )
+                       {
+                           currentmap.IDS[j] = currentmap.IDS[j] + unfoldingstomerge[Math.Min(i - 1, 0)].StartingUnfoldableFaces.Count;
+                       }
+                       
+                   }
+                   mergedTransformMaps.AddRange(modifiedmaps);
+
+                   var modifiedUnfoldedfaces = currentUnfolding.UnfoldedFaces.Select(x => x.ID + unfoldingstomerge[Math.Min(i - 1, 0)].UnfoldedFaces.Count).ToList() as List<T>;
+                   mergedOrgFaces.AddRange(modifiedUnfoldedfaces);
+
+                }
+
+               return new PlanarUnfolding<K, T>(mergedOrgFaces, mergefFinalSurfaces, mergedTransformMaps, mergedUnfoldedFaces);
+            }
         }
 
         /// <summary>
