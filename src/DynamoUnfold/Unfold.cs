@@ -27,6 +27,7 @@ namespace DynamoUnfold
         [MultiReturn(new[] { "surfaces", "unfoldingObject" })]
         public static Dictionary<string, object> UnfoldListOfFaces_AndReturnTransforms(List<Face> faces)
         {
+            faces.RemoveAll(item => item == null);
             var unfolding = PlanarUnfolder.Unfold(faces);
             return new Dictionary<string, object> 
                 {   
@@ -50,6 +51,7 @@ namespace DynamoUnfold
         [MultiReturn(new[] { "surfaces", "unfoldingObject" })]
         public static Dictionary<string, object> UnfoldListOfSurfaces_AndReturnTransforms(List<Surface> surfaces)
         {
+            surfaces.RemoveAll(item => item == null);
             var unfolding = PlanarUnfolder.Unfold(surfaces);
             return new Dictionary<string, object> 
                 {   
@@ -73,6 +75,8 @@ namespace DynamoUnfold
         [MultiReturn(new[] { "surfaces", "unfoldingObject" })]
         public static Dictionary<string, object> _UnfoldCurvedSurfacesByTessellation_AndReturnTransforms(List<Surface> surfaces)
         {
+
+            surfaces.RemoveAll(item => item == null);
             //handle tesselation here
             var pointtuples = Tesselation.Tessellate(surfaces, -1, 512);
             //convert triangles to surfaces
