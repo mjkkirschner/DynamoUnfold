@@ -247,8 +247,8 @@ namespace DynamoUnfold
         /// <param name="surfaces"></param>
         /// <param name="tolerance"> tolerance between the surface and mesh representation</param>
         /// <param name="maxGridLines">maximum number of surface divisons that define one direction of the mesh </param>
-        /// <returns> a list of trimmed planar surfaces that define triangles</returns>
-        public static object _TesselateSurfaces(List<Surface> surfaces, double tolerance = -1, int maxGridLines = 512)
+        /// <returns name = "Surfaces"> a list of trimmed planar surfaces that represent triangles</returns>
+        public static List<Surface> _TesselateSurfaces(List<Surface> surfaces, double tolerance = -1, int maxGridLines = 512)
         {
             var pointtuples = Tesselation.Tessellate(surfaces, tolerance, maxGridLines);
             //convert triangles to surfaces
