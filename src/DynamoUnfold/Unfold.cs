@@ -135,12 +135,12 @@ namespace DynamoUnfold
         /// </summary>
         /// <param name="faces"> the faces to be unfolded</param>
         /// <returns name = "surfaces"> the unfolded surfaces </returns>
-        public static List<Surface> UnfoldListOfFaces(List<Face> faces)
+        public static List<List<Surface>> UnfoldListOfFaces(List<Face> faces)
         {
 
             faces.RemoveAll(item => item == null);
             var unfoldsurfaces = PlanarUnfolder.Unfold(faces);
-            return unfoldsurfaces.UnfoldedSurfaceSet.Select(x => PolySurface.ByJoinedSurfaces(x) as Surface).ToList();
+            return unfoldsurfaces.UnfoldedSurfaceSet;
         }
 
         /// <summary>
@@ -148,12 +148,12 @@ namespace DynamoUnfold
         /// </summary>
         /// <param name="surfaces"> the surfaces to be unfolded</param>
         /// <returns name = "surfaces"> the unfolded surfaces </returns>
-        public static List<Surface> UnfoldListOfSurfaces(List<Surface> surfaces)
+        public static List<List<Surface>> UnfoldListOfSurfaces(List<Surface> surfaces)
         {
 
             surfaces.RemoveAll(item => item == null);
             var unfoldsurfaces = PlanarUnfolder.Unfold(surfaces);
-            return unfoldsurfaces.UnfoldedSurfaceSet.Select(x => PolySurface.ByJoinedSurfaces(x) as Surface).ToList();
+            return unfoldsurfaces.UnfoldedSurfaceSet;
         }
 
 
@@ -163,7 +163,7 @@ namespace DynamoUnfold
         /// </summary>
         /// <param name="surfaces"> the surfaces to be tesselated and unfolded</param>
         /// <returns name = "surfaces"> the unfolded surfaces </returns>
-        public static List<Surface> _UnfoldCurvedSurfacesByTesselation(List<Surface> surfaces)
+        public static List<List<Surface>> _UnfoldCurvedSurfacesByTesselation(List<Surface> surfaces)
         {
             surfaces.RemoveAll(item => item == null);
             //handle tesselation here
@@ -172,7 +172,7 @@ namespace DynamoUnfold
             List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
             var unfoldsurfaces = PlanarUnfolder.Unfold(trisurfaces);
-            return unfoldsurfaces.UnfoldedSurfaceSet.Select(x => PolySurface.ByJoinedSurfaces(x) as Surface).ToList();
+            return unfoldsurfaces.UnfoldedSurfaceSet;
         }
 
         /// <summary>
