@@ -83,7 +83,10 @@ namespace Unfold
                 for (int i = 0; i < unfoldingstomerge.Count; i++)
                 {
                     var currentUnfolding = unfoldingstomerge[i];
-                   var modifiedfaces = currentUnfolding.StartingUnfoldableFaces.Select(x => x.ID + unfoldingstomerge[Math.Min(i-1,0)].StartingUnfoldableFaces.Count).ToList() as List<T>;
+                    var indexOffset = Enumerable.Range(0, i).Select(index => unfoldingstomerge[index].StartingUnfoldableFaces.Count).Sum();
+                    
+
+                    var modifiedfaces = currentUnfolding.StartingUnfoldableFaces.Select(x => { x.ID = x.ID + indexOffset; return x; }).ToList();
                    mergedOrgFaces.AddRange(modifiedfaces);
 
                    var currentfinalsurfaces = currentUnfolding.StartingUnfoldableFaces.Select(x => x.SurfaceEntities).ToList();
@@ -94,14 +97,16 @@ namespace Unfold
                    {
                        for (int j = 0; j < currentmap.IDS.Count; j++ )
                        {
-                           currentmap.IDS[j] = currentmap.IDS[j] + unfoldingstomerge[Math.Min(i - 1, 0)].StartingUnfoldableFaces.Count;
+                           currentmap.IDS[j] = currentmap.IDS[j] + indexOffset;
+                           
+
                        }
-                       
+                       modifiedmaps.Add(currentmap);
                    }
                    mergedTransformMaps.AddRange(modifiedmaps);
 
-                   var modifiedUnfoldedfaces = currentUnfolding.UnfoldedFaces.Select(x => x.ID + unfoldingstomerge[Math.Min(i - 1, 0)].UnfoldedFaces.Count).ToList() as List<T>;
-                   mergedOrgFaces.AddRange(modifiedUnfoldedfaces);
+                   var modifiedUnfoldedfaces = currentUnfolding.UnfoldedFaces.Select(x => { x.ID = x.ID + indexOffset; return x; }).ToList();
+                   mergedUnfoldedFaces.AddRange(modifiedUnfoldedfaces);
 
                 }
 
