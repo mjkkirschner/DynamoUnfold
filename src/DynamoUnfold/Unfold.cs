@@ -196,6 +196,14 @@ namespace DynamoUnfold
 
         }
 
+        #region Unfolding Methods  
+        public static object MergeUnfoldingObjects (List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity>> unfoldings){
+            return PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity>.MergeUnfoldings(unfoldings);
+        }
+
+        #endregion
+
+
 
         // The following methods may be removed from Import eventually
         # region
