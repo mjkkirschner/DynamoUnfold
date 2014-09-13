@@ -221,7 +221,7 @@ namespace UnfoldTests
 
                 var surfaces = new List<Surface>() { testsweep };
                 //handle tesselation here
-                var pointtuples = Tesselation.Tessellate(surfaces, -1, 512);
+                var pointtuples = Tesselation.Tessellate(surfaces, -1, 30);
                 //convert triangles to surfaces
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
@@ -409,10 +409,10 @@ namespace UnfoldTests
 
                 var surfaces = new List<Surface>() { testsweep };
                 //handle tesselation here
-                var pointtuples = Tesselation.Tessellate(surfaces, -1, 512);
+                var pointtuples = Tesselation.Tessellate(surfaces, -1, 30);
                 //convert triangles to surfaces
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
-
+                Console.WriteLine(trisurfaces.Count);
 
                 var unfoldObject = PlanarUnfolder.Unfold(trisurfaces);
 
@@ -570,6 +570,46 @@ namespace UnfoldTests
 
             }
 
+            [Test]
+            public void UnfoldAndLabel2ArcLofts()
+            {
+                // unfold cube
+                Surface testloft = UnfoldTestUtils.SetupArcLoft();
+                var surfaces = new List<Surface>() { testloft };
+               
+                //handle tesselation here
+                var pointtuples = Tesselation.Tessellate(surfaces, -1, 512);
+                //convert triangles to surfaces
+                List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
+
+                var unfoldObject1 = PlanarUnfolder.Unfold(trisurfaces);
+                var unfoldObject2 = PlanarUnfolder.Unfold(trisurfaces);
+
+                var unfoldsurfaces = unfoldObject1.UnfoldedSurfaceSet.Concat(unfoldObject2.UnfoldedSurfaceSet).ToList();
+
+                Console.WriteLine("merging unfolds");
+                var unfoldObject = PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity>.
+                    MergeUnfoldings(new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity>>() { unfoldObject1, unfoldObject2 });
+
+                AssertMergeHasCorrectNumberOfSurfaces(unfoldObject, trisurfaces.Count * 2);
+                AssertMergeHasCorrectNumberOfMaps(unfoldObject, new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity>>() { unfoldObject1, unfoldObject2 });
+
+                Console.WriteLine("generating labels");
+
+                // generate labels
+                var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
+               new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
+
+                UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
+
+                // next check the positions of the translated labels,
+
+                var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID
+                    (unfoldObject, x.AlignedLabelGeometry, x.ID)).ToList();
+
+                UnfoldTestUtils.AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
+
+            }
         
         }
 
