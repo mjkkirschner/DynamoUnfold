@@ -375,7 +375,60 @@ namespace UnfoldTests
             }
         }
 
+        public static void AssertLabelsGoodFinalLocationAndOrientation<K,T>(List<PlanarUnfolder.UnfoldableFaceLabel
+                <K, T>> labels, List<List<Curve>>
+               translatedgeo, PlanarUnfolder.PlanarUnfolding<K, T> unfoldingObject)
+            where K : IUnfoldableEdge
+            where T : IUnfoldablePlanarFace<K>
+        {
 
+            // assert that the final geometry  intersect with the 
+            //the orginal surfaces(transformed through their transformation histories)
+            for (int i = 0; i < labels.Count; i++)
+            {
+                var label = labels[i];
+                var curves = translatedgeo[i];
+
+                var transformedInitialSurfaceToFinal = PlanarUnfolder.DirectlyMapGeometryToUnfoldingByID
+                    <K, T, Surface>
+                    (unfoldingObject, label.UnfoldableFace.SurfaceEntities, label.ID);
+
+                Assert.IsTrue(curves.SelectMany(x => transformedInitialSurfaceToFinal.Select(x.DoesIntersect)).Any());
+
+                Console.WriteLine("This label was in the right spot at the end of the unfold");
+            }
+
+        }
+
+        public static void AssertLabelsGoodStartingLocationAndOrientation<K,T>(List<PlanarUnfolder.UnfoldableFaceLabel
+            <K, T>> labels)
+             where K : IUnfoldableEdge
+            where T : IUnfoldablePlanarFace<K>
+        {
+            // get aligned geometry
+            var alignedGeo = labels.Select(x => x.AlignedLabelGeometry).ToList();
+            // assert that the bounding box of the label at least intersects the face it represents
+            for (int i = 0; i < alignedGeo.Count; i++)
+            {
+
+                var curveList = alignedGeo[i];
+
+                var curvePoints = curveList.Select(x => x.StartPoint);
+                var labelPlane = Plane.ByBestFitThroughPoints(curvePoints);
+                var testsurf = Surface.ByPatch(Rectangle.ByWidthHeight(1, 1).
+                    Transform(CoordinateSystem.ByPlane(labelPlane)) as Curve);
+
+
+                Assert.IsTrue(curveList.SelectMany(x => labels[i].UnfoldableFace.SurfaceEntities.Select(x.DoesIntersect)).Any());
+                Console.WriteLine("This label was in the right spot at the start of the unfold");
+                //also assert that the face normal is parallel with the normal of the boundingbox plane
+
+                var face = labels[i].UnfoldableFace.SurfaceEntities;
+
+                UnfoldTestUtils.AssertSurfacesAreCoplanar(testsurf, face.First());
+                Console.WriteLine("This label was in the right orientation at the start of the unfold");
+            }
+        }
 
         #endregion
 

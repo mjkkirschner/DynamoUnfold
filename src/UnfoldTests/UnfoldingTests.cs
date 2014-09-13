@@ -255,56 +255,7 @@ namespace UnfoldTests
         public class MappingFaceTransformsTests
         {
 
-            public void AssertLabelsGoodFinalLocationAndOrientation(List<PlanarUnfolder.UnfoldableFaceLabel
-                 <EdgeLikeEntity, FaceLikeEntity>> labels, List<List<Curve>>
-                translatedgeo, PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity> unfoldingObject)
-            {
-
-                // assert that the final geometry  intersect with the 
-                //the orginal surfaces(transformed through their transformation histories)
-                for (int i = 0; i < labels.Count; i++)
-                {
-                    var label = labels[i];
-                    var curves = translatedgeo[i];
-
-                    var transformedInitialSurfaceToFinal = PlanarUnfolder.DirectlyMapGeometryToUnfoldingByID
-                        <EdgeLikeEntity, FaceLikeEntity, Surface>
-                        (unfoldingObject, label.UnfoldableFace.SurfaceEntities, label.ID);
-
-                    Assert.IsTrue(curves.SelectMany(x => transformedInitialSurfaceToFinal.Select(x.DoesIntersect)).Any());
-
-                    Console.WriteLine("This label was in the right spot at the end of the unfold");
-                }
-
-            }
-
-            public void AssertLabelsGoodStartingLocationAndOrientation(List<PlanarUnfolder.UnfoldableFaceLabel
-                <EdgeLikeEntity, FaceLikeEntity>> labels)
-            {
-                // get aligned geometry
-                var alignedGeo = labels.Select(x => x.AlignedLabelGeometry).ToList();
-                // assert that the bounding box of the label at least intersects the face it represents
-                for (int i = 0; i < alignedGeo.Count; i++)
-                {
-
-                    var curveList = alignedGeo[i];
-
-                    var curvePoints = curveList.Select(x => x.StartPoint);
-                    var labelPlane = Plane.ByBestFitThroughPoints(curvePoints);
-                    var testsurf = Surface.ByPatch(Rectangle.ByWidthHeight(1, 1).
-                        Transform(CoordinateSystem.ByPlane(labelPlane)) as Curve);
-
-
-                    Assert.IsTrue(curveList.SelectMany(x => labels[i].UnfoldableFace.SurfaceEntities.Select(x.DoesIntersect)).Any());
-                    Console.WriteLine("This label was in the right spot at the start of the unfold");
-                    //also assert that the face normal is parallel with the normal of the boundingbox plane
-
-                    var face = labels[i].UnfoldableFace.SurfaceEntities;
-
-                    UnfoldTestUtils.AssertSurfacesAreCoplanar(testsurf, face.First());
-                    Console.WriteLine("This label was in the right orientation at the start of the unfold");
-                }
-            }
+           
 
             [Test]
             public void UnfoldAndLabelCubeFromFaces()
@@ -323,14 +274,14 @@ namespace UnfoldTests
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
                new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
 
-                AssertLabelsGoodStartingLocationAndOrientation(labels);
+               UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
 
                 // next check the positions of the translated labels,
 
                 var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID
                     (unfoldObject, x.AlignedLabelGeometry, x.ID)).ToList();
 
-                AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
+                UnfoldTestUtils.AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
 
             }
 
@@ -351,13 +302,13 @@ namespace UnfoldTests
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
                new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
 
-                AssertLabelsGoodStartingLocationAndOrientation(labels);
+                UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
 
                 // next check the positions of the translated labels
 
                 var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID(unfoldObject, x.AlignedLabelGeometry, x.ID)).ToList();
 
-                AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
+                UnfoldTestUtils.AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
 
             }
             [Test]
@@ -378,13 +329,13 @@ namespace UnfoldTests
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
                new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
 
-                AssertLabelsGoodStartingLocationAndOrientation(labels);
+                UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
 
                 // next check the positions of the translated labels
 
                 var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID(unfoldObject, x.AlignedLabelGeometry, x.ID)).ToList();
 
-                AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
+                UnfoldTestUtils.AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
 
             }
             [Test]
@@ -410,13 +361,13 @@ namespace UnfoldTests
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
                new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
 
-                AssertLabelsGoodStartingLocationAndOrientation(labels);
+               UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
 
                 // next check the positions of the translated labels
 
                 var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID(unfoldObject, x.AlignedLabelGeometry, x.ID)).ToList();
 
-                AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
+                UnfoldTestUtils.AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
             }
             [Test]
             public void UnfoldAndLabelWideCone()
@@ -441,13 +392,13 @@ namespace UnfoldTests
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
                new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
 
-                AssertLabelsGoodStartingLocationAndOrientation(labels);
+                UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
 
                 // next check the positions of the translated labels
 
                 var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID(unfoldObject, x.AlignedLabelGeometry, x.ID)).ToList();
 
-                AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
+                UnfoldTestUtils.AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
             }
 
             [Test]
@@ -473,13 +424,13 @@ namespace UnfoldTests
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
                new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
 
-                AssertLabelsGoodStartingLocationAndOrientation(labels);
+                UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
 
                 // next check the positions of the translated labels
 
                 var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID(unfoldObject, x.AlignedLabelGeometry, x.ID)).ToList();
 
-                AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
+                UnfoldTestUtils.AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
             }
 
             [Test]
@@ -505,15 +456,123 @@ namespace UnfoldTests
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
                new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
 
-                AssertLabelsGoodStartingLocationAndOrientation(labels);
+                UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
 
                 // next check the positions of the translated labels
 
                 var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID(unfoldObject, x.AlignedLabelGeometry, x.ID)).ToList();
 
-                AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
+                UnfoldTestUtils.AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
             }
         }
+
+        public class PlanarUnfoldingMergeTests
+        {
+            
+            
+
+            public void AssertMergeHasCorrectNumberOfSurfaces<K,T>(PlanarUnfolder.PlanarUnfolding<K,T> mergedunfold, int numberOfSurfaces )
+                 where K : IUnfoldableEdge
+            where T : IUnfoldablePlanarFace<K>
+            {
+
+                var numStartSurfs = mergedunfold.StartingUnfoldableFaces.SelectMany(x=>x.SurfaceEntities).Count();
+                var numEndSurfs = mergedunfold.UnfoldedSurfaceSet.SelectMany(x=>x).Count();
+                Assert.AreEqual(numStartSurfs, numEndSurfs);
+                Assert.AreEqual(numStartSurfs, numberOfSurfaces);
+                Console.WriteLine("correct number of surfaces in the merged unfold");
+            }
+
+            public void AssertMergeHasCorrectNumberOfMaps<K, T>(PlanarUnfolder.PlanarUnfolding<K, T> mergedunfold, List<PlanarUnfolder.PlanarUnfolding<K,T>> unfoldOps )
+                 where K : IUnfoldableEdge
+            where T : IUnfoldablePlanarFace<K>
+            {
+                var expectedCount = unfoldOps.SelectMany(x=>x.Maps).Count();
+                var realnum = mergedunfold.Maps.Count();
+                Assert.AreEqual(expectedCount,realnum);
+                Console.WriteLine("correct number of maps in the merged unfold");
+            }
+
+            [Test]
+            public void UnfoldAndLabel2CubesFromFaces()
+            {
+                // unfold cube
+                Solid testcube = UnfoldTestUtils.SetupCube();
+                List<Face> faces = testcube.Faces.ToList();
+
+                var unfoldObject1 = PlanarUnfolder.Unfold(faces);
+                var unfoldObject2 = PlanarUnfolder.Unfold(faces);
+
+                var unfoldsurfaces = unfoldObject1.UnfoldedSurfaceSet.Concat(unfoldObject2.UnfoldedSurfaceSet).ToList();
+
+                Console.WriteLine("merging unfolds");
+              var unfoldObject =   PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity>.
+                  MergeUnfoldings(new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity>>(){unfoldObject1,unfoldObject2});
+
+                
+                AssertMergeHasCorrectNumberOfSurfaces(unfoldObject,faces.Count*2);
+                AssertMergeHasCorrectNumberOfMaps(unfoldObject,new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity>>(){unfoldObject1,unfoldObject2});
+
+                Console.WriteLine("generating labels");
+
+                // generate labels
+                var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
+               new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
+
+                UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
+
+                // next check the positions of the translated labels,
+
+                var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID
+                    (unfoldObject, x.AlignedLabelGeometry, x.ID)).ToList();
+
+                UnfoldTestUtils.AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
+
+            }
+            [Test]
+            public void UnfoldAndLabel2TallCones()
+            {
+                // unfold cube
+                Solid testcube = UnfoldTestUtils.SetupTallCone();
+               List<Face> faces = testcube.Faces.ToList();
+                var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
+                //handle tesselation here
+                var pointtuples = Tesselation.Tessellate(surfaces, -1, 512);
+                //convert triangles to surfaces
+                List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
+
+                var unfoldObject1 = PlanarUnfolder.Unfold(trisurfaces);
+                var unfoldObject2 = PlanarUnfolder.Unfold(trisurfaces);
+
+                var unfoldsurfaces = unfoldObject1.UnfoldedSurfaceSet.Concat(unfoldObject2.UnfoldedSurfaceSet).ToList();
+
+                Console.WriteLine("merging unfolds");
+              var unfoldObject =   PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity>.
+                  MergeUnfoldings(new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity>>(){unfoldObject1,unfoldObject2});
+
+                AssertMergeHasCorrectNumberOfSurfaces(unfoldObject,trisurfaces.Count*2);
+                AssertMergeHasCorrectNumberOfMaps(unfoldObject,new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity>>(){unfoldObject1,unfoldObject2});
+
+                Console.WriteLine("generating labels");
+
+                // generate labels
+                var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
+               new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
+
+                UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
+
+                // next check the positions of the translated labels,
+
+                var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID
+                    (unfoldObject, x.AlignedLabelGeometry, x.ID)).ToList();
+
+                UnfoldTestUtils.AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
+
+            }
+
+        
+        }
+
     }
 }
 
