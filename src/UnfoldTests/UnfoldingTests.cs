@@ -466,6 +466,42 @@ namespace UnfoldTests
             }
         }
 
+        public class ASM220Defects
+        {
+
+            [Test]
+            public void Unfold10CubesFromSurfaces()
+            {
+                // unfold cube
+                Solid testcube = UnfoldTestUtils.SetupCube();
+                List<Face> faces = testcube.Faces.ToList();
+                var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
+                
+                List<List<Surface>> manycubes = Enumerable.Repeat(surfaces,10).ToList();
+                var unfolds = manycubes.Select(x => PlanarUnfolder.Unfold(x)).ToList();
+
+
+                var unfoldsurfaces = unfolds.SelectMany(x => x.UnfoldedSurfaceSet).ToList();
+
+            }
+            [Test]
+            public void Unfold20CubesFromSurfaces()
+            {
+                // unfold cube
+                Solid testcube = UnfoldTestUtils.SetupCube();
+                List<Face> faces = testcube.Faces.ToList();
+                var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
+
+                List<List<Surface>> manycubes = Enumerable.Repeat(surfaces, 20).ToList();
+                var unfolds = manycubes.Select(x => PlanarUnfolder.Unfold(x)).ToList();
+
+
+                var unfoldsurfaces = unfolds.SelectMany(x => x.UnfoldedSurfaceSet).ToList();
+
+            }
+        }
+
+
         public class PlanarUnfoldingMergeTests
         {
             

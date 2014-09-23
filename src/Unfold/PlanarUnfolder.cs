@@ -62,9 +62,9 @@ namespace Unfold
             /// <param name="unfoldedfaces">the unfolded IunfoldableFaces</param>
             public PlanarUnfolding(List<T> originalFaces, List<List<Surface>> finalSurfaces, List<FaceTransformMap> transforms, List<T> unfoldedfaces)
             {
-                StartingUnfoldableFaces = originalFaces;
-                Maps = transforms;
-                UnfoldedFaces = unfoldedfaces;
+                StartingUnfoldableFaces = originalFaces.ToList();
+                Maps = transforms.ToList();
+                UnfoldedFaces = unfoldedfaces.ToList();
                 StartingPoints = StartingUnfoldableFaces.ToDictionary(x => x.ID, x => Tesselation.MeshHelpers.SurfaceAsPolygonCenter(x.SurfaceEntities.First()));
                 UnfoldedSurfaceSet = finalSurfaces;
             }
@@ -485,15 +485,14 @@ namespace Unfold
                 if (overlapflag)
                 {
                     // this random code may be removed and tested - it only confues packing code at this point
-                    var r = new Random();
-                    var randomx = r.NextDouble();
+                    
                     // if any result was a surface then we overlapped we need to move the folded branch far away and pick a new
                     // branch to start the unfold from
 
                     // wrap up the translated geometry as a new facelike
                     // when this transformation occurs we need to save the coordinate system as well to the transformation map
                     var translatedGeoContainer = new T();
-                    translatedGeoContainer.SurfaceEntities = (child.UnfoldSurfaceSet.SurfaceEntities.Select(x => x.Translate((randomx * 10) + 5, 0, 0) as Surface).ToList());
+                    translatedGeoContainer.SurfaceEntities = (child.UnfoldSurfaceSet.SurfaceEntities.ToList());
                     translatedGeoContainer.OriginalEntity = translatedGeoContainer.SurfaceEntities;
 
 

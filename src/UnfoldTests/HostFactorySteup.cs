@@ -23,16 +23,17 @@ namespace UnfoldTests
             //directory, LibGdlls must be located with the test dll in the same directory.
 
             //libg 219 is for 2014 versions, libg220 is for 2015 host applications
-
             //string directory_name = @"C:\Program Files\Autodesk\Revit MEP 2014\";
-            //string directory_name = @"C:\Program Files\Autodesk\Revit 2015\";
+            string directory_name = @"C:\Program Files\Autodesk\Revit 2015\";
             //string directory_name = @"C:\Program Files\Autodesk\Vasari Beta 3\";
 
-            string directory_name = @"C:\Program Files\Autodesk\Revit 2014\";
+            //string directory_name = @"C:\Program Files\Autodesk\Revit 2014\";
             Console.WriteLine("Looking For ASM dlls in " + directory_name);
             
             HostFactory.Instance.PreloadAsmLibraries(directory_name);
+
             HostFactory.Instance.StartUp();
+            
         }
 
         [TearDown]
@@ -40,10 +41,12 @@ namespace UnfoldTests
         {
             Console.WriteLine("shutting down");
 
-            HostFactory.Instance.ShutDown();
-
+           HostFactory.Instance.ShutDown();
+            
             GC.Collect();
             GC.WaitForPendingFinalizers();
+
+            Console.WriteLine("Shutdown Finished");
         }
     }
 }
