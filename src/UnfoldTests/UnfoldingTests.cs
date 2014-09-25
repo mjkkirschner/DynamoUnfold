@@ -499,6 +499,25 @@ namespace UnfoldTests
                 var unfoldsurfaces = unfolds.SelectMany(x => x.UnfoldedSurfaceSet).ToList();
 
             }
+
+            [Test]
+            public void Unfold27CubesFromSurfaces()
+            {
+                // unfold cube
+                Solid testcube = UnfoldTestUtils.SetupCube();
+                List<Face> faces = testcube.Faces.ToList();
+                var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
+
+                List<List<Surface>> manycubes = Enumerable.Repeat(surfaces, 27).ToList();
+                var unfolds = manycubes.Select(x => PlanarUnfolder.Unfold(x)).ToList();
+
+
+                var unfoldsurfaces = unfolds.SelectMany(x => x.UnfoldedSurfaceSet).ToList();
+
+            }
+
+
+
         }
 
 
@@ -611,15 +630,18 @@ namespace UnfoldTests
             {
                 // unfold cube
                 Surface testloft = UnfoldTestUtils.SetupArcLoft();
+                Surface testloft2 = UnfoldTestUtils.SetupArcLoft();
                 var surfaces = new List<Surface>() { testloft };
-               
+                var surfaces2 = new List<Surface>() { testloft };
                 //handle tesselation here
                 var pointtuples = Tesselation.Tessellate(surfaces, -1, 512);
+                var pointtuples2 = Tesselation.Tessellate(surfaces, -1, 512);
                 //convert triangles to surfaces
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
+                List<Surface> trisurfaces2 = pointtuples2.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
 
                 var unfoldObject1 = PlanarUnfolder.Unfold(trisurfaces);
-                var unfoldObject2 = PlanarUnfolder.Unfold(trisurfaces);
+                var unfoldObject2 = PlanarUnfolder.Unfold(trisurfaces2);
 
                 var unfoldsurfaces = unfoldObject1.UnfoldedSurfaceSet.Concat(unfoldObject2.UnfoldedSurfaceSet).ToList();
 

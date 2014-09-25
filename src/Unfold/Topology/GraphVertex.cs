@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
@@ -85,7 +84,6 @@ namespace Unfold.Topology
             {
                 int hash = 17;
                 // Suitable nullity checks etc, of course :)
-                hash = hash * 23 + Face.GetHashCode();
                 hash = hash * 23 + Face.GetHashCode();
                 return hash;
             }

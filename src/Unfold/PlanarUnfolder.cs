@@ -62,6 +62,7 @@ namespace Unfold
             /// <param name="unfoldedfaces">the unfolded IunfoldableFaces</param>
             public PlanarUnfolding(List<T> originalFaces, List<List<Surface>> finalSurfaces, List<FaceTransformMap> transforms, List<T> unfoldedfaces)
             {
+                Console.WriteLine("generating new unfolding to return");
                 StartingUnfoldableFaces = originalFaces.ToList();
                 Maps = transforms.ToList();
                 UnfoldedFaces = unfoldedfaces.ToList();
@@ -444,7 +445,7 @@ namespace Unfold
                 // just check the initial faces against each other, these should only cotain single surfaces at this point
                 double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
                 //need to run this method on every surface contained in the UnfoldedSurfaceSet and collect them in a new list
-                List<Surface> rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.UnfoldSurfaceSet, parent.Face, edge.GeometryEdge) as List<Surface>;
+                List<Surface> rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.UnfoldSurfaceSet, parent.Face, edge.GeometryEdge);
 
 
 
@@ -496,13 +497,14 @@ namespace Unfold
                     translatedGeoContainer.OriginalEntity = translatedGeoContainer.SurfaceEntities;
 
 
-                    var movedUnfoldBranch = translatedGeoContainer;
-                    movedUnfoldBranch.IDS = child.UnfoldSurfaceSet.IDS;
-                    disconnectedSet.Add(movedUnfoldBranch);
+                   // var movedUnfoldBranch = translatedGeoContainer;
+                    translatedGeoContainer.IDS = child.UnfoldSurfaceSet.IDS;
+                    disconnectedSet.Add(translatedGeoContainer);
 
 
                     // put the child ids back into the new translated geo container
-                    translatedGeoContainer.IDS.AddRange(movedUnfoldBranch.IDS);
+                   
+                    // translatedGeoContainer.IDS.AddRange(movedUnfoldBranch.IDS); removing this line, seems cyclic...
                     translatedGeoContainer.IDS.Add(child.Face.ID);
                     //****
                     //****watch out this may be incorrect... might need multiple transform entries, one for each ID....
@@ -580,7 +582,7 @@ namespace Unfold
             // collect all surface lists
             var masterFacelikeSet = sortedtree.Select(x => x.UnfoldSurfaceSet).ToList();
             masterFacelikeSet.AddRange(disconnectedSet);
-            var rnd = new Random();
+            
             //align all surfaces down
             foreach (var facelike in masterFacelikeSet)
             {

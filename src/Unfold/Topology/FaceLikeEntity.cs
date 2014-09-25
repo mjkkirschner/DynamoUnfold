@@ -27,7 +27,7 @@ namespace Unfold.Topology
             set
             {
                 _surface = value;
-                EdgeLikeEntities = ExtractSurfaceEdges(value);
+                EdgeLikeEntities = ExtractSurfaceEdges(_surface);
             }
         }
         public List<EdgeLikeEntity> EdgeLikeEntities { get; set; }
@@ -37,9 +37,8 @@ namespace Unfold.Topology
 
         private List<EdgeLikeEntity> ExtractSurfaceEdges(List<Surface> surfaces)
         {
-            List<Curve> pericurves = null;
-         
-            pericurves = surfaces.SelectMany(x => x.PerimeterCurves()).ToList();
+           
+           var pericurves = surfaces.SelectMany(x => x.PerimeterCurves()).ToList();
             
            
             //wrap them
