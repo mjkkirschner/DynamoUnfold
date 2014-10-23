@@ -516,7 +516,47 @@ namespace UnfoldTests
 
             }
 
+            [Test]
+            public void Unfold1000CubesFromSurfaces()
+            {
+                // unfold cube
+                Solid testcube = UnfoldTestUtils.SetupCube();
+                List<Face> faces = testcube.Faces.ToList();
+                var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
 
+                List<List<Surface>> manycubes = Enumerable.Repeat(surfaces, 1000).ToList();
+                var unfolds = new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity>>();
+                for (int index = 0; index < manycubes.Count; index++)
+                {
+                    unfolds.Add(PlanarUnfolder.Unfold(manycubes[index]));
+                    Console.WriteLine(index);
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                }
+
+                var unfoldsurfaces = unfolds.SelectMany(x => x.UnfoldedSurfaceSet).ToList();
+
+            }
+            [Test]
+            public void Unfold1000CubesFromSurfacesNOGC()
+            {
+                // unfold cube
+                Solid testcube = UnfoldTestUtils.SetupCube();
+                List<Face> faces = testcube.Faces.ToList();
+                var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
+
+                List<List<Surface>> manycubes = Enumerable.Repeat(surfaces, 1000).ToList();
+                var unfolds = new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity>>();
+                for (int index = 0; index < manycubes.Count; index++)
+                {
+                    unfolds.Add(PlanarUnfolder.Unfold(manycubes[index]));
+                    Console.WriteLine(index);
+                  
+                }
+
+                var unfoldsurfaces = unfolds.SelectMany(x => x.UnfoldedSurfaceSet).ToList();
+
+            }
 
         }
 

@@ -33,26 +33,50 @@ namespace Unfold.Topology
                     ptlist.Add(curve.StartPoint);
                     ptlist.Add(curve.EndPoint);
                 }
+                var centroid = Vector.ByCoordinates(0, 0, 0);
+                foreach (var pt in ptlist)
+                {
+                    centroid = pt.AsVector().Add(centroid);
+                }
 
-                var polygon = Polygon.ByPoints(ptlist);
-
-                return surface.ClosestPointTo(polygon.Center()); 
+                centroid = centroid.Scale(1.0 / ptlist.Count);
+                return surface.ClosestPointTo(centroid.AsPoint());
             
             }
            
             public static Point SurfaceAsPolygonCenter(List<Surface> surfaces)
             {
-                var surface = PolySurface.ByJoinedSurfaces(surfaces);
+               
                 List<Point> ptlist = new List<Point>();
-                foreach (var curve in surface.PerimeterCurves())
+                foreach (var surface in surfaces)
                 {
-                    ptlist.Add(curve.StartPoint);
-                    ptlist.Add(curve.EndPoint);
+                    foreach (var curve in surface.PerimeterCurves())
+                    {
+                        ptlist.Add(curve.StartPoint);
+                        ptlist.Add(curve.EndPoint);
+                    }
                 }
+                var centroid = Vector.ByCoordinates(0, 0, 0);
+               foreach(var pt in ptlist)
+               {
+                   centroid = pt.AsVector().Add(centroid);
+               }
 
-                var polygon = Polygon.ByPoints(ptlist);
+               centroid = centroid.Scale(1.0 / ptlist.Count);
+               var points =  surfaces.Select(x=>x.ClosestPointTo(centroid.AsPoint())).ToList();
 
-                return surface.ClosestPointTo(polygon.Center());
+               double mindist = 100000000000;
+               Surface closeSurf = null;
+               for (int i = 0; i < surfaces.Count; i++)
+               {
+                   var distance = Vector.ByTwoPoints(points[i],centroid.AsPoint()).Length;
+                   if (distance < mindist)
+                   {
+                       closeSurf = surfaces[i];
+                       mindist = distance;
+                   }
+               }
+               return closeSurf.ClosestPointTo(centroid.AsPoint());
 
             }
 

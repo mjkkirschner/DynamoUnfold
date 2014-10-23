@@ -426,6 +426,8 @@ namespace Unfold
 
             while (sortedtree.Count > 1)
             {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
                 // if the tree only has nodes with no parents
                 // then all branches have been folded into these
                 //nodes and we should just return

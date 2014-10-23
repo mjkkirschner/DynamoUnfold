@@ -29,6 +29,10 @@ namespace UnfoldTests
         public class InitialGraphTests
         {
            
+
+
+
+
             [Test]
             public void GraphCanBeGeneratedFromCubeFaces()
             {
@@ -69,7 +73,23 @@ namespace UnfoldTests
 
                 UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
             }
+            [Test]
+            public void GraphCanBeCreatedFrom1000CubeFaces()
+            {
+
+                foreach (var i in Enumerable.Range(0, 1000))
+                {
+                    Console.WriteLine(i);
+                    GraphCanBeGeneratedFromCubeFaces();
+
+                }
+
+            }
+
+
         }
+
+
 
         public class BFSTreeTests
         {
@@ -81,7 +101,7 @@ namespace UnfoldTests
                 List<Face> faces = testcube.Faces.ToList();
 
                 var graph =ModelTopology.GenerateTopologyFromFaces(faces);
-
+                GC.Collect();
                 List<Object> face_objs = faces.Select(x => x as Object).ToList();
 
                 UnfoldTestUtils.GraphHasVertForEachFace(graph, face_objs);
@@ -90,7 +110,7 @@ namespace UnfoldTests
 
                 var nodereturn =ModelGraph.BFS<EdgeLikeEntity,FaceLikeEntity>(graph);
                 object tree = nodereturn["BFS finished"];
-
+                GC.Collect();
                 var casttree = tree as List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>>;
 
                 UnfoldTestUtils.GraphHasVertForEachFace(casttree, face_objs);
@@ -100,8 +120,57 @@ namespace UnfoldTests
                 var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity,FaceLikeEntity>.CycleDetect(casttree);
 
                 UnfoldTestUtils.IsAcylic<EdgeLikeEntity,FaceLikeEntity>(sccs, casttree);
+                //testcube.Dispose();
+            }
+
+            [Test]
+            public void GenBFSTreeFrom1000CubeFaces()
+            {
+
+                foreach (var i in Enumerable.Range(0, 1000))
+                {
+                    Console.WriteLine(i);
+                    GenBFSTreeFromCubeFaces();
+                  
+                }
 
             }
+
+
+            [Test]
+            public void GenBFSTreeFromArcLoft()
+            {
+                Surface testsweep = UnfoldTestUtils.SetupArcLoft();
+
+                var surfaces = new List<Surface>() { testsweep };
+                //handle tesselation here
+                var pointtuples = Tesselation.Tessellate(surfaces, -1, 512);
+                //convert triangles to surfaces
+                List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
+
+
+                var graph = ModelTopology.GenerateTopologyFromSurfaces(trisurfaces);
+
+                List<Object> face_objs = trisurfaces.Select(x => x as Object).ToList();
+
+                UnfoldTestUtils.GraphHasVertForEachFace(graph, face_objs);
+
+                var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
+                object tree = nodereturn["BFS finished"];
+
+                var casttree = tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>;
+
+                UnfoldTestUtils.GraphHasVertForEachFace(casttree, face_objs);
+                UnfoldTestUtils.AssertAllFinishingTimesSet(graph);
+
+                var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(casttree);
+
+                UnfoldTestUtils.IsAcylic<EdgeLikeEntity, FaceLikeEntity>(sccs, casttree);
+
+            }
+
+
+
         }
     }
 }

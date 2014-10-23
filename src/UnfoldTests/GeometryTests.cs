@@ -29,5 +29,33 @@ namespace UnfoldTests
 
             Console.WriteLine(surf.Area);
         }
+
+
+        [Test]
+        public void Creating10000CubesExtractFaces()
+        {
+            foreach (var i in Enumerable.Range(0, 10000))
+            {
+                Console.WriteLine(i);
+                Solid testcube = UnfoldTestUtils.SetupCube();
+                //testcube.Dispose();
+                //List<Face> faces = testcube.Faces.ToList();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+        }
+
+
+        [Test]
+        public void Creating10000Cubes()
+        {
+            foreach (var i in Enumerable.Range(0, 10000))
+            {
+                Console.WriteLine(i);
+                Solid testcube = UnfoldTestUtils.SetupCube();
+               
+            }
+        }
+
     }
 }
