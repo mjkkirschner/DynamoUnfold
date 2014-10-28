@@ -16,7 +16,7 @@ namespace Unfold.Topology
         /// <summary>
         /// a graph edge_ stores head and tail and the  wrapped geometry edgeLikeEntity that this graph edge represents
         /// </summary>
-        public class GraphEdge<K, T>
+        public class GraphEdge<K, T> : IDisposable
             where K : IUnfoldableEdge
             where T : IUnfoldablePlanarFace<K>
         {
@@ -31,6 +31,28 @@ namespace Unfold.Topology
                 Head = head;
                 GeometryEdge = edge;
             }
+
+            public void Dispose()
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    ((IDisposable)Tail).Dispose();
+                    ((IDisposable)Head).Dispose();
+                    ((IDisposable)GeometryEdge).Dispose();
+
+
+                }
+
+            }
+
+
 
         }
 

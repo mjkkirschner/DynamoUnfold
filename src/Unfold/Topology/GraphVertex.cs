@@ -15,7 +15,7 @@ namespace Unfold.Topology
     /// graph vertex, represents a face, stores list of outoging edges
     /// parent,explored,finishtime, and fold edge will be set during BFS or another traversal method
     /// </summary>
-    public class GraphVertex<K, T>
+    public class GraphVertex<K, T> : IDisposable
         where T : IUnfoldablePlanarFace<K>
         where K : IUnfoldableEdge
     {
@@ -88,6 +88,45 @@ namespace Unfold.Topology
                 return hash;
             }
         }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+       // public T UnfoldSurfaceSet { get; set; }
+        //public T Face { get; set; }
+        //public HashSet<GraphEdge<K, T>> GraphEdges { get; set; }
+        //public GraphVertex<K, T> Parent { get; set; }
+        //public Boolean Explored { get; set; }
+        //public int FinishTime { get; set; }
+        //public HashSet<GraphEdge<K, T>> TreeEdges { get; set; }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+              
+
+                foreach (IDisposable item in TreeEdges)
+                {
+                    item.Dispose();
+                }
+
+                foreach (IDisposable item in GraphEdges)
+                {
+                    item.Dispose();
+                }
+
+                ((IDisposable)Parent).Dispose();
+
+                ((IDisposable)Face).Dispose();
+                ((IDisposable)UnfoldSurfaceSet).Dispose();
+
+
+            }
+
+        }
+
 
     }
 }
