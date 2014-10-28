@@ -15,7 +15,7 @@ namespace Unfold.Topology
     /// This is a wrapper type for face like entities so that unfolding methods can operate both on faces/edges or surfaces/adjacent-curves
     /// There are overloads for building this class from faces or surfaces
     /// </summary>
-    public class FaceLikeEntity : IUnfoldablePlanarFace<EdgeLikeEntity>
+    public class FaceLikeEntity : IUnfoldablePlanarFace<EdgeLikeEntity>, IDisposable
     {
 
         public Object OriginalEntity { get; set; }
@@ -38,12 +38,8 @@ namespace Unfold.Topology
         private List<EdgeLikeEntity> ExtractSurfaceEdges(List<Surface> surfaces)
         {
            
-           var pericurves = surfaces.SelectMany(x => x.PerimeterCurves()).ToList();
-            
-           
-            //wrap them
-            List<EdgeLikeEntity> ees = pericurves.Select(x => new EdgeLikeEntity(x)).ToList();
-            return ees;
+          return surfaces.SelectMany(x => x.PerimeterCurves()).Select(y=> new EdgeLikeEntity(y)).ToList();
+          
         }
 
 
@@ -80,7 +76,31 @@ namespace Unfold.Topology
             IDS = new List<int>();
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing){
+                ((IDisposable)OriginalEntity).Dispose();
+
+                foreach (IDisposable item in SurfaceEntities)
+                {
+                    item.Dispose();
+                }
+
+                foreach (IDisposable item in EdgeLikeEntities)
+                {
+                    item.Dispose();
+                }
+                
+        }
 
 
+        }
+       
     }
 }

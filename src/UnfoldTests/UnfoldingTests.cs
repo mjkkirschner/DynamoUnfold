@@ -273,7 +273,7 @@ namespace UnfoldTests
                 // generate labels
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
                new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
-
+                Console.WriteLine("labels generated");
                UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
 
                 // next check the positions of the translated labels,

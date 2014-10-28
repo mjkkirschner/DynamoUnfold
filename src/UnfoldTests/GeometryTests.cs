@@ -49,10 +49,12 @@ namespace UnfoldTests
         [Test]
         public void Creating10000Cubes()
         {
+            List<Solid> retainedlistofcubes = new List<Solid>();
             foreach (var i in Enumerable.Range(0, 10000))
             {
                 Console.WriteLine(i);
                 Solid testcube = UnfoldTestUtils.SetupCube();
+                //retainedlistofcubes.Add(testcube);
                
             }
         }
