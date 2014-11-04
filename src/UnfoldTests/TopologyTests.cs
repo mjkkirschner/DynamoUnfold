@@ -28,7 +28,7 @@ namespace UnfoldTests
     {
         public class InitialGraphTests
         {
-           
+
 
 
 
@@ -36,22 +36,67 @@ namespace UnfoldTests
             [Test]
             public void GraphCanBeGeneratedFromCubeFaces()
             {
-                Solid testcube = UnfoldTestUtils.SetupCube();
-                List<Face> faces = testcube.Faces.ToList();
+                using (Solid testcube = UnfoldTestUtils.SetupCube())
+                {
+                    List<Face> faces;
 
-                Assert.AreEqual(faces.Count, 6);
+                    try
+                    {
+                        faces = testcube.Faces.ToList();
+                    }
 
-                var graph =ModelTopology.GenerateTopologyFromFaces(faces);
+                    catch
+                    {
+                        throw new Exception("extracting faces from cube, is this creating new cubes or referencing faces");
+                    }
 
-                List<Object> face_objs = faces.Select(x => x as Object).ToList();
+                    Assert.AreEqual(faces.Count, 6);
 
-                UnfoldTestUtils.GraphHasVertForEachFace(graph, face_objs);
+                    List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>> graph;
 
-                UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
+                    try
+                    {
 
-                var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity,FaceLikeEntity>.CycleDetect(graph);
+                         graph = ModelTopology.GenerateTopologyFromFaces(faces);
+                    }
 
-                UnfoldTestUtils.IsOneStronglyConnectedGraph(sccs);
+                    catch
+                    {
+                        throw new Exception("generating graph");
+                    }
+
+                    //List<Object> face_objs = faces.Select(x => x as Object).ToList();
+
+                    //UnfoldTestUtils.GraphHasVertForEachFace(graph, face_objs);
+
+                    //UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
+
+                    //var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(graph);
+
+                    //UnfoldTestUtils.IsOneStronglyConnectedGraph(sccs);
+
+                    //manual dispose of lists of Idisposeable, should implement graph type
+                    try
+                    {
+                        foreach (IDisposable item in graph)
+                        {
+                            Console.WriteLine("disposing a graphnode");
+                            item.Dispose();
+                        }
+                    }
+
+                    catch
+                    {
+                        throw new Exception("somewhere in disposal of graph");
+                    }
+
+                    //foreach (IDisposable item in faces)
+                    //{
+                    //    Console.WriteLine("disposing a face of the cube");
+                    //    item.Dispose();
+                    //}
+
+                }
             }
 
 
@@ -65,7 +110,7 @@ namespace UnfoldTests
 
                 Assert.AreEqual(surfaces.Count, 6);
 
-                var graph =ModelTopology.GenerateTopologyFromSurfaces(surfaces);
+                var graph = ModelTopology.GenerateTopologyFromSurfaces(surfaces);
 
                 List<Object> face_objs = surfaces.Select(x => x as Object).ToList();
 
@@ -74,10 +119,10 @@ namespace UnfoldTests
                 UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
             }
             [Test]
-            public void GraphCanBeCreatedFrom1000CubeFaces()
+            public void GraphCanBeCreatedFrom10000CubeFaces()
             {
 
-                foreach (var i in Enumerable.Range(0, 1000))
+                foreach (var i in Enumerable.Range(0, 10000))
                 {
                     Console.WriteLine(i);
                     GraphCanBeGeneratedFromCubeFaces();
@@ -100,7 +145,7 @@ namespace UnfoldTests
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
 
-                var graph =ModelTopology.GenerateTopologyFromFaces(faces);
+                var graph = ModelTopology.GenerateTopologyFromFaces(faces);
                 GC.Collect();
                 List<Object> face_objs = faces.Select(x => x as Object).ToList();
 
@@ -108,18 +153,18 @@ namespace UnfoldTests
 
                 UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
 
-                var nodereturn =ModelGraph.BFS<EdgeLikeEntity,FaceLikeEntity>(graph);
+                var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
                 object tree = nodereturn["BFS finished"];
                 GC.Collect();
-                var casttree = tree as List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>>;
+                var casttree = tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>;
 
                 UnfoldTestUtils.GraphHasVertForEachFace(casttree, face_objs);
                 UnfoldTestUtils.GraphHasCorrectNumberOfEdges(5, casttree);
                 UnfoldTestUtils.AssertAllFinishingTimesSet(graph);
 
-                var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity,FaceLikeEntity>.CycleDetect(casttree);
+                var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(casttree);
 
-                UnfoldTestUtils.IsAcylic<EdgeLikeEntity,FaceLikeEntity>(sccs, casttree);
+                UnfoldTestUtils.IsAcylic<EdgeLikeEntity, FaceLikeEntity>(sccs, casttree);
                 //testcube.Dispose();
             }
 
@@ -131,7 +176,7 @@ namespace UnfoldTests
                 {
                     Console.WriteLine(i);
                     GenBFSTreeFromCubeFaces();
-                  
+
                 }
 
             }

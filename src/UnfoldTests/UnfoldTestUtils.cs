@@ -114,8 +114,20 @@ namespace UnfoldTests
 
         public static Solid SetupCube()
         {
-            var rect = Rectangle.ByWidthHeight(1, 1);
-            return rect.ExtrudeAsSolid(1);
+            PolyCurve rect;
+            try
+            {
+                 rect = Rectangle.ByWidthHeight();
+            }
+            catch
+            {
+                throw new Exception("creating a rect");
+            }
+
+            var cube = rect.ExtrudeAsSolid(1);
+            rect.Dispose();
+            return cube;
+        
         }
 
         public static Solid SetupLargeCone()

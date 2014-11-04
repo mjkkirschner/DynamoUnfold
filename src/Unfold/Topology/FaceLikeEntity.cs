@@ -37,8 +37,13 @@ namespace Unfold.Topology
 
         private List<EdgeLikeEntity> ExtractSurfaceEdges(List<Surface> surfaces)
         {
-           
-          return surfaces.SelectMany(x => x.PerimeterCurves()).Select(y=> new EdgeLikeEntity(y)).ToList();
+
+            var pericurves = surfaces.SelectMany(x => x.PerimeterCurves()).ToList();
+            var ees = pericurves.Select(y => new EdgeLikeEntity(y)).ToList();
+
+            
+            return ees;
+         // return surfaces.SelectMany(x => x.PerimeterCurves()).Select(y=> new EdgeLikeEntity(y)).ToList();
           
         }
 
@@ -62,10 +67,11 @@ namespace Unfold.Topology
             // org entity is the face
             OriginalEntity = face;
             // grab edges
-            List<Edge> orgedges = face.Edges.ToList();
+           // List<Edge> orgedges = face.Edges.ToList();
             //wrap edges
-            EdgeLikeEntities = orgedges.ConvertAll(x => new EdgeLikeEntity(x));
+           // EdgeLikeEntities = orgedges.ConvertAll(x => new EdgeLikeEntity(x));
             // new blank ids list
+
             IDS = new List<int>();
 
 
@@ -85,15 +91,18 @@ namespace Unfold.Topology
         protected virtual void Dispose(bool disposing)
         {
             if (disposing){
+                Console.WriteLine("disposing orginal entity");
                 ((IDisposable)OriginalEntity).Dispose();
 
                 foreach (IDisposable item in SurfaceEntities)
                 {
+                    Console.WriteLine("disposing surface entity");
                     item.Dispose();
                 }
 
                 foreach (IDisposable item in EdgeLikeEntities)
                 {
+                    Console.WriteLine("disposing edgelike contained in facelike");
                     item.Dispose();
                 }
                 

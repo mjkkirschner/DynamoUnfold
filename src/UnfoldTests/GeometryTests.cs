@@ -4,11 +4,44 @@ using System.Linq;
 using System.Text;
 using Autodesk.DesignScript.Geometry;
 using NUnit.Framework;
+using Unfold.Topology;
 
 namespace UnfoldTests
 {
     public class GeometryTests
     {
+        [Test]
+        public void CanWrapFacesFromCube()
+        {
+
+            using (Solid testcube = UnfoldTestUtils.SetupCube())
+            {
+
+
+                var faces = testcube.Faces.ToList();
+
+                var wrappedFaces = faces.Select(x => new FaceLikeEntity(x)).ToList();
+                foreach (IDisposable item in wrappedFaces)
+                {
+                    Console.WriteLine("disposing a face of the cube");
+                   item.Dispose();
+                }
+
+
+            }
+        }
+
+        [Test]
+        public void CanWrapFacesFrom10000Cubes()
+        {
+            foreach (var i in Enumerable.Range(0, 10000))
+            {
+                Console.WriteLine(i);
+                CanWrapFacesFromCube();
+
+            }
+        }
+
         [Test]
         public void TestBasicGeometry()
         {
@@ -55,7 +88,7 @@ namespace UnfoldTests
                 Console.WriteLine(i);
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 //retainedlistofcubes.Add(testcube);
-               
+
             }
         }
 

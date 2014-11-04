@@ -83,13 +83,17 @@ namespace Unfold.Topology
         }
 
 
-              protected virtual void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
-            if (disposing){
+            if (disposing)
+            {
                 ((IDisposable)Curve).Dispose();
-                  ((IDisposable)RealEdge).Dispose();
-
-                
+                if (RealEdge != null)
+                {
+                    ((IDisposable)RealEdge).Dispose();
+                }
+                ((IDisposable)Start).Dispose();
+                ((IDisposable)End).Dispose();
 
             }
 

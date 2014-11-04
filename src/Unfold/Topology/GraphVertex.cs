@@ -94,13 +94,7 @@ namespace Unfold.Topology
             GC.SuppressFinalize(this);
         }
 
-       // public T UnfoldSurfaceSet { get; set; }
-        //public T Face { get; set; }
-        //public HashSet<GraphEdge<K, T>> GraphEdges { get; set; }
-        //public GraphVertex<K, T> Parent { get; set; }
-        //public Boolean Explored { get; set; }
-        //public int FinishTime { get; set; }
-        //public HashSet<GraphEdge<K, T>> TreeEdges { get; set; }
+       
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -109,18 +103,22 @@ namespace Unfold.Topology
 
                 foreach (IDisposable item in TreeEdges)
                 {
+                    Console.WriteLine("disposing a graphedge");
                     item.Dispose();
                 }
 
                 foreach (IDisposable item in GraphEdges)
                 {
+                    Console.WriteLine("disposing a graphedge");
                     item.Dispose();
                 }
-
-                ((IDisposable)Parent).Dispose();
-
-                ((IDisposable)Face).Dispose();
+                //Console.WriteLine("disposing a parent graphnode");
+                //((IDisposable)Parent).Dispose();
+                Console.WriteLine("disposing a unfoldableface");
                 ((IDisposable)UnfoldSurfaceSet).Dispose();
+                Console.WriteLine("disposing a face");
+                ((IDisposable)Face).Dispose();
+              
 
 
             }
