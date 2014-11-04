@@ -30,40 +30,18 @@ namespace UnfoldTests
         {
 
 
-
-
-
             [Test]
             public void GraphCanBeGeneratedFromCubeFaces()
             {
                 using (Solid testcube = UnfoldTestUtils.SetupCube())
                 {
-                    List<Face> faces;
-
-                    try
-                    {
-                        faces = testcube.Faces.ToList();
-                    }
-
-                    catch
-                    {
-                        throw new Exception("extracting faces from cube, is this creating new cubes or referencing faces");
-                    }
-
+                    var faces = testcube.Faces.ToList();
                     Assert.AreEqual(faces.Count, 6);
+                    List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>> graph;
+                    graph = ModelTopology.GenerateTopologyFromFaces(faces);
 
-                    List<GraphVertex<EdgeLikeEntity,FaceLikeEntity>> graph;
 
-                    try
-                    {
 
-                         graph = ModelTopology.GenerateTopologyFromFaces(faces);
-                    }
-
-                    catch
-                    {
-                        throw new Exception("generating graph");
-                    }
 
                     //List<Object> face_objs = faces.Select(x => x as Object).ToList();
 

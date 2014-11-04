@@ -17,13 +17,12 @@ namespace UnfoldTests
             using (Solid testcube = UnfoldTestUtils.SetupCube())
             {
 
-
                 var faces = testcube.Faces.ToList();
 
                 var wrappedFaces = faces.Select(x => new FaceLikeEntity(x)).ToList();
                 foreach (IDisposable item in wrappedFaces)
                 {
-                    Console.WriteLine("disposing a face of the cube");
+                    Console.WriteLine("disposing a wrapped face");
                    item.Dispose();
                 }
 

@@ -517,7 +517,7 @@ namespace UnfoldTests
             }
 
             [Test]
-            public void Unfold1000CubesFromSurfaces()
+            public void Unfold1000CubesFromSurfacesWaitingForGC()
             {
                 // unfold cube
                 Solid testcube = UnfoldTestUtils.SetupCube();

@@ -103,20 +103,26 @@ namespace Unfold.Topology
 
                 foreach (IDisposable item in TreeEdges)
                 {
+#if DEBUG
                     Console.WriteLine("disposing a graphedge");
+#endif
                     item.Dispose();
                 }
 
                 foreach (IDisposable item in GraphEdges)
                 {
+                    #if DEBUG
                     Console.WriteLine("disposing a graphedge");
+#endif
                     item.Dispose();
                 }
-                //Console.WriteLine("disposing a parent graphnode");
-                //((IDisposable)Parent).Dispose();
+               #if DEBUG
                 Console.WriteLine("disposing a unfoldableface");
+                #endif
                 ((IDisposable)UnfoldSurfaceSet).Dispose();
+                #if DEBUG
                 Console.WriteLine("disposing a face");
+#endif
                 ((IDisposable)Face).Dispose();
               
 

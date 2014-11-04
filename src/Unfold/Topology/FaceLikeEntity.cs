@@ -91,18 +91,24 @@ namespace Unfold.Topology
         protected virtual void Dispose(bool disposing)
         {
             if (disposing){
+#if DEBUG
                 Console.WriteLine("disposing orginal entity");
+#endif
                 ((IDisposable)OriginalEntity).Dispose();
 
                 foreach (IDisposable item in SurfaceEntities)
                 {
+                    #if DEBUG
                     Console.WriteLine("disposing surface entity");
+#endif
                     item.Dispose();
                 }
 
                 foreach (IDisposable item in EdgeLikeEntities)
                 {
+                    #if DEBUG
                     Console.WriteLine("disposing edgelike contained in facelike");
+#endif
                     item.Dispose();
                 }
                 

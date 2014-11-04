@@ -21,17 +21,8 @@ namespace Unfold.Topology
 
             List<FaceLikeEntity> wrappedFaces;
 
-            try
-            {
                 wrappedFaces = faces.Select(x => new FaceLikeEntity(x)).ToList();
-            }
-
-            catch
-            {
-                throw new Exception("wrapping up faces failed");
-            }
-        
-
+            
             return GenerateTopology<EdgeLikeEntity, FaceLikeEntity>(wrappedFaces);
         }
 
@@ -59,7 +50,7 @@ namespace Unfold.Topology
             // assign some ids to the faces that will operate on, we use the ids to create text and perform other mappings
            
             //TODO remove this temporarily trying to get tests to pass
-            //AssignIDs<K, T>(facelikes);
+            AssignIDs<K, T>(facelikes);
             
             Dictionary<K, List<T>> edgeDict = new Dictionary<K, List<T>>(new Unfold.Interfaces.SpatialEqualityComparer<K>());
             foreach (T facelike in facelikes)
@@ -85,15 +76,7 @@ namespace Unfold.Topology
             }
             
             var graph = ModelGraph.GenGraph(facelikes, edgeDict);
-            // calling dispose on dictionary objects
-            
-            //dispose dict
-            //Console.WriteLine("disposing Dictionary");
-            //foreach (KeyValuePair<string, string> entry in MyDic)
-            //{
-                // do something with entry.Value or entry.Key
-            //}
-
+          
             return graph;
         }
 

@@ -43,11 +43,9 @@ namespace Unfold.Topology
             {
                 if (disposing)
                 {
-                    //Console.WriteLine("disposing tail graphnode");
-                    //((IDisposable)Tail).Dispose();
-                    //Console.WriteLine("disposing head graphnode");
-                    //((IDisposable)Head).Dispose();
+# if DEBUG
                     Console.WriteLine("disposing a geo edge represented by graphedge");
+                    #endif
                     ((IDisposable)GeometryEdge).Dispose();
 
 
