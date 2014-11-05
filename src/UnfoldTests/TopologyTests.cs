@@ -40,40 +40,25 @@ namespace UnfoldTests
                     List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>> graph;
                     graph = ModelTopology.GenerateTopologyFromFaces(faces);
 
+                    List<Object> face_objs = faces.Select(x => x as Object).ToList();
 
+                    UnfoldTestUtils.GraphHasVertForEachFace(graph, face_objs);
 
+                    UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
 
-                    //List<Object> face_objs = faces.Select(x => x as Object).ToList();
+                    var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(graph);
 
-                    //UnfoldTestUtils.GraphHasVertForEachFace(graph, face_objs);
-
-                    //UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
-
-                    //var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(graph);
-
-                    //UnfoldTestUtils.IsOneStronglyConnectedGraph(sccs);
+                    UnfoldTestUtils.IsOneStronglyConnectedGraph(sccs);
 
                     //manual dispose of lists of Idisposeable, should implement graph type
-                    try
-                    {
+                 
                         foreach (IDisposable item in graph)
                         {
                             Console.WriteLine("disposing a graphnode");
                             item.Dispose();
                         }
-                    }
-
-                    catch
-                    {
-                        throw new Exception("somewhere in disposal of graph");
-                    }
-
-                    //foreach (IDisposable item in faces)
-                    //{
-                    //    Console.WriteLine("disposing a face of the cube");
-                    //    item.Dispose();
-                    //}
-
+                   
+                   
                 }
             }
 
@@ -82,19 +67,38 @@ namespace UnfoldTests
             public void GraphCanBeGeneratedFromCubeSurfaces()
             {
 
+                using (Solid testcube = UnfoldTestUtils.SetupCube())
+                {
+                    var faces = testcube.Faces;
+                    var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
 
-                Solid testcube = UnfoldTestUtils.SetupCube();
-                List<Surface> surfaces = testcube.Faces.Select(x => x.SurfaceGeometry()).ToList();
+                    Assert.AreEqual(surfaces.Count, 6);
 
-                Assert.AreEqual(surfaces.Count, 6);
+                    var graph = ModelTopology.GenerateTopologyFromSurfaces(surfaces);
 
-                var graph = ModelTopology.GenerateTopologyFromSurfaces(surfaces);
+                    List<Object> face_objs = surfaces.Select(x => x as Object).ToList();
 
-                List<Object> face_objs = surfaces.Select(x => x as Object).ToList();
+                    UnfoldTestUtils.GraphHasVertForEachFace(graph, face_objs);
 
-                UnfoldTestUtils.GraphHasVertForEachFace(graph, face_objs);
+                    UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
 
-                UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
+                    var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(graph);
+
+                    UnfoldTestUtils.IsOneStronglyConnectedGraph(sccs);
+
+                    foreach (IDisposable item in graph)
+                    {
+                        Console.WriteLine("disposing a graphnode");
+                        item.Dispose();
+                    }
+
+
+                    foreach (IDisposable item in faces)
+                    {
+                        Console.WriteLine("disposing a face");
+                        item.Dispose();
+                    }
+                }
             }
             [Test]
             public void GraphCanBeCreatedFrom10000CubeFaces()
@@ -108,7 +112,18 @@ namespace UnfoldTests
                 }
 
             }
+            [Test]
+            public void GraphCanBeCreatedFrom10000CubeSurfaces()
+            {
 
+                foreach (var i in Enumerable.Range(0, 10000))
+                {
+                    Console.WriteLine(i);
+                    GraphCanBeGeneratedFromCubeSurfaces();
+
+                }
+
+            }
 
         }
 

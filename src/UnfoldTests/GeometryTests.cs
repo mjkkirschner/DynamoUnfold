@@ -23,12 +23,37 @@ namespace UnfoldTests
                 foreach (IDisposable item in wrappedFaces)
                 {
                     Console.WriteLine("disposing a wrapped face");
-                   item.Dispose();
+                    item.Dispose();
                 }
 
 
             }
         }
+
+        [Test]
+        public void CanWrapSurfacesFromCube()
+        {
+
+            Solid testcube = UnfoldTestUtils.SetupCube();
+            var faces = testcube.Faces.ToList();
+            var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
+            testcube.Dispose();
+            var wrappedFaces = surfaces.Select(x => new FaceLikeEntity(x)).ToList();
+            foreach (IDisposable item in wrappedFaces)
+            {
+                Console.WriteLine("disposing a wrapped face");
+                item.Dispose();
+            }
+            foreach (IDisposable item in faces)
+            {
+                Console.WriteLine("disposing a face");
+                item.Dispose();
+            }
+
+
+        }
+
+
 
         [Test]
         public void CanWrapFacesFrom10000Cubes()
@@ -37,6 +62,17 @@ namespace UnfoldTests
             {
                 Console.WriteLine(i);
                 CanWrapFacesFromCube();
+
+            }
+        }
+
+        [Test]
+        public void CanWrapSurfacesFrom10000Cubes()
+        {
+            foreach (var i in Enumerable.Range(0, 10000))
+            {
+                Console.WriteLine(i);
+                CanWrapSurfacesFromCube();
 
             }
         }
