@@ -599,7 +599,7 @@ namespace Unfold
             masterFacelikeSet.AddRange(disconnectedSet);
             
             //align all surfaces down
-            foreach (var facelike in masterFacelikeSet)
+          /*  foreach (var facelike in masterFacelikeSet)
             {
                 var surfaceToAlignDown = facelike.SurfaceEntities;
 
@@ -615,7 +615,7 @@ namespace Unfold
                     Point.ByCoordinates(somePointOnSurface.X, somePointOnSurface.Y, 0),
                     Vector.XAxis(), Vector.YAxis()))) as Surface).ToList();
                 
-                foreach (IDisposable item in facelike.SurfaceEntities)
+                foreach (IDisposable item in surfaceToAlignDown)
                 {
                     item.Dispose();
                 }
@@ -627,7 +627,7 @@ namespace Unfold
                         facelike.SurfaceEntities.First().ContextCoordinateSystem, facelike.IDS));
 
             }
-
+            */
             // merge the main trunk and the disconnected sets
             var maintree = sortedtree.Select(x => x.UnfoldSurfaceSet.SurfaceEntities).ToList();
             maintree.AddRange(disconnectedSet.Select(x => x.SurfaceEntities).ToList());
