@@ -471,8 +471,7 @@ namespace Unfold
                 {
                     foreach (var surf2 in rotatedFace)
                     {
-                       
-                            var resultGeo = surf1.Intersect(surf2);
+                            var resultGeo = surf1.SafeIntersect(surf2);
                             if (resultGeo.OfType<Surface>().Any())
                             {
                                 overlapflag = true;
@@ -520,8 +519,12 @@ namespace Unfold
 
                     disconnectedSet.Add(child.UnfoldSurfaceSet);
                     child.UnfoldSurfaceSet.IDS.Add(child.Face.ID);
-                    //transforms.Add(new FaceTransformMap(child.UnfoldSurfaceSet.SurfaceEntities.First().ContextCoordinateSystem, child.UnfoldSurfaceSet.IDS));
-
+                    transforms.Add(new FaceTransformMap(child.UnfoldSurfaceSet.SurfaceEntities.First().ContextCoordinateSystem, child.UnfoldSurfaceSet.IDS));
+                    //clean up the rotated faces we didnt use
+                    foreach (IDisposable item in rotatedFace)
+                    {
+                        item.Dispose();
+                    }
 
                 }
 
@@ -577,8 +580,8 @@ namespace Unfold
                     currentIDsToStoreTransforms.Add(child.Face.ID);
                     currentIDsToStoreTransforms.AddRange(rotatedFaceIDs);
                     //////////************* again, this may be incorrect, not sure that they all share the same coord system anylonger...
-                   // transforms.Add(new FaceTransformMap(
-                   // rotatedFace.First().ContextCoordinateSystem, currentIDsToStoreTransforms));
+                    transforms.Add(new FaceTransformMap(
+                        rotatedFace.First().ContextCoordinateSystem, currentIDsToStoreTransforms));
 
 
                 }
@@ -607,10 +610,17 @@ namespace Unfold
                 var startCoordSystem = CoordinateSystem.ByPlane(facePlane);
 
                 // transform surface to horizontal plane at x,y,0 of org surface
-                facelike.SurfaceEntities = surfaceToAlignDown.Select(x => x.Transform(startCoordSystem,
+                var tempSurfaces = surfaceToAlignDown.Select(x => x.Transform(startCoordSystem,
                     CoordinateSystem.ByPlane(Plane.ByOriginXAxisYAxis(
                     Point.ByCoordinates(somePointOnSurface.X, somePointOnSurface.Y, 0),
                     Vector.XAxis(), Vector.YAxis()))) as Surface).ToList();
+                
+                foreach (IDisposable item in facelike.SurfaceEntities)
+                {
+                    item.Dispose();
+                }
+                facelike.SurfaceEntities = tempSurfaces;
+
 
                 // save transformation for each set, this should have all the ids present
                 transforms.Add(new FaceTransformMap(
