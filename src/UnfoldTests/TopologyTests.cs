@@ -135,30 +135,49 @@ namespace UnfoldTests
             public void GenBFSTreeFromCubeFaces()
             {
 
-                Solid testcube = UnfoldTestUtils.SetupCube();
-                List<Face> faces = testcube.Faces.ToList();
+                using (Solid testcube = UnfoldTestUtils.SetupCube())
+                {
+                    List<Face> faces = testcube.Faces.ToList();
 
-                var graph = ModelTopology.GenerateTopologyFromFaces(faces);
-                GC.Collect();
-                List<Object> face_objs = faces.Select(x => x as Object).ToList();
+                    var graph = ModelTopology.GenerateTopologyFromFaces(faces);
+                    List<Object> face_objs = faces.Select(x => x as Object).ToList();
 
-                UnfoldTestUtils.GraphHasVertForEachFace(graph, face_objs);
+                    UnfoldTestUtils.GraphHasVertForEachFace(graph, face_objs);
 
-                UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
+                    UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
 
-                var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
-                object tree = nodereturn["BFS finished"];
-                GC.Collect();
-                var casttree = tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>;
+                    var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
+                    object tree = nodereturn;
+                    var casttree = tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>;
 
-                UnfoldTestUtils.GraphHasVertForEachFace(casttree, face_objs);
-                UnfoldTestUtils.GraphHasCorrectNumberOfEdges(5, casttree);
-                UnfoldTestUtils.AssertAllFinishingTimesSet(graph);
+                    UnfoldTestUtils.GraphHasVertForEachFace(casttree, face_objs);
+                    UnfoldTestUtils.GraphHasCorrectNumberOfEdges(5, casttree);
+                    UnfoldTestUtils.AssertAllFinishingTimesSet(graph);
 
-                var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(casttree);
+                    var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(casttree);
 
-                UnfoldTestUtils.IsAcylic<EdgeLikeEntity, FaceLikeEntity>(sccs, casttree);
-                //testcube.Dispose();
+                    UnfoldTestUtils.IsAcylic<EdgeLikeEntity, FaceLikeEntity>(sccs, casttree);
+
+                    foreach (IDisposable item in graph)
+                    {
+                        Console.WriteLine("disposing a graphnode");
+                        item.Dispose();
+                    }
+
+
+                    foreach (IDisposable item in faces)
+                    {
+                        Console.WriteLine("disposing a face");
+                        item.Dispose();
+                    }
+
+                    foreach (IDisposable item in casttree)
+                    {
+                        Console.WriteLine("disposing a face");
+                        item.Dispose();
+                    }
+
+                }
             }
 
             [Test]
@@ -194,7 +213,7 @@ namespace UnfoldTests
                 UnfoldTestUtils.GraphHasVertForEachFace(graph, face_objs);
 
                 var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
-                object tree = nodereturn["BFS finished"];
+                object tree = nodereturn;
 
                 var casttree = tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>;
 

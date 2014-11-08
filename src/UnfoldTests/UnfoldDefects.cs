@@ -33,7 +33,8 @@ namespace UnfoldTests
                 
 
                 Assert.DoesNotThrow(() => PlanarUnfolder.Unfold(trisurfaces));
-
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
 
             }
 

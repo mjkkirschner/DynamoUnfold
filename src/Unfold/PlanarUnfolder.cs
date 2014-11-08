@@ -340,10 +340,9 @@ namespace Unfold
 
             //perform BFS on the graph and get back the tree
             var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
-            object tree = nodereturn["BFS finished"];
 
-            var casttree = tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>;
 
+            var casttree = nodereturn;
 
             return PlanarUnfold(casttree);
 
@@ -355,10 +354,10 @@ namespace Unfold
 
             //perform BFS on the graph and get back the tree
             var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
-            object tree = nodereturn["BFS finished"];
 
-            var casttree = tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>;
 
+            var casttree = nodereturn;
+           
 
             return PlanarUnfold(casttree);
 
@@ -417,6 +416,7 @@ namespace Unfold
             var allfaces = tree.Select(x => x.Face).ToList();
             var sortedtree = tree.OrderBy(x => x.FinishTime).ToList();
             var disconnectedSet = new List<T>();
+            
             List<FaceTransformMap> transforms = new List<FaceTransformMap>();
 
 
@@ -426,8 +426,7 @@ namespace Unfold
 
             while (sortedtree.Count > 1)
             {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
+               
                 // if the tree only has nodes with no parents
                 // then all branches have been folded into these
                 //nodes and we should just return
@@ -472,46 +471,57 @@ namespace Unfold
                 {
                     foreach (var surf2 in rotatedFace)
                     {
-                        if (surf1.DoesIntersect(surf2))
-                        {
-                            var resultGeo = surf1.SafeIntersect(surf2);
+                       
+                            var resultGeo = surf1.Intersect(surf2);
                             if (resultGeo.OfType<Surface>().Any())
                             {
                                 overlapflag = true;
+                                foreach (IDisposable item in resultGeo)
+                                {
+                                    item.Dispose();
+                                }
                                 goto exitloops;
                                 // thats right, goto!
                             }
-                        }
+                            foreach (IDisposable item in resultGeo)
+                            {
+                                item.Dispose();
+                            }
+                        
                     }
                 }
+                
+
             exitloops:
+              
                 if (overlapflag)
                 {
-                    // this random code may be removed and tested - it only confues packing code at this point
+                    
                     
                     // if any result was a surface then we overlapped we need to move the folded branch far away and pick a new
                     // branch to start the unfold from
 
-                    // wrap up the translated geometry as a new facelike
+                    // wrap up the chain of geometry that we've previously unfolded as a new facelike
                     // when this transformation occurs we need to save the coordinate system as well to the transformation map
-                    var translatedGeoContainer = new T();
+                   /* var translatedGeoContainer = new T();
                     translatedGeoContainer.SurfaceEntities = (child.UnfoldSurfaceSet.SurfaceEntities.ToList());
                     translatedGeoContainer.OriginalEntity = translatedGeoContainer.SurfaceEntities;
 
-
-                   // var movedUnfoldBranch = translatedGeoContainer;
+                   
                     translatedGeoContainer.IDS = child.UnfoldSurfaceSet.IDS;
                     disconnectedSet.Add(translatedGeoContainer);
 
-
-                    // put the child ids back into the new translated geo container
-                   
-                    // translatedGeoContainer.IDS.AddRange(movedUnfoldBranch.IDS); removing this line, seems cyclic...
                     translatedGeoContainer.IDS.Add(child.Face.ID);
-                    //****
-                    //****watch out this may be incorrect... might need multiple transform entries, one for each ID....
-                    transforms.Add(new FaceTransformMap(
-                   translatedGeoContainer.SurfaceEntities.First().ContextCoordinateSystem, translatedGeoContainer.IDS));
+                  
+                   transforms.Add(new FaceTransformMap(
+                   translatedGeoContainer.SurfaceEntities.First().ContextCoordinateSystem, translatedGeoContainer.IDS)); */
+
+                    //try alterate method that does not create a new wrapper type...
+
+                    disconnectedSet.Add(child.UnfoldSurfaceSet);
+                    child.UnfoldSurfaceSet.IDS.Add(child.Face.ID);
+                    //transforms.Add(new FaceTransformMap(child.UnfoldSurfaceSet.SurfaceEntities.First().ContextCoordinateSystem, child.UnfoldSurfaceSet.IDS));
+
 
                 }
 
@@ -567,14 +577,14 @@ namespace Unfold
                     currentIDsToStoreTransforms.Add(child.Face.ID);
                     currentIDsToStoreTransforms.AddRange(rotatedFaceIDs);
                     //////////************* again, this may be incorrect, not sure that they all share the same coord system anylonger...
-                    transforms.Add(new FaceTransformMap(
-                    rotatedFace.First().ContextCoordinateSystem, currentIDsToStoreTransforms));
+                   // transforms.Add(new FaceTransformMap(
+                   // rotatedFace.First().ContextCoordinateSystem, currentIDsToStoreTransforms));
 
 
                 }
                 // shrink the tree
                 child.RemoveFromGraph(sortedtree);
-
+                
 
             }
             // at this point we may have a main trunk with y nodes in it, and x disconnected branches

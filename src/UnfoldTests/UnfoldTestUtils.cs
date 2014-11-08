@@ -38,7 +38,7 @@ namespace UnfoldTests
         {
             //perform BFS on the graph and get back the tree
             var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
-            object tree = nodereturn["BFS finished"];
+            object tree = nodereturn;
 
             var casttree = tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>;
             //perform Tarjans algo and make sure that the tree is acylic before unfold

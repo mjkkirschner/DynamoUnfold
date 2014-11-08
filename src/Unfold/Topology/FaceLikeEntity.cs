@@ -91,11 +91,14 @@ namespace Unfold.Topology
         protected virtual void Dispose(bool disposing)
         {
             if (disposing){
+
+                if (OriginalEntity != null)
+                {
 #if DEBUG
                 Console.WriteLine("disposing orginal entity");
 #endif
-                ((IDisposable)OriginalEntity).Dispose();
-
+                    ((IDisposable)OriginalEntity).Dispose();
+                }
                 foreach (IDisposable item in SurfaceEntities)
                 {
                     #if DEBUG

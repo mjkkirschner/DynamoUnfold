@@ -220,7 +220,7 @@ namespace DynamoUnfold
 
             //perform BFS on the graph and get back the tree
             var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
-            var tree = nodereturn["BFS finished"];
+            var tree = nodereturn;
 
             var treegeo = ModelGraph.ProduceGeometryFromGraph<EdgeLikeEntity, FaceLikeEntity>
                 (tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>);
@@ -243,7 +243,7 @@ namespace DynamoUnfold
 
             //perform BFS on the graph and get back the tree
             var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
-            return nodereturn["BFS finished"];
+            return nodereturn;
         }
 
 
