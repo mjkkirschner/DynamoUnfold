@@ -470,6 +470,21 @@ namespace UnfoldTests
         {
 
             [Test]
+            public void UnfoldCubeSurfaceWithMinimalUnfold()
+            {
+                // unfold cube
+                Solid testcube = UnfoldTestUtils.SetupCube();
+                List<Face> faces = testcube.Faces.ToList();
+                var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
+
+               
+                var unfolds = Enumerable.Range(0,5).Select(x => PlanarUnfolder.Unfold2(surfaces)).ToList();
+
+
+
+            }
+
+
             public void Unfold10CubesFromSurfaces()
             {
                 // unfold cube

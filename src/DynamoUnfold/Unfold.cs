@@ -156,6 +156,13 @@ namespace DynamoUnfold
             return unfoldsurfaces.UnfoldedSurfaceSet;
         }
 
+        public static List<List<Surface>> UnfoldListOfSurfaces2(List<Surface> surfaces)
+        {
+            var unfoldsurfaces = PlanarUnfolder.Unfold2(surfaces);
+            
+            return unfoldsurfaces;
+
+        }
 
         /// <summary>
         /// Method for taking a list of surfaces,tesselating them at max tesselation level,
