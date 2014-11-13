@@ -42,6 +42,9 @@ Once DynamoUnfold is finished building, navigate to **DynamoUnfold/bin/...** and
 ###Pre-built###
 If you are just looking for the necessary .dll's to import through **Zero-Touch Import** into Dynamo check the Pre-built folder. These .dll's will be updated periodically - **but they may be out of snyc with the version of dynamo you are using!** Also Does Not Exist YET!
 
+###Through The **Package Manager**###
+As soon as a fix for ASM 220 branch is confirmed working this library will be wrapped up as a package and distributed on the package manager with samples!
+
 ###Running Unit Tests###
 To run unit tests on this library requires manually copying over the correct libG.dll's from Dynamo's Bin Folder.  Please look at HostFactorySetup.cs for further instructions.  You will also need to specify a directory for the geometry library to search for ASM .dll's.  This will be an Autodesk host application install directory, examples exist in **src/UnfoldTests/HostFactorySetup.cs**
 
