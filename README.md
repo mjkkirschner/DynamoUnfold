@@ -49,6 +49,7 @@ To run unit tests on this library requires manually copying over the correct lib
 ####Known Issues####
 - There is a speed issue when unfolding a tesselated surface with more than approximately 1000 faces, stems from the conversion of triangle data to surfaces.
 - There is an intersection bug that occurs intermittently - more so with large numbers of surfaces, this is being looked into. 
+- ###There is a known issue when running on Revit 2015(ASM220), I believe I have identified the main cause of this problem and am working to fix it in the ASM 220 branch, for small unfolds you may not notice any problems ###
 
 ## Dynamo License ##
 
