@@ -67,6 +67,11 @@ namespace UnfoldTests
                         UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace.First(), parent.Face.SurfaceEntities.First());
 
                         UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace.First(), parent.Face.SurfaceEntities.First());
+
+                        foreach (IDisposable item in rotatedFace)
+                        {
+                            item.Dispose();
+                        }
                     }
                 }
             }
@@ -349,6 +354,12 @@ namespace UnfoldTests
                             overlapflag = true;
                         }
                     }
+
+                    //cleanup intersection geo
+                    foreach (IDisposable item in resultantGeo)
+                    {
+                        item.Dispose();
+                    }
                 }
             }
             Assert.IsFalse(overlapflag);
@@ -441,7 +452,7 @@ namespace UnfoldTests
                 var testsurf = Surface.ByPatch(Rectangle.ByWidthHeight(1, 1).
                     Transform(CoordinateSystem.ByPlane(labelPlane)) as Curve);
 
-
+                //check that the aligned curves intersect the surface they are aligned to
                 Assert.IsTrue(curveList.SelectMany(x => labels[i].UnfoldableFace.SurfaceEntities.Select(x.DoesIntersect)).Any());
                 Console.WriteLine("This label was in the right spot at the start of the unfold");
                 //also assert that the face normal is parallel with the normal of the boundingbox plane
@@ -450,6 +461,8 @@ namespace UnfoldTests
 
                 UnfoldTestUtils.AssertSurfacesAreCoplanar(testsurf, face.First());
                 Console.WriteLine("This label was in the right orientation at the start of the unfold");
+
+                testsurf.Dispose();
             }
         }
 

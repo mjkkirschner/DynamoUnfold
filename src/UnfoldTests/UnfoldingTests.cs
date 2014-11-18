@@ -256,7 +256,7 @@ namespace UnfoldTests
         {
 
            
-
+            
             [Test]
             public void UnfoldAndLabelCubeFromFaces()
             {

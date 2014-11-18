@@ -162,7 +162,7 @@ namespace Unfold
                 var transVector = Vector.ByTwoPoints(textCeneter, Point.ByCoordinates(0, 0, 0));
 
                 var geoIntermediateTransform = geo.Select(x => x.Translate(transVector)).Cast<Curve>().AsEnumerable();
-
+                //TODO dispose of this intermediate geometry
                 return geoIntermediateTransform.Select(x => x.Transform(finalCordSystem)).Cast<Curve>().AsEnumerable();
 
             }
@@ -181,6 +181,29 @@ namespace Unfold
 
         }
 
+        private static G ApplyTransformations<G>(G geometryToTransform, List<CoordinateSystem> transforms) where G : Geometry
+        {
+            //list of geo to dispose at the end of the mapping
+            var oldGeometry = new List<G>();
+            G aggregatedGeo = geometryToTransform;
+            for (int i = 0; i + 1 < transforms.Count; i++)
+            {
+                aggregatedGeo = aggregatedGeo.Transform(transforms[i + 1]) as G;
+                // we only need to keep the last transformation, so add all the others 
+                // to the disposal list
+                if (i != transforms.Count - 2)
+                {
+                    oldGeometry.Add(aggregatedGeo);
+                }
+            }
+            foreach (IDisposable item in oldGeometry)
+            {
+                item.Dispose();
+            }
+
+            return aggregatedGeo;
+        }
+
         public static List<G> MapGeometryToUnfoldingByID<K, T, G>(PlanarUnfolder.PlanarUnfolding<K, T> unfolding, List<G> geometryToTransform, int id)
             where T : IUnfoldablePlanarFace<K>
             where K : IUnfoldableEdge
@@ -197,6 +220,8 @@ namespace Unfold
 
             return transformedgeo;
         }
+
+
 
         public static List<G> DirectlyMapGeometryToUnfoldingByID<K, T, G>(PlanarUnfolder.PlanarUnfolding<K, T> unfolding, List<G> geometryToTransform, int id)
             where T : IUnfoldablePlanarFace<K>
@@ -223,16 +248,12 @@ namespace Unfold
 
             // set the geometry to the first applicable transform
             geometryToTransform = geometryToTransform.Transform(transforms.First()) as G;
-            G aggregatedGeo = geometryToTransform;
-            for (int i = 0; i + 1 < transforms.Count; i++)
-            {
-                aggregatedGeo = aggregatedGeo.Transform(transforms[i + 1]) as G;
 
-            }
-
-            return aggregatedGeo;
+            return ApplyTransformations<G>(geometryToTransform, transforms);
 
         }
+
+       
 
         /// <summary>
         /// overload that automatically calculates startpoint from boundingbox center 
@@ -271,14 +292,8 @@ namespace Unfold
             //unfold surface and is that the same position, so following the transform
             // chain will bring the geo to a similar final location as the unfold
 
-            G aggregatedGeo = geometryToTransform;
-            for (int i = 0; i + 1 < transforms.Count; i++)
-            {
-                aggregatedGeo = aggregatedGeo.Transform(transforms[i + 1]) as G;
+            return ApplyTransformations<G>(geometryToTransform, transforms);
 
-            }
-
-            return aggregatedGeo;
 
         }
 
@@ -305,7 +320,7 @@ namespace Unfold
             var applicableTransforms = map.Where(x => x.IDS.Contains(id));
             var transforms = applicableTransforms.Select(x => x.CS).ToList();
 
-
+            
             // set the geometry to the first applicable transform
             geometryToTransform = geometryToTransform.Transform(transforms.First()) as G;
 
@@ -313,18 +328,13 @@ namespace Unfold
             //create vector from unfold surface center startpoint and the current geo center and translate to this start position
             geometryToTransform = geometryToTransform.Translate(Vector.ByTwoPoints(geoStartPoint, unfolding.StartingPoints[id])) as G;
 
+            //TODO intermediate geometry needs to be cleaned up here
+
             // at this line, geo to transform is in the CS of the 
             //unfold surface and is that the same position, so following the transform
             // chain will bring the geo to a similar final location as the unfold
 
-            G aggregatedGeo = geometryToTransform;
-            for (int i = 0; i + 1 < transforms.Count; i++)
-            {
-                aggregatedGeo = aggregatedGeo.Transform(transforms[i + 1]) as G;
-
-            }
-
-            return aggregatedGeo;
+            return ApplyTransformations<G>(geometryToTransform, transforms);
 
         }
 
@@ -405,7 +415,7 @@ namespace Unfold
                 return resultantGeo;
             }
             catch (Exception e)
-            {
+            {   
                 Console.WriteLine(e.Message);
                 //Geometry.ExportToSAT(new List<Geometry>{surf1,surf2},"C:\\Users\\Mike\\Desktop\\debugGeo");
                 return new Geometry[1] { surf1 };
