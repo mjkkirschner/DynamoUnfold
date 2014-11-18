@@ -117,7 +117,7 @@ namespace UnfoldTests
             PolyCurve rect;
             try
             {
-                 rect = Rectangle.ByWidthHeight();
+                rect = Rectangle.ByWidthHeight();
             }
             catch
             {
@@ -127,7 +127,7 @@ namespace UnfoldTests
             var cube = rect.ExtrudeAsSolid(1);
             rect.Dispose();
             return cube;
-        
+
         }
 
         public static Solid SetupLargeCone()
@@ -148,6 +148,17 @@ namespace UnfoldTests
         {
 
             var alledges = GraphUtilities.GetAllGraphEdges(graph);
+
+            Assert.AreEqual(expectedEdges, alledges.Count);
+            Console.WriteLine("correct number of edges");
+        }
+
+        public static void GraphHasCorrectNumberOfTreeEdges<K, T>(int expectedEdges, List<GraphVertex<K, T>> graph)
+            where K : IUnfoldableEdge
+            where T : IUnfoldablePlanarFace<K>
+        {
+
+            var alledges = GraphUtilities.GetAllTreeEdges(graph);
 
             Assert.AreEqual(expectedEdges, alledges.Count);
             Console.WriteLine("correct number of edges");
@@ -242,7 +253,7 @@ namespace UnfoldTests
             //Console.WriteLine(dotpro);
 
             Assert.IsTrue(Math.Abs(Math.Abs(dotpro) - 1) < .0001);
-          //  Console.WriteLine(dotpro);
+            //  Console.WriteLine(dotpro);
             Console.WriteLine("was parallel");
             //Console.WriteLine(cross1);
             //Console.WriteLine(cross2);
@@ -387,7 +398,7 @@ namespace UnfoldTests
             }
         }
 
-        public static void AssertLabelsGoodFinalLocationAndOrientation<K,T>(List<PlanarUnfolder.UnfoldableFaceLabel
+        public static void AssertLabelsGoodFinalLocationAndOrientation<K, T>(List<PlanarUnfolder.UnfoldableFaceLabel
                 <K, T>> labels, List<List<Curve>>
                translatedgeo, PlanarUnfolder.PlanarUnfolding<K, T> unfoldingObject)
             where K : IUnfoldableEdge
@@ -412,9 +423,9 @@ namespace UnfoldTests
 
         }
 
-        public static void AssertLabelsGoodStartingLocationAndOrientation<K,T>(List<PlanarUnfolder.UnfoldableFaceLabel
+        public static void AssertLabelsGoodStartingLocationAndOrientation<K, T>(List<PlanarUnfolder.UnfoldableFaceLabel
             <K, T>> labels)
-             where K : IUnfoldableEdge
+            where K : IUnfoldableEdge
             where T : IUnfoldablePlanarFace<K>
         {
             // get aligned geometry

@@ -151,7 +151,7 @@ namespace UnfoldTests
                     var casttree = tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>;
 
                     UnfoldTestUtils.GraphHasVertForEachFace(casttree, face_objs);
-                    UnfoldTestUtils.GraphHasCorrectNumberOfEdges(5, casttree);
+                    UnfoldTestUtils.GraphHasCorrectNumberOfTreeEdges(5, casttree);
                     UnfoldTestUtils.AssertAllFinishingTimesSet(graph);
 
                     var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(casttree);

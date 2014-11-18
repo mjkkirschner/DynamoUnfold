@@ -437,9 +437,15 @@ namespace Unfold
             //remove the child node we started with from the tree
             //repeat, until there is only one node in the tree.
             // at this point all faces should be coplanar with this surface
+
+            //list of initial faces
             var allfaces = tree.Select(x => x.Face).ToList();
+            //tree sorted by BFS finish time
             var sortedtree = tree.OrderBy(x => x.FinishTime).ToList();
+            //set of unfold chunks that we break off from main unfold
             var disconnectedSet = new List<T>();
+            //old geometry that we might need to cleanup at the end of unfold
+            var oldGeometry = new List<List<Surface>>();
 
             List<FaceTransformMap> transforms = new List<FaceTransformMap>();
 
@@ -467,6 +473,12 @@ namespace Unfold
                 var parent = child.Parent;
                 //weak code, shoould have a method for this - find edge that leads to
                 var edge = parent.GraphEdges.Where(x => x.Head.Equals(child)).First();
+                if (edge == null)
+                {
+                    throw new Exception("edge was null something removed it from the graph");
+                }
+
+
                 // just check the initial faces against each other, these should only cotain single surfaces at this point
                 double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
                 //need to run this method on every surface contained in the UnfoldedSurfaceSet and collect them in a new list
@@ -491,32 +503,34 @@ namespace Unfold
                 //  bool overlapflag = parent.UnfoldSurfaceSet.SurfaceEntities.SelectMany(a => rotatedFace.SelectMany(a.Intersect)).OfType<Surface>().Any();
 
                 var overlapflag = false;
-                /*       foreach (var surf1 in parent.UnfoldSurfaceSet.SurfaceEntities)
-                       {
-                           foreach (var surf2 in rotatedFace)
-                           {
-                                   var resultGeo = surf1.SafeIntersect(surf2);
-                                   if (resultGeo.OfType<Surface>().Any())
-                                   {
-                                       overlapflag = true;
-                                       foreach (IDisposable item in resultGeo)
-                                       {
-                                           item.Dispose();
-                                       }
-                                       goto exitloops;
-                                       // thats right, goto!
-                                   }
-                                   foreach (IDisposable item in resultGeo)
-                                   {
-                                       item.Dispose();
-                                   }
-                        
-                           }
-                       }
-                
+                foreach (var surf1 in parent.UnfoldSurfaceSet.SurfaceEntities)
+                {
+                    foreach (var surf2 in rotatedFace)
+                    {
+                        var resultGeo = surf1.SafeIntersect(surf2);
+                        if (resultGeo.OfType<Surface>().Any())
+                        {
+                            overlapflag = true;
+                            //dispose all the intersection geometry
+                            foreach (IDisposable item in resultGeo)
+                            {
+                                item.Dispose();
+                            }
+                            goto exitloops;
+                            // thats right, goto!
+                        }
+                        //dispose all intersection geometry
+                        foreach (IDisposable item in resultGeo)
+                        {
+                            item.Dispose();
+                        }
 
-                   exitloops:
-                    */
+                    }
+                }
+
+
+            exitloops:
+
                 if (overlapflag)
                 {
 
@@ -544,11 +558,7 @@ namespace Unfold
                     disconnectedSet.Add(child.UnfoldSurfaceSet);
                     child.UnfoldSurfaceSet.IDS.Add(child.Face.ID);
                     transforms.Add(new FaceTransformMap(child.UnfoldSurfaceSet.SurfaceEntities.First().ContextCoordinateSystem, child.UnfoldSurfaceSet.IDS));
-                    //clean up the rotated faces we didnt use
-                    foreach (IDisposable item in rotatedFace)
-                    {
-                        item.Dispose();
-                    }
+                  
 
                 }
 
@@ -610,8 +620,15 @@ namespace Unfold
                 }
                 // shrink the tree
                 child.RemoveFromGraph(sortedtree);
+                child.RemoveFromGraph(tree);
 
+                // if the rotated faces we just generated are not being folded into the root
+                // of the tree then we should add them to the list to dispose
+                if (parent.FinishTime != 0 && rotatedFace != null)
+                {
 
+                    oldGeometry.Add(rotatedFace);
+                }
             }
             // at this point we may have a main trunk with y nodes in it, and x disconnected branches
             //step 1 is to align all sets down to horizontal plane and record this transform
@@ -654,9 +671,48 @@ namespace Unfold
             // merge the main trunk and the disconnected sets
             var maintree = sortedtree.Select(x => x.UnfoldSurfaceSet.SurfaceEntities).ToList();
             maintree.AddRange(disconnectedSet.Select(x => x.SurfaceEntities).ToList());
+
+            //iterate each list of rotated surfaces in the old geo list
+            foreach (var oldgeolist in oldGeometry)
+            { //against each set of surfaces in the disconnected sets
+                var dispose = true;
+                foreach (var set in disconnectedSet)
+                {   // if they are equal to any set in the disconnected set,
+                    // then set a flag and breakout
+                    if (referencesSameSurfaces(oldgeolist, set.SurfaceEntities))
+                    {
+                        dispose = false;
+                        break;
+                    }
+                }
+                if (dispose)
+                {
+                    foreach (IDisposable item in oldgeolist)
+                    {
+                        item.Dispose();
+                    }
+                }
+            }
+
             // return a planarUnfolding that represents this unfolding
             return new PlanarUnfolding<K, T>(allfaces, maintree, transforms, masterFacelikeSet);
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
