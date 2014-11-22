@@ -7,6 +7,7 @@ using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
 using Unfold.Interfaces;
+using System.Collections;
 
 namespace Unfold.Topology
 {
@@ -41,10 +42,10 @@ namespace Unfold.Topology
             var pericurves = surfaces.SelectMany(x => x.PerimeterCurves()).ToList();
             var ees = pericurves.Select(y => new EdgeLikeEntity(y)).ToList();
 
-            
+
             return ees;
-         // return surfaces.SelectMany(x => x.PerimeterCurves()).Select(y=> new EdgeLikeEntity(y)).ToList();
-          
+            // return surfaces.SelectMany(x => x.PerimeterCurves()).Select(y=> new EdgeLikeEntity(y)).ToList();
+
         }
 
 
@@ -52,7 +53,7 @@ namespace Unfold.Topology
         {
 
             //store the surface
-            SurfaceEntities = new List<Surface>(){surface};
+            SurfaceEntities = new List<Surface>() { surface };
             //store surface
             OriginalEntity = surface;
             // new blank ids
@@ -63,13 +64,13 @@ namespace Unfold.Topology
         public FaceLikeEntity(Face face)
         {
             //grab the surface from the face
-            SurfaceEntities = new List<Surface>{face.SurfaceGeometry()};
+            SurfaceEntities = new List<Surface> { face.SurfaceGeometry() };
             // org entity is the face
             OriginalEntity = face;
             // grab edges
-           // List<Edge> orgedges = face.Edges.ToList();
+            // List<Edge> orgedges = face.Edges.ToList();
             //wrap edges
-           // EdgeLikeEntities = orgedges.ConvertAll(x => new EdgeLikeEntity(x));
+            // EdgeLikeEntities = orgedges.ConvertAll(x => new EdgeLikeEntity(x));
             // new blank ids list
 
             IDS = new List<int>();
@@ -90,35 +91,47 @@ namespace Unfold.Topology
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing){
+            if (disposing)
+            {
 
                 if (OriginalEntity != null)
                 {
 #if DEBUG
-                Console.WriteLine("disposing orginal entity");
+                    Console.WriteLine("disposing orginal entity");
 #endif
-                    ((IDisposable)OriginalEntity).Dispose();
-                }
-                foreach (IDisposable item in SurfaceEntities)
-                {
-                    #if DEBUG
-                    Console.WriteLine("disposing surface entity");
-#endif
-                    item.Dispose();
+                    if (OriginalEntity is IEnumerable)
+                        foreach (IDisposable item in (IEnumerable)OriginalEntity)
+                        {
+                            item.Dispose();
+                        }
+                    else
+                    {
+                        ((IDisposable)OriginalEntity).Dispose();
+                    }
                 }
 
+                if (SurfaceEntities != null)
+                {
+                    foreach (IDisposable item in SurfaceEntities)
+                    {
+#if DEBUG
+                        Console.WriteLine("disposing surface entity");
+#endif
+                        item.Dispose();
+                    }
+                }
                 foreach (IDisposable item in EdgeLikeEntities)
                 {
-                    #if DEBUG
+#if DEBUG
                     Console.WriteLine("disposing edgelike contained in facelike");
 #endif
                     item.Dispose();
                 }
-                
-        }
+
+            }
 
 
         }
-       
+
     }
 }

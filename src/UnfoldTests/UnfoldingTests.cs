@@ -478,7 +478,7 @@ namespace UnfoldTests
                 var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
 
                
-                var unfolds = Enumerable.Range(0,5).Select(x => PlanarUnfolder.Unfold2(surfaces)).ToList();
+                var unfolds = Enumerable.Range(0,5).Select(x => PlanarUnfolder.Unfold(surfaces)).ToList();
 
 
 

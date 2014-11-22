@@ -37,6 +37,7 @@ namespace DynamoUnfold
                 };
 
         }
+
         /// <summary>
         /// Method for taking a list of planar surfaces and unfolding them, 
         /// also returns an unfolding object that stores the starting
@@ -56,10 +57,12 @@ namespace DynamoUnfold
             return new Dictionary<string, object> 
                 {   
                     { "surfaces", (unfolding.UnfoldedSurfaceSet)},
-                    {"unfoldingObject",(unfolding)},
+                    {"unfoldingObject",(unfolding)}
                     
                 };
         }
+
+      
         /// <summary>
         /// Method for taking a list of surfaces,tesselating them at the 
         /// highest tessellation level,and then unfolding them, 
@@ -156,14 +159,7 @@ namespace DynamoUnfold
             return unfoldsurfaces.UnfoldedSurfaceSet;
         }
 
-        public static List<List<Surface>> UnfoldListOfSurfaces2(List<Surface> surfaces)
-        {
-            var unfoldsurfaces = PlanarUnfolder.Unfold2(surfaces);
-            
-            return unfoldsurfaces;
-
-        }
-
+       
         /// <summary>
         /// Method for taking a list of surfaces,tesselating them at max tesselation level,
         /// and then unfolding them.
