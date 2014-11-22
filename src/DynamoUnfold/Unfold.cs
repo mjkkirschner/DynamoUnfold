@@ -37,6 +37,7 @@ namespace DynamoUnfold
                 };
 
         }
+
         /// <summary>
         /// Method for taking a list of planar surfaces and unfolding them, 
         /// also returns an unfolding object that stores the starting
@@ -56,10 +57,12 @@ namespace DynamoUnfold
             return new Dictionary<string, object> 
                 {   
                     { "surfaces", (unfolding.UnfoldedSurfaceSet)},
-                    {"unfoldingObject",(unfolding)},
+                    {"unfoldingObject",(unfolding)}
                     
                 };
         }
+
+      
         /// <summary>
         /// Method for taking a list of surfaces,tesselating them at the 
         /// highest tessellation level,and then unfolding them, 
@@ -156,7 +159,7 @@ namespace DynamoUnfold
             return unfoldsurfaces.UnfoldedSurfaceSet;
         }
 
-
+       
         /// <summary>
         /// Method for taking a list of surfaces,tesselating them at max tesselation level,
         /// and then unfolding them.
@@ -220,7 +223,7 @@ namespace DynamoUnfold
 
             //perform BFS on the graph and get back the tree
             var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
-            var tree = nodereturn["BFS finished"];
+            var tree = nodereturn;
 
             var treegeo = ModelGraph.ProduceGeometryFromGraph<EdgeLikeEntity, FaceLikeEntity>
                 (tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>);
@@ -243,7 +246,7 @@ namespace DynamoUnfold
 
             //perform BFS on the graph and get back the tree
             var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
-            return nodereturn["BFS finished"];
+            return nodereturn;
         }
 
 

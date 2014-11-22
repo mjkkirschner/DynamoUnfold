@@ -187,7 +187,7 @@ namespace Unfold
                 Index = Index + 1;
                 VertStack.Push(vertex);
 
-                var adjlist = vertex.GraphEdges.Select(x => x.Head).ToList();
+                var adjlist = vertex.TreeEdges.Select(x => x.Head).ToList();
 
                 foreach (GraphVertex<K,T> AdjVert in adjlist)
                 {
@@ -246,7 +246,28 @@ namespace Unfold
 
             }
             return alledges;
-          } 
+          }
+
+
+            public static List<GraphEdge<K, T>> GetAllTreeEdges<K, T>(List<GraphVertex<K, T>> graph)
+                where K : IUnfoldableEdge
+                where T : IUnfoldablePlanarFace<K>
+            {
+                var alledges = new List<GraphEdge<K, T>>();
+
+                foreach (GraphVertex<K, T> vertex in graph)
+                {
+                    foreach (GraphEdge<K, T> treeEdge in vertex.TreeEdges)
+                    {
+
+                        alledges.Add(treeEdge);
+                    }
+
+                }
+                return alledges;
+            } 
+
+
         }
 
     }

@@ -38,7 +38,7 @@ namespace UnfoldTests
         {
             //perform BFS on the graph and get back the tree
             var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
-            object tree = nodereturn["BFS finished"];
+            object tree = nodereturn;
 
             var casttree = tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>;
             //perform Tarjans algo and make sure that the tree is acylic before unfold
@@ -67,6 +67,11 @@ namespace UnfoldTests
                         UnfoldTestUtils.AssertSurfacesAreCoplanar(rotatedFace.First(), parent.Face.SurfaceEntities.First());
 
                         UnfoldTestUtils.AssertRotatedSurfacesDoNotShareSameCenter(rotatedFace.First(), parent.Face.SurfaceEntities.First());
+
+                        foreach (IDisposable item in rotatedFace)
+                        {
+                            item.Dispose();
+                        }
                     }
                 }
             }
@@ -114,8 +119,20 @@ namespace UnfoldTests
 
         public static Solid SetupCube()
         {
-            var rect = Rectangle.ByWidthHeight(1, 1);
-            return rect.ExtrudeAsSolid(1);
+            PolyCurve rect;
+            try
+            {
+                rect = Rectangle.ByWidthHeight();
+            }
+            catch
+            {
+                throw new Exception("creating a rect");
+            }
+
+            var cube = rect.ExtrudeAsSolid(1);
+            rect.Dispose();
+            return cube;
+
         }
 
         public static Solid SetupLargeCone()
@@ -136,6 +153,17 @@ namespace UnfoldTests
         {
 
             var alledges = GraphUtilities.GetAllGraphEdges(graph);
+
+            Assert.AreEqual(expectedEdges, alledges.Count);
+            Console.WriteLine("correct number of edges");
+        }
+
+        public static void GraphHasCorrectNumberOfTreeEdges<K, T>(int expectedEdges, List<GraphVertex<K, T>> graph)
+            where K : IUnfoldableEdge
+            where T : IUnfoldablePlanarFace<K>
+        {
+
+            var alledges = GraphUtilities.GetAllTreeEdges(graph);
 
             Assert.AreEqual(expectedEdges, alledges.Count);
             Console.WriteLine("correct number of edges");
@@ -230,7 +258,7 @@ namespace UnfoldTests
             //Console.WriteLine(dotpro);
 
             Assert.IsTrue(Math.Abs(Math.Abs(dotpro) - 1) < .0001);
-          //  Console.WriteLine(dotpro);
+            //  Console.WriteLine(dotpro);
             Console.WriteLine("was parallel");
             //Console.WriteLine(cross1);
             //Console.WriteLine(cross2);
@@ -326,6 +354,12 @@ namespace UnfoldTests
                             overlapflag = true;
                         }
                     }
+
+                    //cleanup intersection geo
+                    foreach (IDisposable item in resultantGeo)
+                    {
+                        item.Dispose();
+                    }
                 }
             }
             Assert.IsFalse(overlapflag);
@@ -375,7 +409,7 @@ namespace UnfoldTests
             }
         }
 
-        public static void AssertLabelsGoodFinalLocationAndOrientation<K,T>(List<PlanarUnfolder.UnfoldableFaceLabel
+        public static void AssertLabelsGoodFinalLocationAndOrientation<K, T>(List<PlanarUnfolder.UnfoldableFaceLabel
                 <K, T>> labels, List<List<Curve>>
                translatedgeo, PlanarUnfolder.PlanarUnfolding<K, T> unfoldingObject)
             where K : IUnfoldableEdge
@@ -400,9 +434,9 @@ namespace UnfoldTests
 
         }
 
-        public static void AssertLabelsGoodStartingLocationAndOrientation<K,T>(List<PlanarUnfolder.UnfoldableFaceLabel
+        public static void AssertLabelsGoodStartingLocationAndOrientation<K, T>(List<PlanarUnfolder.UnfoldableFaceLabel
             <K, T>> labels)
-             where K : IUnfoldableEdge
+            where K : IUnfoldableEdge
             where T : IUnfoldablePlanarFace<K>
         {
             // get aligned geometry
@@ -418,7 +452,7 @@ namespace UnfoldTests
                 var testsurf = Surface.ByPatch(Rectangle.ByWidthHeight(1, 1).
                     Transform(CoordinateSystem.ByPlane(labelPlane)) as Curve);
 
-
+                //check that the aligned curves intersect the surface they are aligned to
                 Assert.IsTrue(curveList.SelectMany(x => labels[i].UnfoldableFace.SurfaceEntities.Select(x.DoesIntersect)).Any());
                 Console.WriteLine("This label was in the right spot at the start of the unfold");
                 //also assert that the face normal is parallel with the normal of the boundingbox plane
@@ -427,6 +461,8 @@ namespace UnfoldTests
 
                 UnfoldTestUtils.AssertSurfacesAreCoplanar(testsurf, face.First());
                 Console.WriteLine("This label was in the right orientation at the start of the unfold");
+
+                testsurf.Dispose();
             }
         }
 

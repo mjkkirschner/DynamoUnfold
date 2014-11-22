@@ -34,7 +34,7 @@
     <Reference Include="DynamoCore">
       <HintPath Condition="'$(Configuration)'=='Debug'">..\..\..\Dynamo\bin\AnyCPU\Debug\DynamoCore.dll</HintPath>
       <HintPath Condition="'$(Configuration)'=='Release'">..\..\..\Dynamo\bin\AnyCPU\Release\DynamoCore.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DynamoPack">
       <HintPath Condition="'$(Configuration)'=='Debug'">..\..\..\DynamoPack\src\DynamoPacking\bin\Debug\DynamoPack.dll</HintPath>

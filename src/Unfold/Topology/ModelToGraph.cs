@@ -19,10 +19,10 @@ namespace Unfold.Topology
         public static List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>> GenerateTopologyFromFaces(List<Face> faces)
         {
 
-            List<FaceLikeEntity> wrappedFaces = faces.Select(x => new FaceLikeEntity(x)).ToList();
+            List<FaceLikeEntity> wrappedFaces;
 
-
-
+                wrappedFaces = faces.Select(x => new FaceLikeEntity(x)).ToList();
+            
             return GenerateTopology<EdgeLikeEntity, FaceLikeEntity>(wrappedFaces);
         }
 
@@ -48,8 +48,10 @@ namespace Unfold.Topology
             where K : IUnfoldableEdge
         {
             // assign some ids to the faces that will operate on, we use the ids to create text and perform other mappings
+           
+            //TODO remove this temporarily trying to get tests to pass
             AssignIDs<K, T>(facelikes);
-
+            
             Dictionary<K, List<T>> edgeDict = new Dictionary<K, List<T>>(new Unfold.Interfaces.SpatialEqualityComparer<K>());
             foreach (T facelike in facelikes)
             {
@@ -72,8 +74,9 @@ namespace Unfold.Topology
                     }
                 }
             }
-
+            
             var graph = ModelGraph.GenGraph(facelikes, edgeDict);
+          
             return graph;
         }
 
@@ -205,14 +208,14 @@ namespace Unfold.Topology
         // be careful here, modifying the verts may causing issues,
         // might be better to create new verts, or implement Icloneable
 
-        [MultiReturn(new[] { "BFS intermediate", "BFS finished" })]
-        public static Dictionary<string, object> BFS<K, T>(List<GraphVertex<K, T>> graph)
+       
+        public static List<GraphVertex<K,T>> BFS<K, T>(List<GraphVertex<K, T>> graph)
             where T : IUnfoldablePlanarFace<K>
             where K : IUnfoldableEdge
         {
-
+            var graphToTraverse = graph;
             // this is a clone of the graph that we modify to store the tree edges on
-            var graphToTraverse = GraphUtilities.CloneGraph<K, T>(graph);
+            //var graphToTraverse = GraphUtilities.CloneGraph<K, T>(graph);
             // this is the final form of the graph, we can replace references to the graph edges with only tree edges
             // and treat this tree as a graph
             List<GraphVertex<K, T>> TreeTransformedToGraph;
@@ -221,7 +224,6 @@ namespace Unfold.Topology
 
             Queue<GraphVertex<K, T>> Q = new Queue<GraphVertex<K, T>>();
 
-            List<Autodesk.DesignScript.Geometry.DesignScriptEntity> tree = new List<Autodesk.DesignScript.Geometry.DesignScriptEntity>();
 
             foreach (var node in graphToTraverse)
             {
@@ -262,22 +264,18 @@ namespace Unfold.Topology
 
             }
 
-            TreeTransformedToGraph = GraphUtilities.CloneGraph<K, T>(graphToTraverse);
+            //TreeTransformedToGraph = GraphUtilities.CloneGraph<K, T>(graphToTraverse);
 
             // set the grap edges to the tree edges incase
             // we want to use general graph algos on the tree;
-            foreach (var Vertex in TreeTransformedToGraph)
+           /* foreach (var Vertex in graphToTraverse)
             {
                 Vertex.GraphEdges = Vertex.TreeEdges;
-                //Vertex.TreeEdges.Clear();
+                Vertex.TreeEdges.Clear();
 
             }
-
-            return new Dictionary<string, object> 
-                {   
-                    {"BFS intermediate",(graphToTraverse)},
-                    {"BFS finished", (TreeTransformedToGraph)}
-                };
+            */
+            return graphToTraverse;
         }
     }
 

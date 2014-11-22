@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
@@ -16,7 +15,7 @@ namespace Unfold.Topology
     /// graph vertex, represents a face, stores list of outoging edges
     /// parent,explored,finishtime, and fold edge will be set during BFS or another traversal method
     /// </summary>
-    public class GraphVertex<K, T>
+    public class GraphVertex<K, T> : IDisposable
         where T : IUnfoldablePlanarFace<K>
         where K : IUnfoldableEdge
     {
@@ -86,10 +85,52 @@ namespace Unfold.Topology
                 int hash = 17;
                 // Suitable nullity checks etc, of course :)
                 hash = hash * 23 + Face.GetHashCode();
-                hash = hash * 23 + Face.GetHashCode();
                 return hash;
             }
         }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+       
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+              
+
+                foreach (IDisposable item in TreeEdges)
+                {
+#if DEBUG
+                    Console.WriteLine("disposing a graphedge");
+#endif
+                    item.Dispose();
+                }
+
+                foreach (IDisposable item in GraphEdges)
+                {
+                    #if DEBUG
+                    Console.WriteLine("disposing a graphedge");
+#endif
+                    item.Dispose();
+                }
+               #if DEBUG
+                Console.WriteLine("disposing a unfoldableface");
+                #endif
+                ((IDisposable)UnfoldSurfaceSet).Dispose();
+                #if DEBUG
+                Console.WriteLine("disposing a face");
+#endif
+                ((IDisposable)Face).Dispose();
+              
+
+
+            }
+
+        }
+
 
     }
 }

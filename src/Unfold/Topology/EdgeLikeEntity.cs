@@ -14,7 +14,7 @@ namespace Unfold.Topology
     /// <summary>
     /// wrapper for edges and curves
     /// </summary>
-    public class EdgeLikeEntity : IUnfoldableEdge
+    public class EdgeLikeEntity : IUnfoldableEdge, IDisposable
     {
 
         public Point Start { get; set; }
@@ -74,6 +74,29 @@ namespace Unfold.Topology
 
                 return false;
             }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                ((IDisposable)Curve).Dispose();
+                if (RealEdge != null)
+                {
+                    ((IDisposable)RealEdge).Dispose();
+                }
+                ((IDisposable)Start).Dispose();
+                ((IDisposable)End).Dispose();
+
+            }
+
         }
     }
 }
