@@ -53,6 +53,7 @@ namespace Unfold
             public List<FaceTransformMap> Maps { get; set; }
             public Dictionary<int, Point> StartingPoints { get; set; }
             public List<T> UnfoldedFaces { get; set; }
+            public List<GraphVertex<K,T>> OriginalGraph {get; set;}
 
             /// <summary>
             /// constructor
@@ -61,7 +62,7 @@ namespace Unfold
             /// <param name="finalSurfaces"> the unfolded surfaces</param>
             /// <param name="transforms"> the transforms that track all surfaces</param>
             /// <param name="unfoldedfaces">the unfolded IunfoldableFaces</param>
-            public PlanarUnfolding(List<T> originalFaces, List<List<Surface>> finalSurfaces, List<FaceTransformMap> transforms, List<T> unfoldedfaces)
+            public PlanarUnfolding(List<T> originalFaces, List<List<Surface>> finalSurfaces, List<FaceTransformMap> transforms, List<T> unfoldedfaces, List<GraphVertex<K,T>> oldGraph)
             {
                 Console.WriteLine("generating new unfolding to return");
                 StartingUnfoldableFaces = originalFaces.ToList();
@@ -69,6 +70,7 @@ namespace Unfold
                 UnfoldedFaces = unfoldedfaces;
                 StartingPoints = StartingUnfoldableFaces.ToDictionary(x => x.ID, x => Tesselation.MeshHelpers.SurfaceAsPolygonCenter(x.SurfaceEntities.First()));
                 UnfoldedSurfaceSet = finalSurfaces;
+                OriginalGraph = oldGraph;
             }
 
            
@@ -123,8 +125,8 @@ namespace Unfold
                     mergedUnfoldedFaces.AddRange(modifedUnfoldedfaces);
 
                 }
-
-                return new PlanarUnfolding<K, T>(mergedOrgFaces, mergedFinalSurfaces, mergedTransformMaps, mergedUnfoldedFaces);
+                //TODO need to implement an algo that actually merges the graphs so we can add tabs to merged unfolds
+                return new PlanarUnfolding<K, T>(mergedOrgFaces, mergedFinalSurfaces, mergedTransformMaps, mergedUnfoldedFaces,null);
             }
         }
 
@@ -633,7 +635,7 @@ namespace Unfold
                 }
                 // shrink the tree
                 child.RemoveFromGraph(sortedtree);
-                child.RemoveFromGraph(tree);
+                //child.RemoveFromGraph(tree);
 
                 // if the rotated faces we just generated are not being folded into the root
                 // of the tree then we should add them to the list to dispose
@@ -708,7 +710,7 @@ namespace Unfold
             }
 
             // return a planarUnfolding that represents this unfolding
-            return new PlanarUnfolding<K, T>(allfaces, maintree, transforms, masterFacelikeSet);
+            return new PlanarUnfolding<K, T>(allfaces, maintree, transforms, masterFacelikeSet,tree);
         }
 
     }

@@ -125,7 +125,7 @@ namespace Unfold
 
             // finally create a new unfold object and pass it out
 
-            var packedUnfolding = new PlanarUnfolder.PlanarUnfolding<K, T>(unfold.StartingUnfoldableFaces, packedfinalsurfaces, aggregatedtransforms, packedfinalfacelikes);
+            var packedUnfolding = new PlanarUnfolder.PlanarUnfolding<K, T>(unfold.StartingUnfoldableFaces, packedfinalsurfaces, aggregatedtransforms, packedfinalfacelikes,unfold.OriginalGraph);
 
             return new Dictionary<string, object> 
                 {   
