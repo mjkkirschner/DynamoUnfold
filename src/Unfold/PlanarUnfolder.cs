@@ -388,16 +388,16 @@ namespace Unfold
 
         public static PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity> Unfold(List<Surface> surfaces)
         {
-            var graph = ModelTopology.GenerateTopologyFromSurfaces(surfaces);
+            var contextResetSurfaces = surfaces.Select(x => x.Transform(x.ContextCoordinateSystem.Inverse()) as Surface).ToList<Surface>();
+
+            var graph = ModelTopology.GenerateTopologyFromSurfaces(contextResetSurfaces);
 
             //perform BFS on the graph and get back the tree
             var nodereturn = ModelGraph.BFS<EdgeLikeEntity, FaceLikeEntity>(graph);
 
-
             var casttree = nodereturn;
-
-
-            return PlanarUnfold(casttree);
+            
+            return PlanarUnfold(casttree,surfaces.First().ContextCoordinateSystem);
 
         }
 
@@ -436,7 +436,7 @@ namespace Unfold
         /// <param name="tree"></param>
         /// <returns></returns>
         public static PlanarUnfolding<K, T>
-            PlanarUnfold<K, T>(List<GraphVertex<K, T>> tree)
+            PlanarUnfold<K, T>(List<GraphVertex<K, T>> tree, CoordinateSystem postTransform = null)
             where K : IUnfoldableEdge
             where T : IUnfoldablePlanarFace<K>, new()
         {
@@ -684,9 +684,13 @@ namespace Unfold
               }
               */
             // merge the main trunk and the disconnected sets
-            var maintree = sortedtree.Select(x => x.UnfoldSurfaceSet.SurfaceEntities.Select(y=>y.Translate(0,0,0) as Surface).ToList()).ToList();
-            maintree.AddRange(disconnectedSet.Select(x => x.SurfaceEntities.Select(y=>y.Translate(0,0,0) as Surface).ToList()).ToList());
-
+            if (postTransform == null)
+            {
+                postTransform = CoordinateSystem.Identity();
+            }
+            var maintree = sortedtree.Select(x => x.UnfoldSurfaceSet.SurfaceEntities.Select(y=>y.Transform(postTransform) as Surface).ToList()).ToList();
+            maintree.AddRange(disconnectedSet.Select(x => x.SurfaceEntities.Select(y=>y.Transform(postTransform)as Surface).ToList()).ToList());
+            
             //iterate each list of rotated surfaces in the old geo list
             foreach (var oldgeolist in oldGeometry)
             { //against each set of surfaces in the disconnected sets

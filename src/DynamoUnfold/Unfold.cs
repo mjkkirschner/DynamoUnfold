@@ -207,6 +207,8 @@ namespace DynamoUnfold
 
         #endregion
 
+
+        #region tab Methods
         //methods for tab generation
         public static List<List<Surface>>GenerateUnfoldedTabs
            (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity> unfoldingObject)
@@ -215,6 +217,7 @@ namespace DynamoUnfold
 
             // gather the difference set of edges between all shared edegs and the edges we actually fold around
             // the difference are the edges that we need to add tabs to
+            // TODO add option to add tabs to both edges MJ
             var gedges = GraphUtilities.GetAllGraphEdges<EdgeLikeEntity,FaceLikeEntity>(unfoldingObject.OriginalGraph).Select(x=>x.GeometryEdge).ToList();
             var tedges = GraphUtilities.GetAllTreeEdges<EdgeLikeEntity, FaceLikeEntity>(unfoldingObject.OriginalGraph).Select(x => x.GeometryEdge).ToList();
             var nonFoldEdegs = gedges.Except(tedges, new SpatialEqualityComparer<EdgeLikeEntity>());
@@ -263,10 +266,69 @@ namespace DynamoUnfold
 
 
         }
-
+        #endregion
 
         // The following methods may be removed from Import eventually
-        # region
+        # region internal
+
+        public static List<List<Surface>> GenerateUnfoldedTabsDebugInitial
+           (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity> unfoldingObject)
+        {
+            var tabedges = new List<EdgeLikeEntity>();
+
+            // gather the difference set of edges between all shared edegs and the edges we actually fold around
+            // the difference are the edges that we need to add tabs to
+            // TODO add option to add tabs to both edges MJ
+            var gedges = GraphUtilities.GetAllGraphEdges<EdgeLikeEntity, FaceLikeEntity>(unfoldingObject.OriginalGraph).Select(x => x.GeometryEdge).ToList();
+            var tedges = GraphUtilities.GetAllTreeEdges<EdgeLikeEntity, FaceLikeEntity>(unfoldingObject.OriginalGraph).Select(x => x.GeometryEdge).ToList();
+            var nonFoldEdegs = gedges.Except(tedges, new SpatialEqualityComparer<EdgeLikeEntity>());
+            var tabDict = new Dictionary<int, List<Surface>>();
+
+            var finaltabs = new List<List<Surface>>();
+
+            foreach (var edge in nonFoldEdegs)
+            {
+                if (tabedges.Contains(edge) == false)
+                {
+                    tabedges.Add(edge);
+                    // find the first vertex that contains this edge in its graph edge list
+                    var firstmatchingvertingraph = unfoldingObject.OriginalGraph.Find(x => x.GraphEdges.Select(y => y.GeometryEdge).ToList().Contains(edge));
+                    // now offset this edge using the surface we just found
+                    var approxcenter = Unfold.Topology.Tesselation.MeshHelpers.SurfaceAsPolygonCenter(firstmatchingvertingraph.Face.SurfaceEntities.First());
+                    var vectorOffset = Vector.ByTwoPoints(approxcenter, edge.Curve.PointAtParameter(.5)).Normalized();
+                    var offsetEdge = edge.Curve.Translate(vectorOffset.Scale(.3)) as Curve;
+                    var sp = offsetEdge.PointAtParameter(.2);
+                    var ep = offsetEdge.PointAtParameter(.8);
+                    var line = Line.ByStartPointEndPoint(sp, ep);
+
+                    var curves = new List<Curve>() { edge.Curve, line };
+                    // this surface is the tab surface
+
+                    var tabSurf = Surface.ByLoft(curves);
+                    if (tabDict.ContainsKey(firstmatchingvertingraph.Face.ID))
+                    {
+                        tabDict[firstmatchingvertingraph.Face.ID].Add(tabSurf);
+                        continue;
+                    }
+                    tabDict.Add(firstmatchingvertingraph.Face.ID, new List<Surface>() { tabSurf });
+                }
+            }
+            //walk the dictionary and map each tab to the unfold by id
+            foreach (var entry in tabDict)
+            {
+                finaltabs.Add(entry.Value);
+            }
+
+
+
+
+            return finaltabs;
+
+
+
+        }
+
+
         // method is for debugging the BFS output visually in dynamo, very useful
         public static object _BFSTestTesselation(List<Surface> surfaces, double tolerance = -1, int maxGridLines = 512)
         {
