@@ -108,7 +108,7 @@ namespace DynamoUnfold
             var labels = unfoldingObject.StartingUnfoldableFaces.Select(x =>
               new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x, labelScale)).ToList();
 
-            return labels.Select(x => x.AlignedLabelGeometry).ToList();
+            return labels.Select(x => x.AlignedLabelGeometry.Select(y=>y.Transform(unfoldingObject.PostTransform) as Curve).ToList()).ToList();
 
         }
 
@@ -126,9 +126,11 @@ namespace DynamoUnfold
             var labels = unfoldingObject.StartingUnfoldableFaces.Select(x =>
               new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x, labelScale)).ToList();
 
-            // need to make one piece of geometry from list of geo...
+           
+            //TODO instead of calling this directly should be calling a method on the unfold object that returns these objects in the correct
+            //position with the post transform so I dont need to know about it at this level
             var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID(unfoldingObject, x.AlignedLabelGeometry, x.ID)).ToList();
-
+           
 
             return transformedGeo;
 

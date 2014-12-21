@@ -125,12 +125,12 @@ namespace Unfold
 
             // finally create a new unfold object and pass it out
 
-            var packedUnfolding = new PlanarUnfolder.PlanarUnfolding<K, T>(unfold.StartingUnfoldableFaces, packedfinalsurfaces, aggregatedtransforms, packedfinalfacelikes,unfold.OriginalGraph);
+            var packedUnfolding = new PlanarUnfolder.PlanarUnfolding<K, T>(unfold.StartingUnfoldableFaces, packedfinalsurfaces, aggregatedtransforms, packedfinalfacelikes,unfold.OriginalGraph,unfold.PostTransform);
 
             return new Dictionary<string, object> 
                 {   
                     
-                    {"packed surfaces",(packedfinalsurfaces)},
+                    {"packed surfaces",(packedUnfolding.UnfoldedSurfaceSet)},
                     {"unfoldObject", (packedUnfolding)}
                 };
         }
