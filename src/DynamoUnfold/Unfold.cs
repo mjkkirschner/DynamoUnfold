@@ -108,8 +108,24 @@ namespace DynamoUnfold
             var labels = unfoldingObject.StartingUnfoldableFaces.Select(x =>
               new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x, labelScale)).ToList();
 
-            return labels.Select(x => x.AlignedLabelGeometry.Select(y=>y.Transform(unfoldingObject.PostTransform) as Curve).ToList()).ToList();
+           var scaledlabels = labels.Select(x => x.AlignedLabelGeometry.Select(y=>y.Transform(unfoldingObject.PostTransform) as Curve).ToList()).ToList();
+           var finallabels = new List<List<Curve>>();
+           var scalefactor = unfoldingObject.PostTransform.ScaleFactor();
+          
+            foreach (var scaledlabel in scaledlabels){
+                var points = scaledlabel.Select(x=>x.StartPoint).ToList();
+                var labelbb = BoundingBox.ByGeometry(scaledlabel);
+                // find the center of this box and use as start point
+                var textCenter = labelbb.MinPoint.Add((
+                    labelbb.MaxPoint.Subtract(labelbb.MinPoint.AsVector())
+                    .AsVector().Scale(.5)));
+                
+                var plane = Plane.ByBestFitThroughPoints(points);
+                 finallabels.Add(scaledlabel.Select(x => x.Scale(plane,1/scalefactor.X ,1/scalefactor.Y,1/scalefactor.Z) as Curve).ToList());
+                    
 
+            }
+            return finallabels;
         }
 
         /// <summary>
