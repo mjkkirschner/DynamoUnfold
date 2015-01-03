@@ -79,8 +79,8 @@ namespace Unfold
 
             var facelikes = translatedFaces;
             var bbs = facelikes.Select(x => BoundingBox.ByGeometry(x.SurfaceEntities)).ToList();
-
-            var newcenters = DynamoPack.Packing.ByCoordinateSystems(bbs, width, height, gap);
+			//calculate new centers using packing algorithm
+			var newcenters = DynamoPack.Packing.ByCoordinateSystems(bbs, width * (1 / unfold.PostTransform.XScaleFactor), height * (1 / unfold.PostTransform.XScaleFactor), gap * (1 / unfold.PostTransform.XScaleFactor));
             var centers = bbs.Select(x => x.MinPoint.Add((x.MaxPoint.Subtract(x.MinPoint.AsVector()).AsVector().Scale(.5)))).ToList();
 
             if (newcenters.Count != centers.Count)
@@ -91,7 +91,7 @@ namespace Unfold
             var packedfinalsurfaces = new List<List<Surface>>();
             var packedfinalfacelikes = new List<T>();
 
-
+			//now move surfaces to new centers
             foreach (var surftotrans in facelikes)
             {
                 var index = facelikes.IndexOf(surftotrans);
@@ -99,7 +99,7 @@ namespace Unfold
                 var newsurface = surftotrans.SurfaceEntities.Select(x => x.Translate(transvec)).Cast<Surface>().ToList();
                 var ids = translatedFaces[index].IDS;
 
-                // keep track of where all the newsurfaces end up in the packing and what labels where moved
+                // keep track of where all the newsurfaces end up in the packing and what labels were moved
                 packingtransforms.Add(new PlanarUnfolder.FaceTransformMap(newsurface.First().ContextCoordinateSystem, ids));
                 packedfinalsurfaces.Add(newsurface);
 

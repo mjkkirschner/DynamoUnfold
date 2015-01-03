@@ -209,7 +209,6 @@ namespace DynamoUnfold
             double width = 20, double height = 20, double gap = 3)
         {
 
-
             return UnfoldPacking.PackUnfoldSurfaces(unfolding, width, height, gap);
 
         }
@@ -224,6 +223,7 @@ namespace DynamoUnfold
 
         #region tab Methods
         //methods for tab generation
+		//TODO Move all of this implementation out of this project
         public static List<List<Surface>>GenerateUnfoldedTabs
            (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity> unfoldingObject)
         {
