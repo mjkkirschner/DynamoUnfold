@@ -101,24 +101,26 @@ namespace DynamoUnfold
         /// <param name="unfoldingObject"> requires an unfolding object that represents an unfolding operation</param>
         /// <param name="labelScale"> scale for the text labels</param>
         /// <returns name = "labels"> labels composed of curve geometry </returns>
-        public static List<List<Curve>> GenerateInitialLabels
+        public static List<List<Line>> GenerateInitialLabels
            (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity> unfoldingObject, double labelScale = 1.0)
         {
-
+			//generate a set of labels at the label scale, these will be aligned to face (see constructor)
             var labels = unfoldingObject.StartingUnfoldableFaces.Select(x =>
               new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x, labelScale)).ToList();
-
-           var scaledlabels = labels.Select(x => x.AlignedLabelGeometry.Select(y=>y.Transform(unfoldingObject.PostTransform) as Curve).ToList()).ToList();
-           var finallabels = new List<List<Curve>>();
+			//transform the labels' alignedGeometry curve by curve using the inverse transform stored on the unfolding object
+			//we need to use this post transform because the unfolding surfaces were transformed to the origin before the unfold began
+			// to reset the context coordinate systems
+		   var scaledlabels = labels.Select(x => x.AlignedLabelGeometry.Select(y=>y.Transform(unfoldingObject.PostTransform) as Curve).ToList()).ToList();
+           var finallabels = new List<List<Line>>();
            var scalefactor = unfoldingObject.PostTransform.ScaleFactor();
           //foreach label scale at each's center by 1/scalefactor
             foreach (var scaledlabel in scaledlabels){
                 var points = scaledlabel.Select(x=>x.StartPoint).ToList();
-               
                 var plane = Plane.ByBestFitThroughPoints(points);
-                 finallabels.Add(scaledlabel.Select(x => x.Scale(plane,1/scalefactor.X ,1/scalefactor.Y,1/scalefactor.Z) as Curve).ToList());
-                    
-
+				var resultantNCurve = scaledlabel.Select(x => x.Scale(plane, 1 / scalefactor.X, 1 / scalefactor.Y, 1 / scalefactor.Z) as Curve).ToList();
+				var line = resultantNCurve.Select(x=>Line.ByStartPointEndPoint(x.StartPoint,x.EndPoint)).ToList();
+                 finallabels.Add(line);
+				
             }
             return finallabels;
         }
@@ -135,14 +137,13 @@ namespace DynamoUnfold
         {
 
             var labels = unfoldingObject.StartingUnfoldableFaces.Select(x =>
-              new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x, labelScale)).ToList();
+              new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x, labelScale * (1/unfoldingObject.PostTransform.ScaleFactor().X))).ToList();
 
            
             //TODO instead of calling this directly should be calling a method on the unfold object that returns these objects in the correct
             //position with the post transform so I dont need to know about it at this level
             var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID(unfoldingObject, x.AlignedLabelGeometry, x.ID)).ToList();
            
-
             return transformedGeo;
 
         }
