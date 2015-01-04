@@ -699,9 +699,13 @@ namespace Unfold
               }
               */
             // merge the main trunk and the disconnected sets
-         
-            var maintree = sortedtree.Select(x => x.UnfoldSurfaceSet.SurfaceEntities.Select(y=>y.Transform(CoordinateSystem.Identity()) as Surface).ToList()).ToList();
-            maintree.AddRange(disconnectedSet.Select(x => x.SurfaceEntities.Select(y=>y.Transform(CoordinateSystem.Identity())as Surface).ToList()).ToList());
+
+			var maintree = sortedtree.Select(x => x.UnfoldSurfaceSet.SurfaceEntities).ToList();
+			maintree.AddRange(disconnectedSet.Select(x => x.SurfaceEntities).ToList());
+            
+
+            //var maintree = sortedtree.Select(x => x.UnfoldSurfaceSet.SurfaceEntities.Select(y=>y.Transform(CoordinateSystem.Identity()) as Surface).ToList()).ToList();
+            //maintree.AddRange(disconnectedSet.Select(x => x.SurfaceEntities.Select(y=>y.Transform(CoordinateSystem.Identity())as Surface).ToList()).ToList());
             
             //iterate each list of rotated surfaces in the old geo list
             foreach (var oldgeolist in oldGeometry)
