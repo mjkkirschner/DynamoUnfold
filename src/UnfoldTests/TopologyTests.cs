@@ -46,7 +46,7 @@ namespace UnfoldTests
 
                     UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
 
-                    var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(graph);
+                    var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(graph,GraphUtilities.EdgeType.Graph);
 
                     UnfoldTestUtils.IsOneStronglyConnectedGraph(sccs);
 
@@ -82,7 +82,7 @@ namespace UnfoldTests
 
                     UnfoldTestUtils.GraphHasCorrectNumberOfEdges(24, graph);
 
-                    var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(graph);
+					var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(graph, GraphUtilities.EdgeType.Graph);
 
                     UnfoldTestUtils.IsOneStronglyConnectedGraph(sccs);
 
@@ -154,7 +154,7 @@ namespace UnfoldTests
                     UnfoldTestUtils.GraphHasCorrectNumberOfTreeEdges(5, casttree);
                     UnfoldTestUtils.AssertAllFinishingTimesSet(graph);
 
-                    var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(casttree);
+					var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(casttree, GraphUtilities.EdgeType.Tree);
 
                     UnfoldTestUtils.IsAcylic<EdgeLikeEntity, FaceLikeEntity>(sccs, casttree);
 
@@ -220,7 +220,7 @@ namespace UnfoldTests
                 UnfoldTestUtils.GraphHasVertForEachFace(casttree, face_objs);
                 UnfoldTestUtils.AssertAllFinishingTimesSet(graph);
 
-                var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(casttree);
+				var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(casttree, GraphUtilities.EdgeType.Tree);
 
                 UnfoldTestUtils.IsAcylic<EdgeLikeEntity, FaceLikeEntity>(sccs, casttree);
 
