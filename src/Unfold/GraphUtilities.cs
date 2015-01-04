@@ -13,7 +13,9 @@ namespace Unfold
     public static class GraphUtilities
     {
 
-
+		//type used to determine which edges to check when cycle detecting
+		//(Pre / Post unfold tree transformation search)
+		public enum EdgeType { Graph,Tree }
 
         /// <summary>
         /// method to find a list of nodes that represent a list of faces
@@ -152,7 +154,7 @@ namespace Unfold
 
 
             //use for cycle detection to assert that the BFS tree has no cycles and is a tree
-            public static List<List<GraphVertex<K,T>>> CycleDetect(List<GraphVertex<K,T>> graph)
+            public static List<List<GraphVertex<K,T>>> CycleDetect(List<GraphVertex<K,T>> graph, EdgeType edgeType )
             {
 
                 var GraphWithTags = CloneGraph<K,T>(graph);
@@ -172,7 +174,7 @@ namespace Unfold
                 {
                     if (vert.Index < 0)
                     {
-                        checkStrongConnect(vert);
+                        checkStrongConnect(vert,edgeType);
 
                     }
 
@@ -180,21 +182,31 @@ namespace Unfold
                 return stronglyConnectedComponents;
             }
 
-            private static void checkStrongConnect(GraphVertex<K,T> vertex)
+            private static void checkStrongConnect(GraphVertex<K,T> vertex, EdgeType edgeType)
             {
                 vertex.Index = Index;
                 vertex.LowLink = Index;
                 Index = Index + 1;
                 VertStack.Push(vertex);
+				List<GraphVertex<K, T>> adjlist;
 
-                var adjlist = vertex.TreeEdges.Select(x => x.Head).ToList();
 
+				if (edgeType == EdgeType.Graph)
+				{
+					adjlist = vertex.GraphEdges.Select(x => x.Head).ToList();
+				}
+				else
+				{
+					adjlist = vertex.TreeEdges.Select(x => x.Head).ToList();
+				}
+
+               
                 foreach (GraphVertex<K,T> AdjVert in adjlist)
                 {
 
                     if (AdjVert.Index < 0)
                     {
-                        checkStrongConnect(AdjVert);
+                        checkStrongConnect(AdjVert,edgeType);
                         vertex.LowLink = Math.Min(vertex.LowLink, AdjVert.LowLink);
 
                     }

@@ -42,7 +42,7 @@ namespace UnfoldTests
 
             var casttree = tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>;
             //perform Tarjans algo and make sure that the tree is acylic before unfold
-            var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(casttree);
+            var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(casttree,GraphUtilities.EdgeType.Tree);
 
             UnfoldTestUtils.IsAcylic<EdgeLikeEntity, FaceLikeEntity>(sccs, casttree);
 
