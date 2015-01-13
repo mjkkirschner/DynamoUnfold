@@ -466,7 +466,7 @@ namespace Unfold
 
 
             // as an initial set, we'll record the starting coordinate system of each surface
-            transforms.AddRange(allfaces.Select(x => new FaceTransformMap(x.SurfaceEntities.First().ContextCoordinateSystem, x.IDS)).ToList());
+            transforms.AddRange(allfaces.Select(x => new FaceTransformMap(Tesselation.MeshHelpers.UniformCSfromSurface(x.SurfaceEntities.First()), x.IDS)).ToList());
 
 
             while (sortedtree.Count > 1)
@@ -572,7 +572,9 @@ namespace Unfold
 
                     disconnectedSet.Add(child.UnfoldSurfaceSet);
                     child.UnfoldSurfaceSet.IDS.Add(child.Face.ID);
-                    transforms.Add(new FaceTransformMap(child.UnfoldSurfaceSet.SurfaceEntities.First().ContextCoordinateSystem, child.UnfoldSurfaceSet.IDS));
+                    transforms.Add(new FaceTransformMap(Tesselation.MeshHelpers.UniformCSfromSurface(
+                        child.UnfoldSurfaceSet.SurfaceEntities.First())
+                        , child.UnfoldSurfaceSet.IDS));
                   
 
                 }
@@ -628,8 +630,9 @@ namespace Unfold
                     currentIDsToStoreTransforms.Add(child.Face.ID);
                     currentIDsToStoreTransforms.AddRange(rotatedFaceIDs);
                     //////////************* again, this may be incorrect, not sure that they all share the same coord system anylonger...
-                    transforms.Add(new FaceTransformMap(
-                        rotatedFace.First().ContextCoordinateSystem, currentIDsToStoreTransforms));
+                    transforms.Add(new FaceTransformMap(Tesselation.MeshHelpers.UniformCSfromSurface(
+                        rotatedFace.First()),
+                        currentIDsToStoreTransforms));
 
 
                 }

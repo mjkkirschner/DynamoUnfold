@@ -9,7 +9,7 @@ using Autodesk.DesignScript.Runtime;
 using Unfold.Interfaces;
 using DynamoText;
 using DynamoPack;
-
+using Unfold.Topology;
 
 namespace Unfold
 {
@@ -44,7 +44,7 @@ namespace Unfold
 
                 // save transformation for each set, this should have all the ids present
                 alignDownTransforms.Add(new PlanarUnfolder.FaceTransformMap(
-                        facelike.SurfaceEntities.First().ContextCoordinateSystem, facelike.IDS));
+                       Tesselation.MeshHelpers.UniformCSfromSurface(facelike.SurfaceEntities.First()), facelike.IDS));
 
                 //create a new facelike to hold the new surfaces that are aligned to the plane
                 //the ids are the same though which lets us label these and apply the correct transformations
@@ -100,7 +100,7 @@ namespace Unfold
                 var ids = translatedFaces[index].IDS;
 
                 // keep track of where all the newsurfaces end up in the packing and what labels where moved
-                packingtransforms.Add(new PlanarUnfolder.FaceTransformMap(newsurface.First().ContextCoordinateSystem, ids));
+                packingtransforms.Add(new PlanarUnfolder.FaceTransformMap(Tesselation.MeshHelpers.UniformCSfromSurface(newsurface.First()), ids));
                 packedfinalsurfaces.Add(newsurface);
 
                 // create a copy of the old facelike, but update the surface

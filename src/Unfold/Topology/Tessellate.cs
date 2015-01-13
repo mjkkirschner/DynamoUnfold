@@ -43,7 +43,14 @@ namespace Unfold.Topology
                 return surface.ClosestPointTo(centroid.AsPoint());
             
             }
-           
+           public static CoordinateSystem UniformCSfromSurface(Surface surface){
+
+               var origin = SurfaceAsPolygonCenter(surface);
+               
+               return CoordinateSystem.ByPlane(Plane.ByOriginNormal(origin, surface.NormalAtPoint(origin)));
+               
+           }
+
             public static Point SurfaceAsPolygonCenter(List<Surface> surfaces)
             {
                

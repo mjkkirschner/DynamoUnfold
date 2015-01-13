@@ -296,6 +296,19 @@ namespace DynamoUnfold
             return output;
         }
 
+        public static List<List<CoordinateSystem>> _TransformMap(PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity> unfoldobject)
+        {
+            var output = new List<List<CoordinateSystem>>();
+            var map = unfoldobject.Maps;
+            foreach (var id in unfoldobject.StartingUnfoldableFaces.Select(x => x.ID).ToList())
+            {
+                var applicableTransforms = map.Where(x => x.IDS.Contains(id));
+                var transforms = applicableTransforms.Select(x => x.CS).ToList();
+                output.Add(transforms);
+            }
+            return output;
+        }
+
         public static object _BFSTestNoGeometryGeneration(List<Surface> surfaces)
         {
 
