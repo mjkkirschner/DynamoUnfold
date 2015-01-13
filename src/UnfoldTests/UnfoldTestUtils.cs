@@ -416,13 +416,15 @@ namespace UnfoldTests
             where T : IUnfoldablePlanarFace<K>
         {
 
-            // assert that the final geometry  intersect with the 
+            // assert that the final geometry intersect with the 
             //the orginal surfaces(transformed through their transformation histories)
             for (int i = 0; i < labels.Count; i++)
             {
                 var label = labels[i];
                 var curves = translatedgeo[i];
-
+                //this transformation takes an initial surface and pushes it through the unfold transform map to get the final 
+                //position, but, this check does not take into account the post transform... so this is checking if the labels
+                // WERE in the correct position before the post transform was applied...
                 var transformedInitialSurfaceToFinal = PlanarUnfolder.DirectlyMapGeometryToUnfoldingByID
                     <K, T, Surface>
                     (unfoldingObject, label.UnfoldableFace.SurfaceEntities, label.ID);

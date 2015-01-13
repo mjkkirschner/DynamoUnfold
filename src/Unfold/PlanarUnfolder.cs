@@ -140,6 +140,34 @@ namespace Unfold
                 // transformed when returned with a specific post transform
                 return new PlanarUnfolding<K, T>(mergedOrgFaces, mergedFinalSurfaces, mergedTransformMaps, mergedUnfoldedFaces,null,null);
             }
+
+
+            public static List<List<Line>> GenerateLabels(PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity> unfoldingObject, double labelScale)
+            {
+                //generate a set of labels at the label scale, these will be aligned to face (see constructor)
+                var labels = unfoldingObject.StartingUnfoldableFaces.Select(x =>
+                  new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x, labelScale)).ToList();
+                //transform the labels' alignedGeometry curve by curve using the inverse transform stored on the unfolding object
+                //we need to use this post transform because the unfolding surfaces were transformed to the origin before the unfold began
+                // to reset the context coordinate systems
+                var transformedLabels = labels.Select(x => x.AlignedLabelGeometry.Select(y => y.Transform(unfoldingObject.PostTransform) as Curve).ToList()).ToList();
+                var finallabels = new List<List<Line>>();
+                var scalefactor = unfoldingObject.PostTransform.ScaleFactor();
+                //foreach label scale at each's center by 1/scalefactor
+                foreach (var scaledlabel in transformedLabels)
+                {
+                    var points = scaledlabel.Select(x => x.StartPoint).ToList();
+                    var plane = Plane.ByBestFitThroughPoints(points);
+                   
+                    //convert these resultant nurbs curves to lines - nurbs curves are too heavy for labels
+                    var resultantNCurve = scaledlabel.Select(x => x.Scale(plane, 1 / scalefactor.X, 1 / scalefactor.Y, 1 / scalefactor.Z) as Curve).ToList();
+                    var line = resultantNCurve.Select(x => Line.ByStartPointEndPoint(x.StartPoint, x.EndPoint)).ToList();
+                    finallabels.Add(line);
+
+                }
+                return finallabels;
+            }
+
         }
 
         /// <summary>

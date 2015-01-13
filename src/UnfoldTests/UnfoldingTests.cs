@@ -255,8 +255,8 @@ namespace UnfoldTests
         public class MappingFaceTransformsTests
         {
 
-           
-            
+
+
             [Test]
             public void UnfoldAndLabelCubeFromFaces()
             {
@@ -274,7 +274,7 @@ namespace UnfoldTests
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
                new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
                 Console.WriteLine("labels generated");
-               UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
+                UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
 
                 // next check the positions of the translated labels,
 
@@ -341,7 +341,7 @@ namespace UnfoldTests
             [Test]
             public void UnfoldAndLabelTallCone()
             {
-                // unfold cube
+               
                 Solid testcone = UnfoldTestUtils.SetupTallCone();
                 List<Face> faces = testcone.Faces.ToList();
                 var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
@@ -361,7 +361,7 @@ namespace UnfoldTests
                 var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
                new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
 
-               UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
+                UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
 
                 // next check the positions of the translated labels
 
@@ -466,6 +466,60 @@ namespace UnfoldTests
             }
         }
 
+        public class LabelingNonIdentityContextCoordinateSystemSurfaces
+        {
+
+            [Test]
+            public void UnfoldAndLabelTranslatedCubeFromSurfacs()
+            {
+                
+                // unfold cube
+                Solid testcube = UnfoldTestUtils.SetupCube();
+                List<Face> faces = testcube.Faces.ToList();
+                var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
+                //translate each surface by vector
+                var transSurfaces = surfaces.Select(x=>x.Translate(100,100,100) as Surface).ToList();
+                var unfoldObject = PlanarUnfolder.Unfold(transSurfaces);
+                //this will invoke the post transform on all surfaces so they should be located near 100,100,100
+
+                var unfoldsurfaces = unfoldObject.UnfoldedSurfaceSet;
+               
+                
+                Assert.IsTrue(transSurfaces.First().ContextCoordinateSystem.IsEqualTo(unfoldsurfaces.First().First().ContextCoordinateSystem));
+                Console.WriteLine("translated surfaces have the same context coord system as the post transformed unfolded ones");
+                
+                Console.WriteLine("generating labels");
+
+                // generate labels
+                var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
+               new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
+
+                UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
+
+                // next check the positions of the translated labels
+                var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID(unfoldObject, x.AlignedLabelGeometry, x.ID)).ToList();
+
+                UnfoldTestUtils.AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
+
+            }
+
+
+            [Test]
+            public void UnfoldAndLabelTranslatedAndScaledCubeFromSurfacs()
+            {
+                throw new NotImplementedException();
+
+            }
+
+            [Test]
+            public void UnfoldPackAndLabelTranslatedAndScaledCubeFromSurfacs()
+            {
+                throw new NotImplementedException();
+
+            }
+
+        }
+
         public class ASM220Defects
         {
 
@@ -476,14 +530,9 @@ namespace UnfoldTests
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
                 var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
-
-               
-                var unfolds = Enumerable.Range(0,5).Select(x => PlanarUnfolder.Unfold(surfaces)).ToList();
-
-
+                var unfolds = Enumerable.Range(0, 5).Select(x => PlanarUnfolder.Unfold(surfaces)).ToList();
 
             }
-
 
             public void Unfold10CubesFromSurfaces()
             {
@@ -491,11 +540,8 @@ namespace UnfoldTests
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
                 var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
-                
-                List<List<Surface>> manycubes = Enumerable.Repeat(surfaces,10).ToList();
+                List<List<Surface>> manycubes = Enumerable.Repeat(surfaces, 10).ToList();
                 var unfolds = manycubes.Select(x => PlanarUnfolder.Unfold(x)).ToList();
-
-
                 var unfoldsurfaces = unfolds.SelectMany(x => x.UnfoldedSurfaceSet).ToList();
 
             }
@@ -506,11 +552,8 @@ namespace UnfoldTests
                 Solid testcube = UnfoldTestUtils.SetupCube();
                 List<Face> faces = testcube.Faces.ToList();
                 var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
-
                 List<List<Surface>> manycubes = Enumerable.Repeat(surfaces, 20).ToList();
                 var unfolds = manycubes.Select(x => PlanarUnfolder.Unfold(x)).ToList();
-
-
                 var unfoldsurfaces = unfolds.SelectMany(x => x.UnfoldedSurfaceSet).ToList();
 
             }
@@ -566,7 +609,7 @@ namespace UnfoldTests
                 {
                     unfolds.Add(PlanarUnfolder.Unfold(manycubes[index]));
                     Console.WriteLine(index);
-                  
+
                 }
 
                 var unfoldsurfaces = unfolds.SelectMany(x => x.UnfoldedSurfaceSet).ToList();
@@ -578,28 +621,28 @@ namespace UnfoldTests
 
         public class PlanarUnfoldingMergeTests
         {
-            
-            
 
-            public void AssertMergeHasCorrectNumberOfSurfaces<K,T>(PlanarUnfolder.PlanarUnfolding<K,T> mergedunfold, int numberOfSurfaces )
-                 where K : IUnfoldableEdge
-            where T : IUnfoldablePlanarFace<K>
+
+
+            public void AssertMergeHasCorrectNumberOfSurfaces<K, T>(PlanarUnfolder.PlanarUnfolding<K, T> mergedunfold, int numberOfSurfaces)
+                where K : IUnfoldableEdge
+                where T : IUnfoldablePlanarFace<K>
             {
 
-                var numStartSurfs = mergedunfold.StartingUnfoldableFaces.SelectMany(x=>x.SurfaceEntities).Count();
-                var numEndSurfs = mergedunfold.UnfoldedSurfaceSet.SelectMany(x=>x).Count();
+                var numStartSurfs = mergedunfold.StartingUnfoldableFaces.SelectMany(x => x.SurfaceEntities).Count();
+                var numEndSurfs = mergedunfold.UnfoldedSurfaceSet.SelectMany(x => x).Count();
                 Assert.AreEqual(numStartSurfs, numEndSurfs);
                 Assert.AreEqual(numStartSurfs, numberOfSurfaces);
                 Console.WriteLine("correct number of surfaces in the merged unfold");
             }
 
-            public void AssertMergeHasCorrectNumberOfMaps<K, T>(PlanarUnfolder.PlanarUnfolding<K, T> mergedunfold, List<PlanarUnfolder.PlanarUnfolding<K,T>> unfoldOps )
-                 where K : IUnfoldableEdge
-            where T : IUnfoldablePlanarFace<K>
+            public void AssertMergeHasCorrectNumberOfMaps<K, T>(PlanarUnfolder.PlanarUnfolding<K, T> mergedunfold, List<PlanarUnfolder.PlanarUnfolding<K, T>> unfoldOps)
+                where K : IUnfoldableEdge
+                where T : IUnfoldablePlanarFace<K>
             {
-                var expectedCount = unfoldOps.SelectMany(x=>x.Maps).Count();
+                var expectedCount = unfoldOps.SelectMany(x => x.Maps).Count();
                 var realnum = mergedunfold.Maps.Count();
-                Assert.AreEqual(expectedCount,realnum);
+                Assert.AreEqual(expectedCount, realnum);
                 Console.WriteLine("correct number of maps in the merged unfold");
             }
 
@@ -616,12 +659,12 @@ namespace UnfoldTests
                 var unfoldsurfaces = unfoldObject1.UnfoldedSurfaceSet.Concat(unfoldObject2.UnfoldedSurfaceSet).ToList();
 
                 Console.WriteLine("merging unfolds");
-              var unfoldObject =   PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity>.
-                  MergeUnfoldings(new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity>>(){unfoldObject1,unfoldObject2});
+                var unfoldObject = PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity>.
+                    MergeUnfoldings(new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity>>() { unfoldObject1, unfoldObject2 });
 
-                
-                AssertMergeHasCorrectNumberOfSurfaces(unfoldObject,faces.Count*2);
-                AssertMergeHasCorrectNumberOfMaps(unfoldObject,new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity>>(){unfoldObject1,unfoldObject2});
+
+                AssertMergeHasCorrectNumberOfSurfaces(unfoldObject, faces.Count * 2);
+                AssertMergeHasCorrectNumberOfMaps(unfoldObject, new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity>>() { unfoldObject1, unfoldObject2 });
 
                 Console.WriteLine("generating labels");
 
@@ -644,7 +687,7 @@ namespace UnfoldTests
             {
                 // unfold cube
                 Solid testcube = UnfoldTestUtils.SetupTallCone();
-               List<Face> faces = testcube.Faces.ToList();
+                List<Face> faces = testcube.Faces.ToList();
                 var surfaces = faces.Select(x => x.SurfaceGeometry()).ToList();
                 //handle tesselation here
                 var pointtuples = Tesselation.Tessellate(surfaces, -1, 512);
@@ -657,11 +700,11 @@ namespace UnfoldTests
                 var unfoldsurfaces = unfoldObject1.UnfoldedSurfaceSet.Concat(unfoldObject2.UnfoldedSurfaceSet).ToList();
 
                 Console.WriteLine("merging unfolds");
-              var unfoldObject =   PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity>.
-                  MergeUnfoldings(new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity>>(){unfoldObject1,unfoldObject2});
+                var unfoldObject = PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity>.
+                    MergeUnfoldings(new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity>>() { unfoldObject1, unfoldObject2 });
 
-                AssertMergeHasCorrectNumberOfSurfaces(unfoldObject,trisurfaces.Count*2);
-                AssertMergeHasCorrectNumberOfMaps(unfoldObject,new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity>>(){unfoldObject1,unfoldObject2});
+                AssertMergeHasCorrectNumberOfSurfaces(unfoldObject, trisurfaces.Count * 2);
+                AssertMergeHasCorrectNumberOfMaps(unfoldObject, new List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity>>() { unfoldObject1, unfoldObject2 });
 
                 Console.WriteLine("generating labels");
 
@@ -723,7 +766,7 @@ namespace UnfoldTests
                 UnfoldTestUtils.AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
 
             }
-        
+
         }
 
         public class TabGenerationTests
