@@ -29,11 +29,13 @@ namespace Unfold
 			public Plane RotationPlane { get; set; }
             public double RotationDegrees { get; set; }
             public List<int> IDS { get; set; }
-			public CoordinateSystem CS { get; set; }
+			public CoordinateSystem From { get; set; }
+			public CoordinateSystem To { get; set; }
 
-			public FaceTransformMap(CoordinateSystem cs, List<int> ids)
+			public FaceTransformMap(CoordinateSystem from,CoordinateSystem to, List<int> ids)
 			{
-				CS = cs;
+				From = from;
+				To = to;
 				IDS = ids;
 			}
 
@@ -42,8 +44,11 @@ namespace Unfold
                 IDS = ids;
 				RotationDegrees = rotdegrees;
 				RotationPlane = rotPlane;
-				CS = null;
+				From = null;
+				To = null;
             }
+
+
 
         }
 

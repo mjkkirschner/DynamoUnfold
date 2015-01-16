@@ -44,8 +44,10 @@ namespace Unfold
 
                 // save transformation for each set, this should have all the ids present
 				//TODO is this incorrect? should we be saving tempSurfaces?
-                alignDownTransforms.Add(new PlanarUnfolder.FaceTransformMap(
-                        facelike.SurfaceEntities.First().ContextCoordinateSystem, facelike.IDS));
+                alignDownTransforms.Add(new PlanarUnfolder.FaceTransformMap(CoordinateSystem.Identity(), facelike.IDS));
+
+				//alignDownTransforms.Add(new PlanarUnfolder.FaceTransformMap(
+					//startCoordSystem, facelike.IDS));
 
                 //create a new facelike to hold the new surfaces that are aligned to the plane
                 //the ids are the same though which lets us label these and apply the correct transformations
