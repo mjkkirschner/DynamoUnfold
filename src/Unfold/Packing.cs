@@ -43,6 +43,7 @@ namespace Unfold
                     Vector.XAxis(), Vector.YAxis()))) as Surface).ToList();
 
                 // save transformation for each set, this should have all the ids present
+				//TODO is this incorrect? should we be saving tempSurfaces?
                 alignDownTransforms.Add(new PlanarUnfolder.FaceTransformMap(
                         facelike.SurfaceEntities.First().ContextCoordinateSystem, facelike.IDS));
 
