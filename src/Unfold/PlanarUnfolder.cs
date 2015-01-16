@@ -26,14 +26,22 @@ namespace Unfold
         public class FaceTransformMap
         {
 
-            public CoordinateSystem CS { get; set; }
+			public Plane RotationPlane { get; set; }
+            public double RotationDegrees { get; set; }
             public List<int> IDS { get; set; }
+			public CoordinateSystem CS { get; set; }
 
+			public FaceTransformMap(CoordinateSystem cs, List<int> ids)
+			{
+				CS = cs;
+				IDS = ids;
+			}
 
-            public FaceTransformMap(CoordinateSystem cs, List<int> ids)
+            public FaceTransformMap(Plane rotPlane, double rotdegrees, List<int> ids)
             {
                 IDS = ids;
-                CS = cs;
+				RotationDegrees = rotdegrees;
+				RotationPlane = rotPlane; 
 
             }
 
@@ -497,8 +505,8 @@ namespace Unfold
                 // just check the initial faces against each other, these should only cotain single surfaces at this point
                 double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
                 //need to run this method on every surface contained in the UnfoldedSurfaceSet and collect them in a new list
-                List<Surface> rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.UnfoldSurfaceSet, parent.Face, edge.GeometryEdge);
-
+                var rotationPackage = AlignPlanarFaces.GetCoplanarRotation(nc, child.UnfoldSurfaceSet, parent.Face, edge.GeometryEdge);
+				List<Surface> rotatedFace = rotationPackage.Item1;
 
 
                 //at this point need to check if the rotated face has intersected with any other face that has been been
@@ -572,7 +580,7 @@ namespace Unfold
 
                     disconnectedSet.Add(child.UnfoldSurfaceSet);
                     child.UnfoldSurfaceSet.IDS.Add(child.Face.ID);
-                    transforms.Add(new FaceTransformMap(child.UnfoldSurfaceSet.SurfaceEntities.First().ContextCoordinateSystem, child.UnfoldSurfaceSet.IDS));
+					transforms.Add(new FaceTransformMap(rotationPackage.Item2,rotationPackage.Item3, child.UnfoldSurfaceSet.IDS));
                   
 
                 }
@@ -629,7 +637,7 @@ namespace Unfold
                     currentIDsToStoreTransforms.AddRange(rotatedFaceIDs);
                     //////////************* again, this may be incorrect, not sure that they all share the same coord system anylonger...
                     transforms.Add(new FaceTransformMap(
-                        rotatedFace.First().ContextCoordinateSystem, currentIDsToStoreTransforms));
+                        rotationPackage.Item2,rotationPackage.Item3, currentIDsToStoreTransforms));
 
 
                 }
