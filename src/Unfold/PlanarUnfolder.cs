@@ -41,8 +41,8 @@ namespace Unfold
             {
                 IDS = ids;
 				RotationDegrees = rotdegrees;
-				RotationPlane = rotPlane; 
-
+				RotationPlane = rotPlane;
+				CS = null;
             }
 
         }
@@ -204,6 +204,37 @@ namespace Unfold
 
         }
 
+		private static G ApplyTransformations<G>(G geometryToTransform, List<FaceTransformMap> transformMaps) where G: Geometry
+		{
+			var oldGeometry = new List<G>();
+			G aggregatedGeo = geometryToTransform;
+			for (int i = 0; i + 1 < transformMaps.Count; i++)
+			{
+				//if this transformMap is a coordinateSystem, then use geo.transform
+				if (transformMaps[i + 1].CS != null)
+				{
+					aggregatedGeo = aggregatedGeo.Transform(transformMaps[i+1].CS) as G;
+				}
+				else
+				{	var plane = transformMaps[i + 1].RotationPlane;
+					var degrees = transformMaps[i + 1].RotationDegrees;
+					aggregatedGeo = aggregatedGeo.Rotate(plane,degrees) as G;
+				}
+				// we only need to keep the last transformation, so add all the others 
+				// to the disposal list
+				if (i != transformMaps.Count - 2)
+				{
+					oldGeometry.Add(aggregatedGeo);
+				}
+			}
+			foreach (IDisposable item in oldGeometry)
+			{
+				item.Dispose();
+			}
+
+			return aggregatedGeo;
+		}
+
         private static G ApplyTransformations<G>(G geometryToTransform, List<CoordinateSystem> transforms) where G : Geometry
         {
             //list of geo to dispose at the end of the mapping
@@ -340,7 +371,7 @@ namespace Unfold
 
             // grab all transforms that were applied to this surface id
             var map = unfolding.Maps;
-            var applicableTransforms = map.Where(x => x.IDS.Contains(id));
+            var applicableTransforms = map.Where(x => x.IDS.Contains(id)).ToList();
             var transforms = applicableTransforms.Select(x => x.CS).ToList();
 
             
@@ -357,7 +388,7 @@ namespace Unfold
             //unfold surface and is that the same position, so following the transform
             // chain will bring the geo to a similar final location as the unfold
 
-            return ApplyTransformations<G>(geometryToTransform, transforms);
+            return ApplyTransformations<G>(geometryToTransform, applicableTransforms);
 
         }
 
@@ -474,7 +505,7 @@ namespace Unfold
 
 
             // as an initial set, we'll record the starting coordinate system of each surface
-            transforms.AddRange(allfaces.Select(x => new FaceTransformMap(x.SurfaceEntities.First().ContextCoordinateSystem, x.IDS)).ToList());
+            transforms.AddRange(allfaces.Select(x => new FaceTransformMap(CoordinateSystem.Identity(), x.IDS)).ToList());
 
 
             while (sortedtree.Count > 1)
