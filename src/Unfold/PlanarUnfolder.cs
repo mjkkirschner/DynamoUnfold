@@ -381,9 +381,9 @@ namespace Unfold
             // set the geometry to the first applicable transform
             //geometryToTransform = geometryToTransform.Transform(transforms.First()) as G;
 
-            var geoStartPoint = offset;
+           // var geoStartPoint = offset;
             //create vector from unfold surface center startpoint and the current geo center and translate to this start position
-            geometryToTransform = geometryToTransform.Translate(Vector.ByTwoPoints(geoStartPoint, unfolding.StartingPoints[id])) as G;
+           // geometryToTransform = geometryToTransform.Translate(Vector.ByTwoPoints(geoStartPoint, unfolding.StartingPoints[id])) as G;
 
             //TODO intermediate geometry needs to be cleaned up here
 
@@ -614,7 +614,9 @@ namespace Unfold
 
                     disconnectedSet.Add(child.UnfoldSurfaceSet);
                     child.UnfoldSurfaceSet.IDS.Add(child.Face.ID);
-					transforms.Add(new FaceTransformMap(rotationPackage.Item2,rotationPackage.Item3, child.UnfoldSurfaceSet.IDS));
+					//TODO this is incorrect, we dont want to add the rotation since we had an intersect...
+					//could add 0 degree rotation...
+					//transforms.Add(new FaceTransformMap(rotationPackage.Item2,rotationPackage.Item3, child.UnfoldSurfaceSet.IDS));
                   
 
                 }
