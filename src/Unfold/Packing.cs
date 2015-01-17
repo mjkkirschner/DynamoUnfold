@@ -41,10 +41,13 @@ namespace Unfold
                     CoordinateSystem.ByPlane(Plane.ByOriginXAxisYAxis(
                     Point.ByCoordinates(somePointOnSurface.X, somePointOnSurface.Y, 0),
                     Vector.XAxis(), Vector.YAxis()))) as Surface).ToList();
-
+				
+				var flatcoordsystem = CoordinateSystem.ByPlane(Plane.ByOriginXAxisYAxis(
+                    Point.ByCoordinates(somePointOnSurface.X, somePointOnSurface.Y, 0),
+                    Vector.XAxis(), Vector.YAxis())) ;
                 // save transformation for each set, this should have all the ids present
 				//TODO is this incorrect? should we be saving tempSurfaces?
-                alignDownTransforms.Add(new PlanarUnfolder.FaceTransformMap(CoordinateSystem.Identity(), facelike.IDS));
+                alignDownTransforms.Add(new PlanarUnfolder.FaceTransformMap(startCoordSystem,flatcoordsystem, facelike.IDS));
 
 				//alignDownTransforms.Add(new PlanarUnfolder.FaceTransformMap(
 					//startCoordSystem, facelike.IDS));
@@ -102,8 +105,8 @@ namespace Unfold
                 var newsurface = surftotrans.SurfaceEntities.Select(x => x.Translate(transvec)).Cast<Surface>().ToList();
                 var ids = translatedFaces[index].IDS;
 
-                // keep track of where all the newsurfaces end up in the packing and what labels where moved
-                packingtransforms.Add(new PlanarUnfolder.FaceTransformMap(newsurface.First().ContextCoordinateSystem, ids));
+                // keep track of where all the newsurfaces end up in the packing and what labels where moved //TODO just try keeping the transvec instead.....
+                packingtransforms.Add(new PlanarUnfolder.FaceTransformMap(surftotrans.SurfaceEntities.First().ContextCoordinateSystem,newsurface.First().ContextCoordinateSystem, ids));
                 packedfinalsurfaces.Add(newsurface);
 
                 // create a copy of the old facelike, but update the surface
