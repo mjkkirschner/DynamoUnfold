@@ -35,7 +35,8 @@ namespace Unfold
                 var norm = facelike.SurfaceEntities.First().NormalAtParameter(.5, .5);
                 var facePlane = Plane.ByOriginNormal(somePointOnSurface, norm);
                 var startCoordSystem = CoordinateSystem.ByPlane(facePlane);
-
+                //TODO need to cleanup planes, coord systems...
+ 
                 // transform surface to horizontal plane at x,y,0 of org surface
                 var tempSurfaces = surfaceToAlignDown.Select(x => x.Transform(startCoordSystem,
                     CoordinateSystem.ByPlane(Plane.ByOriginXAxisYAxis(

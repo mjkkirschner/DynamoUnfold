@@ -175,23 +175,32 @@ namespace Unfold
 
             private IEnumerable<Curve> AlignGeoToFace(IEnumerable<Curve> geo)
             {
+                var oldgeo = new List<DesignScriptEntity>();
                 var approxCenter = Tesselation.MeshHelpers.SurfaceAsPolygonCenter(UnfoldableFace.SurfaceEntities.First());
                 var norm = UnfoldableFace.SurfaceEntities.First().NormalAtPoint(approxCenter);
                 var facePlane = Plane.ByOriginNormal(approxCenter, norm);
                 var finalCordSystem = CoordinateSystem.ByPlane(facePlane);
-
+                //a list for collecting old geo that needs to be disposed
+                oldgeo.Add(facePlane);
                 // find bounding box of set of curves
                 var textBoudingBox = BoundingBox.ByGeometry(geo);
+                oldgeo.Add(textBoudingBox);
                 // find the center of this box and use as start point
                 var textCeneter = textBoudingBox.MinPoint.Add((
                     textBoudingBox.MaxPoint.Subtract(textBoudingBox.MinPoint.AsVector())
                     .AsVector().Scale(.5)));
 
                 var transVector = Vector.ByTwoPoints(textCeneter, Point.ByCoordinates(0, 0, 0));
-
+               
                 var geoIntermediateTransform = geo.Select(x => x.Translate(transVector)).Cast<Curve>().AsEnumerable();
-                //TODO dispose of this intermediate geometry
-                return geoIntermediateTransform.Select(x => x.Transform(finalCordSystem)).Cast<Curve>().AsEnumerable();
+                oldgeo.AddRange(geoIntermediateTransform);
+                var finalTransformedLabel = geoIntermediateTransform.Select(x => x.Transform(finalCordSystem)).Cast<Curve>().AsEnumerable();
+                foreach (IDisposable item in oldgeo)
+                {
+                    item.Dispose();
+                }
+
+                return finalTransformedLabel;
 
             }
 
@@ -541,7 +550,7 @@ namespace Unfold
                 //need to run this method on every surface contained in the UnfoldedSurfaceSet and collect them in a new list
                 var rotationPackage = AlignPlanarFaces.GetCoplanarRotation(nc, child.UnfoldSurfaceSet, parent.Face, edge.GeometryEdge);
 				List<Surface> rotatedFace = rotationPackage.Item1;
-
+                //TODO do I cleanup this rotation package anywhere? the plane from it specifically?
 
                 //at this point need to check if the rotated face has intersected with any other face that has been been
                 // folded already, all of these already folded faces should exist either in the parent unfoldedSurfaceSet

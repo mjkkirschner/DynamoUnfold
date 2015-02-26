@@ -72,8 +72,20 @@ namespace UnfoldTests
                         {
                             item.Dispose();
                         }
+
                     }
                 }
+            }
+            foreach (IDisposable item in graph)
+            {
+                Console.WriteLine("disposing a graphnode");
+                item.Dispose();
+            }
+
+            foreach (IDisposable item in casttree)
+            {
+                Console.WriteLine("disposing a face");
+                item.Dispose();
             }
         }
 
@@ -228,10 +240,10 @@ namespace UnfoldTests
 
         public static void AssertSurfacesAreCoplanar(Surface surf1, Surface surf2)
         {
+            var oldgeo = new List<DesignScriptEntity>();
             // 3 random points on each surface
             //assumption that domain of surface is [0,1]
             Random random = new Random();
-
 
             var A = surf1.PointAtParameter(random.NextDouble(), random.NextDouble());
             var B = surf1.PointAtParameter(random.NextDouble(), random.NextDouble());
@@ -240,7 +252,7 @@ namespace UnfoldTests
             var D = surf2.PointAtParameter(random.NextDouble(), random.NextDouble());
             var E = surf2.PointAtParameter(random.NextDouble(), random.NextDouble());
             var F = surf2.PointAtParameter(random.NextDouble(), random.NextDouble());
-
+            oldgeo.AddRange(new List<DesignScriptEntity>{A,B,C,D,E,F});
             // generate 2 vectors for each surface
 
             var AB = Vector.ByTwoPoints(A, B).Normalized();
@@ -254,8 +266,13 @@ namespace UnfoldTests
             var cross2 = DE.Cross(EF).Normalized();
 
             var dotpro = cross1.Dot(cross2);
-
+            oldgeo.AddRange(new List<DesignScriptEntity> { AB, BC, DE, EF, cross1, cross2 });
             //Console.WriteLine(dotpro);
+
+            foreach (IDisposable item in oldgeo)
+            {
+                item.Dispose();
+            }
 
             Assert.IsTrue(Math.Abs(Math.Abs(dotpro) - 1) < .0001);
             //  Console.WriteLine(dotpro);

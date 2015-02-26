@@ -221,7 +221,7 @@ namespace Unfold
 			where K : IUnfoldableEdge
 			where T : IUnfoldablePlanarFace<K>
 		{
-
+            //TODO I dont think we cleanup the plane that is generated in this call anywhere...
 			var output = GetCoplanarRotation<K, T>(normalconsistency, facetoRotate, referenceFace, sharedEdge);
 			return output.Item1;
 			
