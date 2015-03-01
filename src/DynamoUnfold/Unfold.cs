@@ -200,7 +200,7 @@ namespace DynamoUnfold
 
         }
 
-        #region Unfolding Methods  
+        #region Merge Methods  
         public static object MergeUnfoldingObjects (List<PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity,FaceLikeEntity>> unfoldings){
             return PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity>.MergeUnfoldings(unfoldings);
         }
@@ -264,9 +264,16 @@ namespace DynamoUnfold
 
         }
 
+		#region unroll methods
+		public static List<List<Geometry>> findRulingLines(Surface surface, double stepsize)
+		{
+			return RulingLineFinder.FindingRulingLines(surface, stepsize);
 
-        // The following methods may be removed from Import eventually
-        # region
+		}
+		#endregion
+
+		// The following methods may be removed from Import eventually
+        #region explorationdebug
         // method is for debugging the BFS output visually in dynamo, very useful
         public static object _BFSTestTesselation(List<Surface> surfaces, double tolerance = -1, int maxGridLines = 512)
         {

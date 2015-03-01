@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlignPlanarFaces.cs" />
+    <Compile Include="RulingLineFinder.cs" />
     <Compile Include="GraphUtilities.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="Topology\GraphVertex.cs" />
