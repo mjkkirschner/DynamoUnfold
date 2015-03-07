@@ -265,11 +265,17 @@ namespace DynamoUnfold
         }
 
 		#region unroll methods
-		public static List<List<Geometry>> findRulingLines(Surface surface, double stepsize)
+		public static List<Line> findRulingLines(Surface surface, double stepsize)
 		{
 			return RulingLineFinder.FindingRulingLines(surface, stepsize);
 
 		}
+        public static List<List<Geometry>> findRulingPatches(Surface surface, double stepsize)
+        {
+            return RulingLineFinder.FindingRulingPatches(surface, stepsize);
+
+        }
+
 		#endregion
 
 		// The following methods may be removed from Import eventually
