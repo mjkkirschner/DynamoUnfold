@@ -30,10 +30,11 @@ namespace Unfold
 			}
 			return max;
 		}
-
+        
 		public static List<List<Geometry>> FindingRulingLines(Surface surface, double stepSize)
 		{
-			//TODO need to make sure that we're aligned with the direction of curvature on this surface... will need to look at principal curvature directions max and step that way
+			//TODO need to make sure that we're aligned with the direction of curvature on this surface... 
+            //will need to look at principal curvature directions max and step that way
 			//find principal curvature directions at this point
 			var curvatureatmid = surface.PrincipalCurvaturesAtParameter(.5, .5);
 
@@ -50,9 +51,13 @@ namespace Unfold
 			}
 
 
-			var outputlines = new List<List<Geometry>>();
+			var intersectedRulingLines = new List<List<Geometry>>();
+            var filteredintersectedRulingLines = new List<Geometry>();
+            var finalpatches = new List<List<Geometry>>();
 			//TODO march from 0 to 1 by stepsize...might miss one, need to check
 			double v = .5;
+            //TODO change this stepping routine to instead use a stepsize based on curvature at last ruling line
+            //we'll make this a while loop
 			for (double u = 0; u <=1; u += stepSize)
 			{
 				if (flipUV)
@@ -62,27 +67,47 @@ namespace Unfold
 					v = temp;
 				}
 				var rulingcoordsystem = surface.CurvatureAtParameter(u, v);
-				Line lineToProject;
-
+				Line lineToIntersect;
+                var normal = surface.NormalAtParameter(u, v);
 				if (flipUV)
 				{
-					var smallu = surface.PointAtParameter(0, .5);
-					var bigu = surface.PointAtParameter(1, .5);
-					var noncurvedir = Vector.ByTwoPoints(smallu, bigu);
-					lineToProject = Line.ByStartPointEndPoint(rulingcoordsystem.Origin.Add(noncurvedir.Scale(-100)), rulingcoordsystem.Origin.Add(noncurvedir.Scale(100)));
+				    //cross product of normal and curve direction
+                    var noncurvedir = rulingcoordsystem.YAxis.Cross(normal);
+					lineToIntersect = Line.ByStartPointEndPoint(rulingcoordsystem.Origin.Add(noncurvedir.Scale(-100)), 
+                        rulingcoordsystem.Origin.Add(noncurvedir.Scale(100)));
 				}
 				else
 				{
-					var smallu = surface.PointAtParameter(.5, 0);
-					var bigu = surface.PointAtParameter(.5, 1);
-					var noncurvedir = Vector.ByTwoPoints(smallu, bigu);
-					lineToProject = Line.ByStartPointEndPoint(rulingcoordsystem.Origin.Add(noncurvedir.Scale(-100)), rulingcoordsystem.Origin.Add(noncurvedir.Scale(100)));
+
+                    var noncurvedir = rulingcoordsystem.XAxis.Cross(normal);
+					lineToIntersect = Line.ByStartPointEndPoint(rulingcoordsystem.Origin.Add(noncurvedir.Scale(-100)),
+                        rulingcoordsystem.Origin.Add(noncurvedir.Scale(100)));
 				}
-				var intersectionResults = lineToProject.Intersect(surface);
-				outputlines.Add(new List<Geometry>() { lineToProject});
-				//outputlines.Add(intersectionResults.Where(x => x is Curve || x is NurbsCurve || x is Line).ToList());
+                //intersec the very large rule with the surface
+				var intersectionResults = lineToIntersect.Intersect(surface);
+                //we get a list of geometry results...if this is developable we'll get just one line
+				intersectedRulingLines.Add(intersectionResults.ToList());
+                //filter this list of geo down to the first curvelike thing....
+                filteredintersectedRulingLines.Add(intersectionResults.Where(x => x is Curve || x is NurbsCurve || x is Line).First());
+                
+                // if we have found our first ruling line then we can start finding polygons between
+                // ruling lines
+                if (intersectedRulingLines.Count > 1)
+                {
+                    //get the last two intersected ruling lines
+                    var lineone = filteredintersectedRulingLines[intersectedRulingLines.Count - 2];
+                    var linetwo = filteredintersectedRulingLines[intersectedRulingLines.Count - 1];
+                    //draw a line from the center points of the two ruling lines, and then get the center of that line
+                    var vectorfromone2two = Vector.ByTwoPoints(((Curve)lineone).PointAtParameter(.5), (((Curve)linetwo).PointAtParameter(.5)));
+                    var pickpointone = ((Curve)lineone).PointAtParameter(.5).Subtract(vectorfromone2two);
+                    var pickpointtwo =  ((Curve)linetwo).PointAtParameter(.5).Add(vectorfromone2two);
+
+                    var initialTrim = surface.Trim(lineone, pickpointone);
+                    var finalTrim = initialTrim.First().Trim(linetwo,pickpointtwo);
+                    finalpatches.Add(finalTrim.ToList());
+                }
 			}
-			return outputlines;
+			return finalpatches;
 
 		}
 
