@@ -233,29 +233,22 @@ namespace UnfoldTests
         [Test]
         public void UnfoldAndTabCubeFromFaces()
         {
-            throw new NotImplementedException();
+           
             // unfold cube
             Solid testcube = UnfoldTestUtils.SetupCube();
             List<Face> faces = testcube.Faces.ToList();
 
             var unfoldObject = PlanarUnfolder.Unfold(faces);
-
-            var unfoldsurfaces = unfoldObject.UnfoldedSurfaceSet;
-
             Console.WriteLine("generating tabs");
 
-            // generate labels
-            var labels = unfoldObject.StartingUnfoldableFaces.Select(x =>
-           new PlanarUnfolder.UnfoldableFaceLabel<EdgeLikeEntity, FaceLikeEntity>(x)).ToList();
-            Console.WriteLine("labels generated");
-            UnfoldTestUtils.AssertLabelsGoodStartingLocationAndOrientation(labels);
-
-            // next check the positions of the translated labels,
-
-            var transformedGeo = labels.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID
+            // generate tabs
+            var tabs = TabGeneration.GenerateTabSurfacesFromUnfold<EdgeLikeEntity, FaceLikeEntity>(unfoldObject);
+            Console.WriteLine("tabs generated");
+            // next check the positions of the translated tab,
+            var transformedGeo = tab.Select(x => PlanarUnfolder.MapGeometryToUnfoldingByID
                 (unfoldObject, x.AlignedLabelGeometry, x.ID)).ToList();
 
-            UnfoldTestUtils.AssertLabelsGoodFinalLocationAndOrientation(labels, transformedGeo, unfoldObject);
+            UnfoldTestUtils.AssertTabsGoodFinalLocation<K,T>(tabs,unfoldObject);
 
         }
 

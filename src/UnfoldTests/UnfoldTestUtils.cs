@@ -498,5 +498,40 @@ namespace UnfoldTests
 
         #endregion
 
+        public static void AssertTabsGoodFinalLocation<K, T>(List<TabGeneration.Tab<K,T>> tabs,
+            PlanarUnfolder.PlanarUnfolding<K, T> unfoldingObject)
+            where K : IUnfoldableEdge
+            where T : IUnfoldablePlanarFace<K>
+        {
+            var oldgeo = new List<Geometry>();
+            // assert that the final geometry  intersect with the 
+            //the orginal surfaces(transformed through their transformation histories)
+            for (int i = 0; i < labels.Count; i++)
+            {
+                var label = labels[i];
+                var curves = translatedgeo[i];
+
+                var transformedInitialSurfaceToFinal = PlanarUnfolder.DirectlyMapGeometryToUnfoldingByID
+                    <K, T, Surface>
+                    (unfoldingObject, label.UnfoldableFace.SurfaceEntities, label.ID);
+
+                Assert.IsTrue(curves.SelectMany(x => transformedInitialSurfaceToFinal.Select(x.DoesIntersect)).Any());
+                oldgeo.AddRange(transformedInitialSurfaceToFinal);
+                Console.WriteLine("This label was in the right spot at the end of the unfold");
+            }
+
+            foreach (IDisposable item in oldgeo)
+            {
+                item.Dispose();
+            }
+            foreach (var list in translatedgeo)
+            {
+                foreach (IDisposable item in list)
+                {
+                    item.Dispose();
+                }
+            }
+
+        }
     }
 }
