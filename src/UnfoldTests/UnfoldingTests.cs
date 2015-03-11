@@ -230,6 +230,10 @@ namespace UnfoldTests
 
                 UnfoldTestUtils.CheckAllUnfoldedFacesForCorrectUnfold(unfoldsurfaces);
 
+                foreach (IDisposable item in trisurfaces){
+                    item.Dispose();
+                }
+
             }
 
            // [Test]
