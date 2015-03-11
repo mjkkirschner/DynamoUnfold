@@ -95,7 +95,7 @@ namespace Unfold
             //will need to look at principal curvature directions max and step that way
 			//find principal curvature directions at this point
 			var curvatureatmid = surface.PrincipalCurvaturesAtParameter(.5, .5);
-
+			
 			bool flipUV = false;
 			//curvature is greater in the U dir
 			if (Math.Abs(curvatureatmid[0]) > Math.Abs(curvatureatmid[1]))
@@ -177,6 +177,17 @@ namespace Unfold
 
 		}
 
+		public static List<Curve> RotateRulesToCeiling(List<Line> rules, Plane ceilingPlane)
+		{
+			//algorithm draft
+			//give a list of ruling lines found either adaptively or by some tolerance
+			//take all rules, find the angle between the normal of the ruling line (or original srf along this ruling line)
+			//now rotate this ruling line up to the ceiling plane, it will be rotated around an axis
+			//perpendicular to the normal at that rule, going through the vertex V of the cone, we can find V, 
+			//by intersecting/extending multiple ruling lines... or more generally, consider the case where a developable
+			//begins on the surface of a cone, but then continues off the cone into a cylinder, we can intersect the ruling line
+			//with the ceiling plane to find the point that our rotation axis must pass through.
 
+		}
 	}
 }
