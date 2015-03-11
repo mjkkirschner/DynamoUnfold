@@ -67,6 +67,7 @@
     <Compile Include="RulingLineFinder.cs" />
     <Compile Include="GraphUtilities.cs" />
     <Compile Include="Interfaces.cs" />
+    <Compile Include="TabGeneration.cs" />
     <Compile Include="Topology\GraphVertex.cs" />
     <Compile Include="Topology\ModelToGraph.cs" />
     <Compile Include="Packing.cs" />
