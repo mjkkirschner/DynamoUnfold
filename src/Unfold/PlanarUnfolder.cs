@@ -96,7 +96,7 @@ namespace Unfold
                 var mergedFinalSurfaces = new List<List<Surface>>();
                 var mergedTransformMaps = new List<FaceTransformMap>();
                 var mergedUnfoldedFaces = new List<T>();
-
+                var concatedGraphs = new List<GraphVertex<K, T>>();
 
                 for (int i = 0; i < unfoldingstomerge.Count; i++)
                 {
@@ -136,10 +136,11 @@ namespace Unfold
                     }
 
                     mergedUnfoldedFaces.AddRange(modifedUnfoldedfaces);
-
+                    concatedGraphs.AddRange(currentUnfolding.OriginalGraph);
                 }
                 //TODO need to implement an algo that actually merges the graphs so we can add tabs to merged unfolds
-                return new PlanarUnfolding<K, T>(mergedOrgFaces, mergedFinalSurfaces, mergedTransformMaps, mergedUnfoldedFaces,null);
+                //for now we just concat the list of graphs
+                return new PlanarUnfolding<K, T>(mergedOrgFaces, mergedFinalSurfaces, mergedTransformMaps, mergedUnfoldedFaces,concatedGraphs);
             }
         }
 
