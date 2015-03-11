@@ -432,7 +432,7 @@ namespace UnfoldTests
             where K : IUnfoldableEdge
             where T : IUnfoldablePlanarFace<K>
         {
-
+            var oldgeo = new List<Geometry>();
             // assert that the final geometry  intersect with the 
             //the orginal surfaces(transformed through their transformation histories)
             for (int i = 0; i < labels.Count; i++)
@@ -445,8 +445,20 @@ namespace UnfoldTests
                     (unfoldingObject, label.UnfoldableFace.SurfaceEntities, label.ID);
 
                 Assert.IsTrue(curves.SelectMany(x => transformedInitialSurfaceToFinal.Select(x.DoesIntersect)).Any());
-
+                oldgeo.AddRange(transformedInitialSurfaceToFinal);
                 Console.WriteLine("This label was in the right spot at the end of the unfold");
+            }
+
+            foreach (IDisposable item in oldgeo)
+            {
+                item.Dispose();
+            }
+            foreach (var list in translatedgeo)
+            {
+                foreach (IDisposable item in list)
+                {
+                    item.Dispose();
+                }
             }
 
         }
@@ -480,6 +492,7 @@ namespace UnfoldTests
                 Console.WriteLine("This label was in the right orientation at the start of the unfold");
 
                 testsurf.Dispose();
+                labelPlane.Dispose();
             }
         }
 

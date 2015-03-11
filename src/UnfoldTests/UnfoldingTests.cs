@@ -256,11 +256,13 @@ namespace UnfoldTests
 
         }
 
+        /// <summary>
+        /// these are tests that map geometry through the unfold using stored transforms, for example
+        /// tabs and labels use these methods and are tested here.
+        /// </summary>
         public class MappingFaceTransformsTests
         {
 
-           
-            
             [Test]
             public void UnfoldAndLabelCubeFromFaces()
             {
