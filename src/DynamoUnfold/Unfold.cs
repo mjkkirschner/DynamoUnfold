@@ -212,7 +212,7 @@ namespace DynamoUnfold
            (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity> unfoldingObject)
         {
            
-            var output = new List<List<TabGeneration.Tab<EdgeLikeEntity,FaceLikeEntity>>>();
+            var output = new List<List<Surface>>();
             foreach (var entry in TabGeneration.GenerateTabSurfacesFromUnfold(unfoldingObject))
             {
                 output.Add(entry.Value.Select(x=>x.AlignedTabSurf).ToList());

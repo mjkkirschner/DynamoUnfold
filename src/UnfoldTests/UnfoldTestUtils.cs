@@ -506,32 +506,27 @@ namespace UnfoldTests
             var oldgeo = new List<Geometry>();
             // assert that the final geometry  intersect with the 
             //the orginal surfaces(transformed through their transformation histories)
-            for (int i = 0; i < labels.Count; i++)
+            for (int i = 0; i < tabs.Count; i++)
             {
-                var label = labels[i];
-                var curves = translatedgeo[i];
+                var tab = tabs[i];
+				var initialSrf = unfoldingObject.StartingUnfoldableFaces[tab.ID].SurfaceEntities;
 
                 var transformedInitialSurfaceToFinal = PlanarUnfolder.DirectlyMapGeometryToUnfoldingByID
                     <K, T, Surface>
-                    (unfoldingObject, label.UnfoldableFace.SurfaceEntities, label.ID);
+                    (unfoldingObject,initialSrf, tab.ID);
 
-                Assert.IsTrue(curves.SelectMany(x => transformedInitialSurfaceToFinal.Select(x.DoesIntersect)).Any());
+                Assert.IsTrue(transformedInitialSurfaceToFinal.Select(x=> tab.TabSurf.DoesIntersect(x)).Any());
                 oldgeo.AddRange(transformedInitialSurfaceToFinal);
-                Console.WriteLine("This label was in the right spot at the end of the unfold");
+                Console.WriteLine("This tab was in the right spot at the end of the unfold, \n" +
+				"it intersects with the correct face");
             }
 
             foreach (IDisposable item in oldgeo)
             {
                 item.Dispose();
             }
-            foreach (var list in translatedgeo)
-            {
-                foreach (IDisposable item in list)
-                {
-                    item.Dispose();
-                }
-            }
-
+            
+            
         }
     }
 }
