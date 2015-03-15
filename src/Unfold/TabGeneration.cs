@@ -22,7 +22,8 @@ namespace Unfold
             where K : IUnfoldableEdge
         {
 
-            public Surface TabSurf { get; set; }
+            public Surface TabSurf { get; private set; }
+            public Surface AlignedTabSurf { get; private set; }
             public int ID { get; set; }
             public T UnfoldableFace { get; set; }
 
@@ -30,15 +31,16 @@ namespace Unfold
             {
                 ID = face.ID;
                 UnfoldableFace = face;
-                TabSurf = generateTabGeo(edge,tabOffset,unfoldObject);
+                TabSurf = generateTabGeo(edge,tabOffset);
+                AlignedTabSurf = PlanarUnfolder.DirectlyMapGeometryToUnfoldingByID(unfoldObject, TabSurf, ID);
             }
 
-            private Surface generateTabGeo (K edge, double tabOffset,PlanarUnfolder.PlanarUnfolding<K,T> unfoldObject)
+            private Surface generateTabGeo (K edge, double tabOffset)
             { 
                 // now offset this edge using the surface that contains the edge this tab represents
                 var approxcenter = Unfold.Topology.Tesselation.MeshHelpers.SurfaceAsPolygonCenter(UnfoldableFace.SurfaceEntities.First());
                 var vectorOffset = Vector.ByTwoPoints(approxcenter, edge.Curve.PointAtParameter(.5)).Normalized();
-                var offsetEdge = edge.Curve.Translate(vectorOffset.Scale(.3)) as Curve;
+                var offsetEdge = edge.Curve.Translate(vectorOffset.Scale(tabOffset)) as Curve;
                 var sp = offsetEdge.PointAtParameter(.2);
                 var ep = offsetEdge.PointAtParameter(.8);
                 var line = Line.ByStartPointEndPoint(sp, ep);
@@ -47,8 +49,6 @@ namespace Unfold
                 // this surface is the tab surface
 
                 var tabSurf = Surface.ByLoft(curves);
-                PlanarUnfolder.DirectlyMapGeometryToUnfoldingByID(unfoldObject, tabSurf, ID);
-
                 return tabSurf;
                  }
 

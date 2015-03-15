@@ -215,7 +215,7 @@ namespace DynamoUnfold
             var output = new List<List<TabGeneration.Tab<EdgeLikeEntity,FaceLikeEntity>>>();
             foreach (var entry in TabGeneration.GenerateTabSurfacesFromUnfold(unfoldingObject))
             {
-                output.Add(entry.Value.);
+                output.Add(entry.Value.Select(x=>x.AlignedTabSurf).ToList());
             }
             return output;
 
