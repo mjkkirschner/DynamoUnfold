@@ -55,7 +55,7 @@ namespace Unfold
 
         }
 
-        public static Dictionary<int,List<Tab<K,T>>> GenerateTabSurfacesFromUnfold<K, T>(PlanarUnfolder.PlanarUnfolding<K, T> unfoldingObject)
+        public static Dictionary<int,List<Tab<K,T>>> GenerateTabSurfacesFromUnfold<K, T>(PlanarUnfolder.PlanarUnfolding<K, T> unfoldingObject,double relativeWidth = .3)
             where K : IUnfoldableEdge
             where T : IUnfoldablePlanarFace<K>, new()
         {
@@ -79,7 +79,7 @@ namespace Unfold
                     // find the first vertex that contains this edge in its graph edge list
                     var firstmatchingvertingraph = unfoldingObject.OriginalGraph.Find(x => x.GraphEdges.Select(y => y.GeometryEdge).ToList().Contains(edge));
                    
-                    var newtab = new Tab<K, T>(firstmatchingvertingraph.Face,edge,unfoldingObject ,.3);
+                    var newtab = new Tab<K, T>(firstmatchingvertingraph.Face,edge,unfoldingObject ,relativeWidth);
                     if (tabDict.ContainsKey(firstmatchingvertingraph.Face.ID))
                     {
                        

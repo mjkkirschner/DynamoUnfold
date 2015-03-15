@@ -77,7 +77,7 @@ namespace DynamoUnfold
         /// transformations that were applied to the original 
         /// surfaces to create the unfolding </returns>
         [MultiReturn(new[] { "surfaces", "unfoldingObject" })]
-        public static Dictionary<string, object> _UnfoldCurvedSurfacesByTessellation_AndReturnTransforms(List<Surface> surfaces)
+        public static Dictionary<string, object> __UnfoldCurvedSurfacesByTessellation_AndReturnTransforms(List<Surface> surfaces)
         {
 
             surfaces.RemoveAll(item => item == null);
@@ -208,12 +208,22 @@ namespace DynamoUnfold
         #endregion
 
         //methods for tab generation
+		/// <summary>
+		/// method for generating tabs on the unfolded surfaces, this method will generate tabs on all
+		/// shared edges that were not folded, but only one of each pair. For example, if unfolding a cube,
+		/// the corner edges that were split will only have tabs generated on one of the final resulting surface
+		/// edges. This single edge in the cube becomes two edges in the unfold, and only one is tabbed.
+		/// </summary>
+		/// <param name="unfoldingObject"> an unfolding object that represents a single unfold operation</param>
+		/// /// <param name="relativeWidth"> the tab thickness, relative to the distance between the center of the surface
+		/// it lies on and the edge it represents, bigger surfaces will have larger tabs</param>
+		/// <returns></returns>
         public static List<List<Surface>>GenerateUnfoldedTabs
-           (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity> unfoldingObject)
+           (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity> unfoldingObject,double relativeWidth = .3)
         {
            
             var output = new List<List<Surface>>();
-            foreach (var entry in TabGeneration.GenerateTabSurfacesFromUnfold(unfoldingObject))
+            foreach (var entry in TabGeneration.GenerateTabSurfacesFromUnfold(unfoldingObject,relativeWidth))
             {
                 output.Add(entry.Value.Select(x=>x.AlignedTabSurf).ToList());
             }
@@ -238,7 +248,7 @@ namespace DynamoUnfold
 		// The following methods may be removed from Import eventually
         #region explorationdebug
         // method is for debugging the BFS output visually in dynamo, very useful
-        public static object _BFSTestTesselation(List<Surface> surfaces, double tolerance = -1, int maxGridLines = 512)
+        public static object __BFSTestTesselation(List<Surface> surfaces, double tolerance = -1, int maxGridLines = 512)
         {
 
             //handle tesselation here
@@ -260,13 +270,13 @@ namespace DynamoUnfold
         }
 
 
-        public static object _DebugGeoFromGraph(List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>> graph)
+        public static object __DebugGeoFromGraph(List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>> graph)
         {
             var output = ModelGraph.ProduceGeometryFromGraph<EdgeLikeEntity, FaceLikeEntity>(graph);
             return output;
         }
 
-        public static object _BFSTestNoGeometryGeneration(List<Surface> surfaces)
+        public static object __BFSTestNoGeometryGeneration(List<Surface> surfaces)
         {
 
             var graph = ModelTopology.GenerateTopologyFromSurfaces(surfaces);
