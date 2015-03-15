@@ -36,7 +36,8 @@ namespace Unfold
             }
 
             private Surface generateTabGeo (K edge, double tabOffset)
-            { 
+            {
+				var oldgeo = new List<Geometry>();
                 // now offset this edge using the surface that contains the edge this tab represents
                 var approxcenter = Unfold.Topology.Tesselation.MeshHelpers.SurfaceAsPolygonCenter(UnfoldableFace.SurfaceEntities.First());
                 var vectorOffset = Vector.ByTwoPoints(approxcenter, edge.Curve.PointAtParameter(.5)).Normalized();
@@ -46,9 +47,13 @@ namespace Unfold
                 var line = Line.ByStartPointEndPoint(sp, ep);
 
                 var curves = new List<Curve>() { edge.Curve, line };
-                // this surface is the tab surface
-
+                
+				// this surface is the tab surface
                 var tabSurf = Surface.ByLoft(curves);
+
+				offsetEdge.Dispose();
+				line.Dispose();
+
                 return tabSurf;
                  }
 
@@ -69,8 +74,6 @@ namespace Unfold
             var nonFoldEdegs = gedges.Except(tedges, new SpatialEqualityComparer<K>());
             var tabDict = new Dictionary<int, List<Tab<K,T>>>();
 
-            var finaltabs = new List<List<Surface>>();
-
             foreach (var edge in nonFoldEdegs)
             {
                 if (tabedges.Contains(edge) == false)
@@ -78,8 +81,10 @@ namespace Unfold
                     tabedges.Add(edge);
                     // find the first vertex that contains this edge in its graph edge list
                     var firstmatchingvertingraph = unfoldingObject.OriginalGraph.Find(x => x.GraphEdges.Select(y => y.GeometryEdge).ToList().Contains(edge));
-                   
+                   //make a new tab
                     var newtab = new Tab<K, T>(firstmatchingvertingraph.Face,edge,unfoldingObject ,relativeWidth);
+					//store the tab
+					//if the same surface has another tab on a different edge add it to the dict
                     if (tabDict.ContainsKey(firstmatchingvertingraph.Face.ID))
                     {
                        
