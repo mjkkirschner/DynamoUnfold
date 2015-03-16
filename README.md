@@ -12,9 +12,11 @@ This project includes references to:
 - Protogeometry
 
 
-![alt tag](https://github.com/holyjewsus/DynamoUnfold/blob/master/unfold%20images/Screen%20Shot%202014-08-02%20at%204.20.53%20PM.png)
+<img src = "https://github.com/holyjewsus/DynamoUnfold/blob/master/unfold%20images/Screen%20Shot%202014-08-02%20at%204.20.53%20PM.png">
 
+<img src = "https://github.com/holyjewsus/DynamoUnfold/blob/master/unfold%20images/Screen%20Shot%202015-03-15%20at%205.03.44%20PM.png" width = 650>
 
+<img src = "https://github.com/holyjewsus/DynamoUnfold/blob/master/unfold%20images/Screen%20Shot%202015-03-16%20at%2012.20.56%20AM.png" width = 650>
 
 ###Building / Installing###
 Building this library requires that you have also cloned Dynamo, DynamoText, and DynamoPack.
@@ -43,16 +45,17 @@ Once DynamoUnfold is finished building, navigate to **DynamoUnfold/bin/...** and
 If you are just looking for the necessary .dll's to import through **Zero-Touch Import** into Dynamo check the Pre-built folder. These .dll's will be updated periodically - **but they may be out of snyc with the version of dynamo you are using!** Also Does Not Exist YET!
 
 ###Through The **Package Manager**###
-As soon as a fix for ASM 220 branch is confirmed working this library will be wrapped up as a package and distributed on the package manager with samples!
+Master branch of this library will periodically be wrapped up as a package and distributed on the package manager with samples!
 
 ###Running Unit Tests###
 To run unit tests on this library requires manually copying over the correct libG.dll's from Dynamo's Bin Folder.  Please look at HostFactorySetup.cs for further instructions.  You will also need to specify a directory for the geometry library to search for ASM .dll's.  This will be an Autodesk host application install directory, examples exist in **src/UnfoldTests/HostFactorySetup.cs**
 
+####Contributing####
+please see: https://github.com/holyjewsus/DynamoUnfold/wiki
 
 ####Known Issues####
 - There is a speed issue when unfolding a tesselated surface with more than approximately 1000 faces, stems from the conversion of triangle data to surfaces.
 - There is an intersection bug that occurs intermittently - more so with large numbers of surfaces, this is being looked into. 
-- There is a known issue when running on Revit 2015(ASM220), I believe I have identified the main cause of this problem and am working to fix it in the ASM 220 branch, for small unfolds you may not notice any problems
 
 ## Dynamo License ##
 
