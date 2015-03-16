@@ -42,7 +42,7 @@ namespace UnfoldTests
 
             var casttree = tree as List<GraphVertex<EdgeLikeEntity, FaceLikeEntity>>;
             //perform Tarjans algo and make sure that the tree is acylic before unfold
-            var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(casttree);
+            var sccs = GraphUtilities.TarjansAlgo<EdgeLikeEntity, FaceLikeEntity>.CycleDetect(casttree,GraphUtilities.EdgeType.Tree);
 
             UnfoldTestUtils.IsAcylic<EdgeLikeEntity, FaceLikeEntity>(sccs, casttree);
 
@@ -72,8 +72,20 @@ namespace UnfoldTests
                         {
                             item.Dispose();
                         }
+
                     }
                 }
+            }
+            foreach (IDisposable item in graph)
+            {
+                Console.WriteLine("disposing a graphnode");
+                item.Dispose();
+            }
+
+            foreach (IDisposable item in casttree)
+            {
+                Console.WriteLine("disposing a face");
+                item.Dispose();
             }
         }
 
@@ -228,10 +240,10 @@ namespace UnfoldTests
 
         public static void AssertSurfacesAreCoplanar(Surface surf1, Surface surf2)
         {
+            var oldgeo = new List<DesignScriptEntity>();
             // 3 random points on each surface
             //assumption that domain of surface is [0,1]
             Random random = new Random();
-
 
             var A = surf1.PointAtParameter(random.NextDouble(), random.NextDouble());
             var B = surf1.PointAtParameter(random.NextDouble(), random.NextDouble());
@@ -240,7 +252,7 @@ namespace UnfoldTests
             var D = surf2.PointAtParameter(random.NextDouble(), random.NextDouble());
             var E = surf2.PointAtParameter(random.NextDouble(), random.NextDouble());
             var F = surf2.PointAtParameter(random.NextDouble(), random.NextDouble());
-
+            oldgeo.AddRange(new List<DesignScriptEntity>{A,B,C,D,E,F});
             // generate 2 vectors for each surface
 
             var AB = Vector.ByTwoPoints(A, B).Normalized();
@@ -254,8 +266,13 @@ namespace UnfoldTests
             var cross2 = DE.Cross(EF).Normalized();
 
             var dotpro = cross1.Dot(cross2);
-
+            oldgeo.AddRange(new List<DesignScriptEntity> { AB, BC, DE, EF, cross1, cross2 });
             //Console.WriteLine(dotpro);
+
+            foreach (IDisposable item in oldgeo)
+            {
+                item.Dispose();
+            }
 
             Assert.IsTrue(Math.Abs(Math.Abs(dotpro) - 1) < .0001);
             //  Console.WriteLine(dotpro);
@@ -415,7 +432,7 @@ namespace UnfoldTests
             where K : IUnfoldableEdge
             where T : IUnfoldablePlanarFace<K>
         {
-
+            var oldgeo = new List<Geometry>();
             // assert that the final geometry  intersect with the 
             //the orginal surfaces(transformed through their transformation histories)
             for (int i = 0; i < labels.Count; i++)
@@ -428,8 +445,20 @@ namespace UnfoldTests
                     (unfoldingObject, label.UnfoldableFace.SurfaceEntities, label.ID);
 
                 Assert.IsTrue(curves.SelectMany(x => transformedInitialSurfaceToFinal.Select(x.DoesIntersect)).Any());
-
+                oldgeo.AddRange(transformedInitialSurfaceToFinal);
                 Console.WriteLine("This label was in the right spot at the end of the unfold");
+            }
+
+            foreach (IDisposable item in oldgeo)
+            {
+                item.Dispose();
+            }
+            foreach (var list in translatedgeo)
+            {
+                foreach (IDisposable item in list)
+                {
+                    item.Dispose();
+                }
             }
 
         }
@@ -463,10 +492,41 @@ namespace UnfoldTests
                 Console.WriteLine("This label was in the right orientation at the start of the unfold");
 
                 testsurf.Dispose();
+                labelPlane.Dispose();
             }
         }
 
         #endregion
 
+        public static void AssertTabsGoodFinalLocation<K, T>(List<TabGeneration.Tab<K,T>> tabs,
+            PlanarUnfolder.PlanarUnfolding<K, T> unfoldingObject)
+            where K : IUnfoldableEdge
+            where T : IUnfoldablePlanarFace<K>
+        {
+            var oldgeo = new List<Geometry>();
+            // assert that the final geometry  intersect with the 
+            //the orginal surfaces(transformed through their transformation histories)
+            for (int i = 0; i < tabs.Count; i++)
+            {
+                var tab = tabs[i];
+				var initialSrf = unfoldingObject.StartingUnfoldableFaces[tab.ID].SurfaceEntities;
+
+                var transformedInitialSurfaceToFinal = PlanarUnfolder.DirectlyMapGeometryToUnfoldingByID
+                    <K, T, Surface>
+                    (unfoldingObject,initialSrf, tab.ID);
+
+                Assert.IsTrue(transformedInitialSurfaceToFinal.Select(x=> tab.TabSurf.DoesIntersect(x)).Any());
+                oldgeo.AddRange(transformedInitialSurfaceToFinal);
+                Console.WriteLine("This tab was in the right spot at the end of the unfold, \n" +
+				"it intersects with the correct face");
+            }
+
+            foreach (IDisposable item in oldgeo)
+            {
+                item.Dispose();
+            }
+            
+            
+        }
     }
 }

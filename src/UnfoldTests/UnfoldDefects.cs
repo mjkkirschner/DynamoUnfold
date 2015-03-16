@@ -33,9 +33,7 @@ namespace UnfoldTests
                 
 
                 Assert.DoesNotThrow(() => PlanarUnfolder.Unfold(trisurfaces));
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-
+               
             }
 
             [Test]
@@ -49,7 +47,6 @@ namespace UnfoldTests
                 var pointtuples = Tesselation.Tessellate(surfaces, -1, 512);
                 //convert triangles to surfaces
                 List<Surface> trisurfaces = pointtuples.Select(x => Surface.ByPerimeterPoints(new List<Point>() { x[0], x[1], x[2] })).ToList();
-
 
                 Assert.DoesNotThrow(() => PlanarUnfolder.Unfold(trisurfaces));
 

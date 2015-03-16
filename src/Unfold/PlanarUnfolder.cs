@@ -26,16 +26,29 @@ namespace Unfold
         public class FaceTransformMap
         {
 
-            public CoordinateSystem CS { get; set; }
+			public Plane RotationPlane { get; set; }
+            public double RotationDegrees { get; set; }
             public List<int> IDS { get; set; }
+			public CoordinateSystem From { get; set; }
+			public CoordinateSystem To { get; set; }
 
+			public FaceTransformMap(CoordinateSystem from,CoordinateSystem to, List<int> ids)
+			{
+				From = from;
+				To = to;
+				IDS = ids;
+			}
 
-            public FaceTransformMap(CoordinateSystem cs, List<int> ids)
+            public FaceTransformMap(Plane rotPlane, double rotdegrees, List<int> ids)
             {
                 IDS = ids;
-                CS = cs;
-
+				RotationDegrees = rotdegrees;
+				RotationPlane = rotPlane;
+				From = null;
+				To = null;
             }
+
+
 
         }
 
@@ -53,6 +66,7 @@ namespace Unfold
             public List<FaceTransformMap> Maps { get; set; }
             public Dictionary<int, Point> StartingPoints { get; set; }
             public List<T> UnfoldedFaces { get; set; }
+            public List<GraphVertex<K,T>> OriginalGraph {get; set;}
 
             /// <summary>
             /// constructor
@@ -61,7 +75,7 @@ namespace Unfold
             /// <param name="finalSurfaces"> the unfolded surfaces</param>
             /// <param name="transforms"> the transforms that track all surfaces</param>
             /// <param name="unfoldedfaces">the unfolded IunfoldableFaces</param>
-            public PlanarUnfolding(List<T> originalFaces, List<List<Surface>> finalSurfaces, List<FaceTransformMap> transforms, List<T> unfoldedfaces)
+            public PlanarUnfolding(List<T> originalFaces, List<List<Surface>> finalSurfaces, List<FaceTransformMap> transforms, List<T> unfoldedfaces, List<GraphVertex<K,T>> oldGraph)
             {
                 Console.WriteLine("generating new unfolding to return");
                 StartingUnfoldableFaces = originalFaces.ToList();
@@ -69,9 +83,16 @@ namespace Unfold
                 UnfoldedFaces = unfoldedfaces;
                 StartingPoints = StartingUnfoldableFaces.ToDictionary(x => x.ID, x => Tesselation.MeshHelpers.SurfaceAsPolygonCenter(x.SurfaceEntities.First()));
                 UnfoldedSurfaceSet = finalSurfaces;
+                OriginalGraph = oldGraph;
             }
 
-           
+           /// <summary>
+           /// this method attempts to merge unfolding operations so they can be labeled and packed together
+           /// </summary>
+           /// <typeparam name="K"></typeparam>
+           /// <typeparam name="T"></typeparam>
+           /// <param name="unfoldingstomerge"></param>
+           /// <returns></returns>
             public static PlanarUnfolding<K, T> MergeUnfoldings<K, T>(List<PlanarUnfolding<K, T>> unfoldingstomerge)
                 where T : IUnfoldablePlanarFace<K>
                 where K : IUnfoldableEdge
@@ -81,7 +102,7 @@ namespace Unfold
                 var mergedFinalSurfaces = new List<List<Surface>>();
                 var mergedTransformMaps = new List<FaceTransformMap>();
                 var mergedUnfoldedFaces = new List<T>();
-
+                var concatedGraphs = new List<GraphVertex<K, T>>();
 
                 for (int i = 0; i < unfoldingstomerge.Count; i++)
                 {
@@ -121,10 +142,11 @@ namespace Unfold
                     }
 
                     mergedUnfoldedFaces.AddRange(modifedUnfoldedfaces);
-
+                    concatedGraphs.AddRange(currentUnfolding.OriginalGraph);
                 }
-
-                return new PlanarUnfolding<K, T>(mergedOrgFaces, mergedFinalSurfaces, mergedTransformMaps, mergedUnfoldedFaces);
+                //TODO need to implement an algo that actually merges the graphs so we can add tabs to merged unfolds
+                //for now we just concat the list of graphs
+                return new PlanarUnfolding<K, T>(mergedOrgFaces, mergedFinalSurfaces, mergedTransformMaps, mergedUnfoldedFaces,concatedGraphs);
             }
         }
 
@@ -155,28 +177,41 @@ namespace Unfold
 
                 return textgeo;
 
-
             }
 
+			/// <summary>
+			/// align the label geometry to the face that it represents
+			/// </summary>
+			/// <param name="geo"></param>
+			/// <returns></returns>
             private IEnumerable<Curve> AlignGeoToFace(IEnumerable<Curve> geo)
             {
+                var oldgeo = new List<DesignScriptEntity>();
                 var approxCenter = Tesselation.MeshHelpers.SurfaceAsPolygonCenter(UnfoldableFace.SurfaceEntities.First());
                 var norm = UnfoldableFace.SurfaceEntities.First().NormalAtPoint(approxCenter);
                 var facePlane = Plane.ByOriginNormal(approxCenter, norm);
                 var finalCordSystem = CoordinateSystem.ByPlane(facePlane);
-
+                //a list for collecting old geo that needs to be disposed
+                oldgeo.Add(facePlane);
                 // find bounding box of set of curves
                 var textBoudingBox = BoundingBox.ByGeometry(geo);
+                oldgeo.Add(textBoudingBox);
                 // find the center of this box and use as start point
                 var textCeneter = textBoudingBox.MinPoint.Add((
                     textBoudingBox.MaxPoint.Subtract(textBoudingBox.MinPoint.AsVector())
                     .AsVector().Scale(.5)));
 
                 var transVector = Vector.ByTwoPoints(textCeneter, Point.ByCoordinates(0, 0, 0));
-
+               
                 var geoIntermediateTransform = geo.Select(x => x.Translate(transVector)).Cast<Curve>().AsEnumerable();
-                //TODO dispose of this intermediate geometry
-                return geoIntermediateTransform.Select(x => x.Transform(finalCordSystem)).Cast<Curve>().AsEnumerable();
+                oldgeo.AddRange(geoIntermediateTransform);
+                var finalTransformedLabel = geoIntermediateTransform.Select(x => x.Transform(finalCordSystem)).Cast<Curve>().AsEnumerable();
+                foreach (IDisposable item in oldgeo)
+                {
+                    item.Dispose();
+                }
+
+                return finalTransformedLabel;
 
             }
 
@@ -193,6 +228,42 @@ namespace Unfold
 
 
         }
+
+		//following methods take an ID, some geometry and an unfold and attempt to push that geometry through the same
+		//operations that were done to the surface with the supplied ID, this lets a label be placed on the resulting 
+		//unfolded surface at the correct spot, also used for tabs.
+		# region map geo through unfold by transforms
+
+		private static G ApplyTransformations<G>(G geometryToTransform, List<FaceTransformMap> transformMaps) where G: Geometry
+		{
+			var oldGeometry = new List<G>();
+			G aggregatedGeo = geometryToTransform;
+			for (int i = 0; i + 1 < transformMaps.Count; i++)
+			{
+				//if this transformMap is a coordinateSystem, then use geo.transform
+				if (transformMaps[i + 1].From != null)
+				{
+					aggregatedGeo = aggregatedGeo.Transform(transformMaps[i + 1].From, transformMaps[i + 1].To) as G;
+				}
+				else
+				{	var plane = transformMaps[i + 1].RotationPlane;
+					var degrees = transformMaps[i + 1].RotationDegrees;
+					aggregatedGeo = aggregatedGeo.Rotate(plane,degrees) as G;
+				}
+				// we only need to keep the last transformation, so add all the others 
+				// to the disposal list
+				if (i != transformMaps.Count - 2)
+				{
+					oldGeometry.Add(aggregatedGeo);
+				}
+			}
+			foreach (IDisposable item in oldGeometry)
+			{
+				item.Dispose();
+			}
+
+			return aggregatedGeo;
+		}
 
         private static G ApplyTransformations<G>(G geometryToTransform, List<CoordinateSystem> transforms) where G : Geometry
         {
@@ -255,14 +326,13 @@ namespace Unfold
 
             // grab all transforms that were applied to this surface id
             var map = unfolding.Maps;
-            var applicableTransforms = map.Where(x => x.IDS.Contains(id));
-            var transforms = applicableTransforms.Select(x => x.CS).ToList();
-
+            var applicableTransforms = map.Where(x => x.IDS.Contains(id)).ToList();
+            
 
             // set the geometry to the first applicable transform
-            geometryToTransform = geometryToTransform.Transform(transforms.First()) as G;
+            //geometryToTransform = geometryToTransform.Transform(transforms.First()) as G;
 
-            return ApplyTransformations<G>(geometryToTransform, transforms);
+            return ApplyTransformations<G>(geometryToTransform, applicableTransforms);
 
         }
 
@@ -287,12 +357,11 @@ namespace Unfold
 
             // grab all transforms that were applied to this surface id
             var map = unfolding.Maps;
-            var applicableTransforms = map.Where(x => x.IDS.Contains(id));
-            var transforms = applicableTransforms.Select(x => x.CS).ToList();
+            var applicableTransforms = map.Where(x => x.IDS.Contains(id)).ToList();
 
 
             // set the geometry to the first applicable transform
-            geometryToTransform = geometryToTransform.Transform(transforms.First()) as G;
+            //geometryToTransform = geometryToTransform.Transform(transforms.First()) as G;
 
             // get bb of geo to transform
             var myBox = BoundingBox.ByGeometry(geometryToTransform);
@@ -305,7 +374,7 @@ namespace Unfold
             //unfold surface and is that the same position, so following the transform
             // chain will bring the geo to a similar final location as the unfold
 
-            return ApplyTransformations<G>(geometryToTransform, transforms);
+            return ApplyTransformations<G>(geometryToTransform, applicableTransforms);
 
 
         }
@@ -330,16 +399,16 @@ namespace Unfold
 
             // grab all transforms that were applied to this surface id
             var map = unfolding.Maps;
-            var applicableTransforms = map.Where(x => x.IDS.Contains(id));
-            var transforms = applicableTransforms.Select(x => x.CS).ToList();
+            var applicableTransforms = map.Where(x => x.IDS.Contains(id)).ToList();
+            //var transforms = applicableTransforms.Select(x => x.CS).ToList();
 
             
             // set the geometry to the first applicable transform
-            geometryToTransform = geometryToTransform.Transform(transforms.First()) as G;
+            //geometryToTransform = geometryToTransform.Transform(transforms.First()) as G;
 
-            var geoStartPoint = offset;
+           // var geoStartPoint = offset;
             //create vector from unfold surface center startpoint and the current geo center and translate to this start position
-            geometryToTransform = geometryToTransform.Translate(Vector.ByTwoPoints(geoStartPoint, unfolding.StartingPoints[id])) as G;
+           // geometryToTransform = geometryToTransform.Translate(Vector.ByTwoPoints(geoStartPoint, unfolding.StartingPoints[id])) as G;
 
             //TODO intermediate geometry needs to be cleaned up here
 
@@ -347,11 +416,14 @@ namespace Unfold
             //unfold surface and is that the same position, so following the transform
             // chain will bring the geo to a similar final location as the unfold
 
-            return ApplyTransformations<G>(geometryToTransform, transforms);
+            return ApplyTransformations<G>(geometryToTransform, applicableTransforms);
 
         }
-
-         private static bool referencesSameSurfaces(List<Surface> list1, List<Surface> list2)
+		# endregion
+		
+		//method that checks two lists of surfaces to see if one surface Object is in both,
+		//this uses referenceEquals, so we're looking for the same object in memory
+		private static bool referencesSameSurfaces(List<Surface> list1, List<Surface> list2)
         {
 
         foreach (var surf in list1 )
@@ -366,6 +438,8 @@ namespace Unfold
             return false;
         }
 
+
+		//TODO?
         // I would like to expose PlanarunfoldingResult object with query methods
         // might be able to make the rest of these methods generic now....
 
@@ -405,7 +479,8 @@ namespace Unfold
         /// in the case one occurs return a new surface
         /// this signifies that an intersection occured
         /// in the most current branch access exceptions
-        /// have been avoided by removing polysurface creation
+        /// have been avoided by removing polysurface creation, 
+		/// still some geometry intersections cause this... Bugs have been filed
         /// </summary>
         /// <param name="surf1"></param>
         /// <param name="surf2"></param>
@@ -439,7 +514,7 @@ namespace Unfold
             where T : IUnfoldablePlanarFace<K>, new()
         {
             // this algorithm is a first test of recursive unfolding - overlapping is expected
-            // but it dealth with by moving branches
+            // but it dealth with by splitting branches
 
             //algorithm pseudocode follows:
             //Find the last ranked finishing time node in the BFS tree
@@ -463,10 +538,10 @@ namespace Unfold
             List<FaceTransformMap> transforms = new List<FaceTransformMap>();
 
 
-            // as an initial set, we'll record the starting coordinate system of each surface
-            transforms.AddRange(allfaces.Select(x => new FaceTransformMap(x.SurfaceEntities.First().ContextCoordinateSystem, x.IDS)).ToList());
+            // as an initial set, we'll record the identity matrix
+            transforms.AddRange(allfaces.Select(x => new FaceTransformMap(CoordinateSystem.Identity(),CoordinateSystem.Identity(), x.IDS)).ToList());
 
-
+			//keep folding until only one face remains
             while (sortedtree.Count > 1)
             {
 
@@ -495,9 +570,9 @@ namespace Unfold
                 // just check the initial faces against each other, these should only cotain single surfaces at this point
                 double nc = AlignPlanarFaces.CheckNormalConsistency(child.Face, parent.Face, edge.GeometryEdge);
                 //need to run this method on every surface contained in the UnfoldedSurfaceSet and collect them in a new list
-                List<Surface> rotatedFace = AlignPlanarFaces.MakeGeometryCoPlanarAroundEdge(nc, child.UnfoldSurfaceSet, parent.Face, edge.GeometryEdge);
-
-
+                var rotationPackage = AlignPlanarFaces.GetCoplanarRotation(nc, child.UnfoldSurfaceSet, parent.Face, edge.GeometryEdge);
+				List<Surface> rotatedFace = rotationPackage.Item1;
+                //TODO do I cleanup this rotation package anywhere? the plane from it specifically?
 
                 //at this point need to check if the rotated face has intersected with any other face that has been been
                 // folded already, all of these already folded faces should exist either in the parent unfoldedSurfaceSet
@@ -548,31 +623,14 @@ namespace Unfold
                 {
 
 
-                    // if any result was a surface then we overlapped we need to move the folded branch far away and pick a new
+                    // if any intersection result was a surface then we overlapped, we need to pick a new
                     // branch to start the unfold from
 
-                    // wrap up the chain of geometry that we've previously unfolded as a new facelike
-                    // when this transformation occurs we need to save the coordinate system as well to the transformation map
-                    /* var translatedGeoContainer = new T();
-                     translatedGeoContainer.SurfaceEntities = (child.UnfoldSurfaceSet.SurfaceEntities.ToList());
-                     translatedGeoContainer.OriginalEntity = translatedGeoContainer.SurfaceEntities;
-
-                   
-                     translatedGeoContainer.IDS = child.UnfoldSurfaceSet.IDS;
-                     disconnectedSet.Add(translatedGeoContainer);
-
-                     translatedGeoContainer.IDS.Add(child.Face.ID);
-                  
-                    transforms.Add(new FaceTransformMap(
-                    translatedGeoContainer.SurfaceEntities.First().ContextCoordinateSystem, translatedGeoContainer.IDS)); */
-
-                    //try alterate method that does not create a new wrapper type...
-
+					//add this unfolded branch to a list of disconnected branches and push the child initial ID into the 
+					//set of IDS we folded
                     disconnectedSet.Add(child.UnfoldSurfaceSet);
                     child.UnfoldSurfaceSet.IDS.Add(child.Face.ID);
-                    transforms.Add(new FaceTransformMap(child.UnfoldSurfaceSet.SurfaceEntities.First().ContextCoordinateSystem, child.UnfoldSurfaceSet.IDS));
-                  
-
+					
                 }
 
                 else
@@ -593,8 +651,6 @@ namespace Unfold
                     // and to which faces they have been applied, we must push the intermediate coordinate systems
                     // as well as the ids to which they apply through the graph as well.
 
-
-
                     // need to extract the parentIDchain, this is previous faces that been made coplanar with the parent
                     // we need to grab them before the parent unfoldchain is replaced
                     var parentIDchain = parent.UnfoldSurfaceSet.IDS;
@@ -613,7 +669,6 @@ namespace Unfold
                     parent.UnfoldSurfaceSet.IDS.AddRange(rotatedFaceIDs);
                     parent.UnfoldSurfaceSet.IDS.Add(child.Face.ID);
 
-
                     // note that we add the parent ID chain to the parent unfold chain, replacing it
                     // but that we DO NOT add these ids to the current transformation map, since we're not transforming them
                     // right now, we just need to keep them from being deleted while adding the new ids.
@@ -625,15 +680,15 @@ namespace Unfold
 
                     currentIDsToStoreTransforms.Add(child.Face.ID);
                     currentIDsToStoreTransforms.AddRange(rotatedFaceIDs);
-                    //////////************* again, this may be incorrect, not sure that they all share the same coord system anylonger...
+                    //here we create a new transformation map that represents the rotation we just perfromed to all these child surfaces
                     transforms.Add(new FaceTransformMap(
-                        rotatedFace.First().ContextCoordinateSystem, currentIDsToStoreTransforms));
+                        rotationPackage.Item2,rotationPackage.Item3, currentIDsToStoreTransforms));
 
 
                 }
                 // shrink the tree
                 child.RemoveFromGraph(sortedtree);
-                child.RemoveFromGraph(tree);
+                //child.RemoveFromGraph(tree);
 
                 // if the rotated faces we just generated are not being folded into the root
                 // of the tree then we should add them to the list to dispose
@@ -644,44 +699,15 @@ namespace Unfold
                 }
             }
             // at this point we may have a main trunk with y nodes in it, and x disconnected branches
-            //step 1 is to align all sets down to horizontal plane and record this transform
-
+			//we'll collect all the different branches to return the geometry
 
             // collect all surface lists
             var masterFacelikeSet = sortedtree.Select(x => x.UnfoldSurfaceSet).ToList();
             masterFacelikeSet.AddRange(disconnectedSet);
 
-            //align all surfaces down
-            /*  foreach (var facelike in masterFacelikeSet)
-              {
-                  var surfaceToAlignDown = facelike.SurfaceEntities;
-
-                  // get the coordinate system defined by the face normal
-                  var somePointOnSurface = facelike.SurfaceEntities.First().PointAtParameter(.5, .5);
-                  var norm = facelike.SurfaceEntities.First().NormalAtParameter(.5, .5);
-                  var facePlane = Plane.ByOriginNormal(somePointOnSurface, norm);
-                  var startCoordSystem = CoordinateSystem.ByPlane(facePlane);
-
-                  // transform surface to horizontal plane at x,y,0 of org surface
-                  var tempSurfaces = surfaceToAlignDown.Select(x => x.Transform(startCoordSystem,
-                      CoordinateSystem.ByPlane(Plane.ByOriginXAxisYAxis(
-                      Point.ByCoordinates(somePointOnSurface.X, somePointOnSurface.Y, 0),
-                      Vector.XAxis(), Vector.YAxis()))) as Surface).ToList();
-                
-                  foreach (IDisposable item in surfaceToAlignDown)
-                  {
-                      item.Dispose();
-                  }
-                  facelike.SurfaceEntities = tempSurfaces;
-
-
-                  // save transformation for each set, this should have all the ids present
-                  transforms.Add(new FaceTransformMap(
-                          facelike.SurfaceEntities.First().ContextCoordinateSystem, facelike.IDS));
-
-              }
-              */
+            
             // merge the main trunk and the disconnected sets
+			//this is a hacky way of creating a copy (translation by 0)
             var maintree = sortedtree.Select(x => x.UnfoldSurfaceSet.SurfaceEntities.Select(y=>y.Translate(0,0,0) as Surface).ToList()).ToList();
             maintree.AddRange(disconnectedSet.Select(x => x.SurfaceEntities.Select(y=>y.Translate(0,0,0) as Surface).ToList()).ToList());
 
@@ -708,7 +734,7 @@ namespace Unfold
             }
 
             // return a planarUnfolding that represents this unfolding
-            return new PlanarUnfolding<K, T>(allfaces, maintree, transforms, masterFacelikeSet);
+            return new PlanarUnfolding<K, T>(allfaces, maintree, transforms, masterFacelikeSet,tree);
         }
 
     }

@@ -183,7 +183,7 @@ namespace Unfold
         /// <param name="referenceFace"></param>
         /// <param name="sharedEdge"></param>
         /// <returns></returns>
-        public static List<Surface> MakeGeometryCoPlanarAroundEdge<K, T>(double normalconsistency, T facetoRotate,
+        public static Tuple<List<Surface>,Plane,double> GetCoplanarRotation<K, T>(double normalconsistency, T facetoRotate,
            T referenceFace, K sharedEdge)
             where K : IUnfoldableEdge
             where T : IUnfoldablePlanarFace<K>
@@ -212,9 +212,22 @@ namespace Unfold
 # endif
             List<Surface> rotatedFace = facetoRotate.SurfaceEntities.Select(x=>x.Rotate(planeRotOrigin, degrees)).Cast<Surface>().ToList();
 
-            return rotatedFace;
+            return Tuple.Create(rotatedFace,planeRotOrigin,degrees);
 
         }
+
+		public static List<Surface> MakeGeometryCoPlanarAroundEdge<K, T>(double normalconsistency, T facetoRotate,
+	   T referenceFace, K sharedEdge)
+			where K : IUnfoldableEdge
+			where T : IUnfoldablePlanarFace<K>
+		{
+            //TODO I dont think we cleanup the plane that is generated in this call anywhere...
+			var output = GetCoplanarRotation<K, T>(normalconsistency, facetoRotate, referenceFace, sharedEdge);
+			return output.Item1;
+			
+
+		}
+
 
     }
 }

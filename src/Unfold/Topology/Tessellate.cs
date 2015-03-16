@@ -26,12 +26,14 @@ namespace Unfold.Topology
             }
 
             public static Point SurfaceAsPolygonCenter(Surface surface){
-
+                
+                var oldgeo = new List<DesignScriptEntity>();
                 List<Point> ptlist = new List<Point>();
                 foreach (var curve in surface.PerimeterCurves())
                 {
                     ptlist.Add(curve.StartPoint);
                     ptlist.Add(curve.EndPoint);
+                    oldgeo.Add(curve);
                 }
                 var centroid = Vector.ByCoordinates(0, 0, 0);
                 foreach (var pt in ptlist)
@@ -40,20 +42,26 @@ namespace Unfold.Topology
                 }
 
                 centroid = centroid.Scale(1.0 / ptlist.Count);
+                //cleanup all the perimeter curves we extracted to do this calculation
+                foreach (IDisposable item in oldgeo)
+                {
+                    item.Dispose();
+                }
                 return surface.ClosestPointTo(centroid.AsPoint());
             
             }
            
             public static Point SurfaceAsPolygonCenter(List<Surface> surfaces)
             {
-               
+                var oldgeo = new List<DesignScriptEntity>();
                 List<Point> ptlist = new List<Point>();
                 foreach (var surface in surfaces)
-                {
+                {//TODO cleanup these curves
                     foreach (var curve in surface.PerimeterCurves())
                     {
                         ptlist.Add(curve.StartPoint);
                         ptlist.Add(curve.EndPoint);
+                        oldgeo.Add(curve);
                     }
                 }
                 var centroid = Vector.ByCoordinates(0, 0, 0);
@@ -76,6 +84,13 @@ namespace Unfold.Topology
                        mindist = distance;
                    }
                }
+
+                //cleanup all the perimeter curves we extracted to do this calculation
+               foreach (IDisposable item in oldgeo)
+               {
+                   item.Dispose();
+               }
+
                return closeSurf.ClosestPointTo(centroid.AsPoint());
 
             }

@@ -35,16 +35,23 @@ namespace Unfold
                 var norm = facelike.SurfaceEntities.First().NormalAtParameter(.5, .5);
                 var facePlane = Plane.ByOriginNormal(somePointOnSurface, norm);
                 var startCoordSystem = CoordinateSystem.ByPlane(facePlane);
-
+                //TODO need to cleanup planes, coord systems...
+ 
                 // transform surface to horizontal plane at x,y,0 of org surface
                 var tempSurfaces = surfaceToAlignDown.Select(x => x.Transform(startCoordSystem,
                     CoordinateSystem.ByPlane(Plane.ByOriginXAxisYAxis(
                     Point.ByCoordinates(somePointOnSurface.X, somePointOnSurface.Y, 0),
                     Vector.XAxis(), Vector.YAxis()))) as Surface).ToList();
-
+				
+				var flatcoordsystem = CoordinateSystem.ByPlane(Plane.ByOriginXAxisYAxis(
+                    Point.ByCoordinates(somePointOnSurface.X, somePointOnSurface.Y, 0),
+                    Vector.XAxis(), Vector.YAxis())) ;
                 // save transformation for each set, this should have all the ids present
-                alignDownTransforms.Add(new PlanarUnfolder.FaceTransformMap(
-                        facelike.SurfaceEntities.First().ContextCoordinateSystem, facelike.IDS));
+				//TODO is this incorrect? should we be saving tempSurfaces?
+                alignDownTransforms.Add(new PlanarUnfolder.FaceTransformMap(startCoordSystem,flatcoordsystem, facelike.IDS));
+
+				//alignDownTransforms.Add(new PlanarUnfolder.FaceTransformMap(
+					//startCoordSystem, facelike.IDS));
 
                 //create a new facelike to hold the new surfaces that are aligned to the plane
                 //the ids are the same though which lets us label these and apply the correct transformations
@@ -99,8 +106,8 @@ namespace Unfold
                 var newsurface = surftotrans.SurfaceEntities.Select(x => x.Translate(transvec)).Cast<Surface>().ToList();
                 var ids = translatedFaces[index].IDS;
 
-                // keep track of where all the newsurfaces end up in the packing and what labels where moved
-                packingtransforms.Add(new PlanarUnfolder.FaceTransformMap(newsurface.First().ContextCoordinateSystem, ids));
+                // keep track of where all the newsurfaces end up in the packing and what labels where moved //TODO just try keeping the transvec instead.....
+                packingtransforms.Add(new PlanarUnfolder.FaceTransformMap(surftotrans.SurfaceEntities.First().ContextCoordinateSystem,newsurface.First().ContextCoordinateSystem, ids));
                 packedfinalsurfaces.Add(newsurface);
 
                 // create a copy of the old facelike, but update the surface
@@ -125,7 +132,7 @@ namespace Unfold
 
             // finally create a new unfold object and pass it out
 
-            var packedUnfolding = new PlanarUnfolder.PlanarUnfolding<K, T>(unfold.StartingUnfoldableFaces, packedfinalsurfaces, aggregatedtransforms, packedfinalfacelikes);
+            var packedUnfolding = new PlanarUnfolder.PlanarUnfolding<K, T>(unfold.StartingUnfoldableFaces, packedfinalsurfaces, aggregatedtransforms, packedfinalfacelikes,unfold.OriginalGraph);
 
             return new Dictionary<string, object> 
                 {   
