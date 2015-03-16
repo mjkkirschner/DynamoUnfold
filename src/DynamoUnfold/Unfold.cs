@@ -232,20 +232,23 @@ namespace DynamoUnfold
         }
 
 		#region unroll methods
-		public static List<Line> findRulingLines(Surface surface, double stepsize)
+		public static class _experimental
 		{
-			return RulingLineFinder.FindingRulingLines(surface, stepsize);
+			public static List<Line> _findRulingLines(List<Surface> surfaces, double stepsize)
+			{
+				return RulingLineFinder.FindingRulingLines(surfaces, stepsize).Select(x => x.Item2).ToList();
 
-		}
-        public static List<List<Geometry>> findRulingPatches(Surface surface, double stepsize)
-        {
-            return RulingLineFinder.FindingRulingPatches(surface, stepsize);
+			}
+			public static List<List<Geometry>> _findRulingPatches(Surface surface, double stepsize)
+			{
+				return RulingLineFinder.FindingRulingPatches(surface, stepsize);
 
-        }
-		public static List<List<Geometry>> UnrollDevelopable(Surface surface,double stepsize,Plane ceilingPlane){
-			return RulingLineFinder.RotateRulesToCeiling(ceilingPlane,surface,stepsize);
+			}
+			public static List<List<Geometry>> _UnrollDevelopable(List<Surface> surfaces, double stepsize, Plane ceilingPlane)
+			{
+				return RulingLineFinder.RotateRulesToCeiling(ceilingPlane, surfaces, stepsize);
+			}
 		}
-		
 
 		#endregion
 

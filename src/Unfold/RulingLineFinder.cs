@@ -31,10 +31,12 @@ namespace Unfold
 			return max;
 		}
 
-		public static List<Line> FindingRulingLines(Surface surface, double stepSize)
+		public static List<Tuple<Surface,Line>> FindingRulingLines(List<Surface> surfaces, double stepSize)
 		{
-			//TODO need to make sure that we're aligned with the direction of curvature on this surface... 
-			//will need to look at principal curvature directions max and step that way
+			var rulingLines = new List<Line>();
+			var surfacetoLineTuples = new List<Tuple<Surface, Line>>();
+			foreach (var surface in surfaces)
+			{
 			//find principal curvature directions at this point
 			var curvatureatmid = surface.PrincipalCurvaturesAtParameter(.5, .5);
 
@@ -50,7 +52,7 @@ namespace Unfold
 				flipUV = true;
 			}
 
-			var rulingLines = new List<Line>();
+			
 			//TODO march from 0 to 1 by stepsize...might miss one, need to check
 			double v = .5;
 			double u = 0;
@@ -64,6 +66,11 @@ namespace Unfold
 					u = v;
 					v = steppos;
 				}
+				else
+				{
+					u = steppos;
+					
+				}
 				var rulingcoordsystem = surface.CurvatureAtParameter(u, v);
 				Line lineToIntersect;
 				var normal = surface.NormalAtParameter(u, v);
@@ -71,6 +78,10 @@ namespace Unfold
 				{
 					//cross product of normal and curve direction
 					var noncurvedir = rulingcoordsystem.YAxis.Cross(normal);
+					if (noncurvedir.IsAlmostEqualTo(Vector.ByCoordinates(0, 0, 0)))
+					{
+						noncurvedir = surface.DerivativesAtParameter(u, v).First(); ;
+					}
 					lineToIntersect = Line.ByStartPointEndPoint(rulingcoordsystem.Origin.Add(noncurvedir.Scale(-100)),
 						rulingcoordsystem.Origin.Add(noncurvedir.Scale(100)));
 				}
@@ -78,14 +89,19 @@ namespace Unfold
 				{
 					//cross product of normal and curve direction
 					var noncurvedir = rulingcoordsystem.XAxis.Cross(normal);
+					if (noncurvedir.IsAlmostEqualTo(Vector.ByCoordinates(0, 0, 0)))
+					{
+						noncurvedir = surface.DerivativesAtParameter(u, v)[1];
+					}
 					lineToIntersect = Line.ByStartPointEndPoint(rulingcoordsystem.Origin.Add(noncurvedir.Scale(-100)),
 						rulingcoordsystem.Origin.Add(noncurvedir.Scale(100)));
 				}
 
 				rulingLines.Add(lineToIntersect);
-
+				surfacetoLineTuples.Add(Tuple.Create(surface, lineToIntersect));
+				}
 			}
-			return rulingLines;
+			return surfacetoLineTuples;
 
 		}
 
@@ -125,6 +141,10 @@ namespace Unfold
 					u = v;
 					v = steppos;
 				}
+				else
+				{
+					u = steppos;
+				}
 				var rulingcoordsystem = surface.CurvatureAtParameter(u, v);
 				Line lineToIntersect;
 				var normal = surface.NormalAtParameter(u, v);
@@ -132,6 +152,11 @@ namespace Unfold
 				{
 					//cross product of normal and curve direction
 					var noncurvedir = rulingcoordsystem.YAxis.Cross(normal);
+					
+					if (noncurvedir.IsAlmostEqualTo(Vector.ByCoordinates(0,0,0)))
+					{
+						noncurvedir = surface.DerivativesAtParameter(u, v).First(); ;
+					}
 					lineToIntersect = Line.ByStartPointEndPoint(rulingcoordsystem.Origin.Add(noncurvedir.Scale(-100)),
 						rulingcoordsystem.Origin.Add(noncurvedir.Scale(100)));
 				}
@@ -139,6 +164,10 @@ namespace Unfold
 				{
 
 					var noncurvedir = rulingcoordsystem.XAxis.Cross(normal);
+					if (noncurvedir.IsAlmostEqualTo(Vector.ByCoordinates(0, 0, 0)))
+					{
+						noncurvedir = surface.DerivativesAtParameter(u, v)[1];
+					}
 					lineToIntersect = Line.ByStartPointEndPoint(rulingcoordsystem.Origin.Add(noncurvedir.Scale(-100)),
 						rulingcoordsystem.Origin.Add(noncurvedir.Scale(100)));
 				}
@@ -177,7 +206,7 @@ namespace Unfold
 
 		}
 
-		public static List<List<Geometry>> RotateRulesToCeiling(Plane ceilingPlane, Surface surface,double stepsize)
+		public static List<List<Geometry>> RotateRulesToCeiling(Plane ceilingPlane, List<Surface> surfaces,double stepsize)
 		{
 			//algorithm draft
 			//give a list of ruling lines found either adaptively or by some tolerance
@@ -190,21 +219,23 @@ namespace Unfold
 			
 			//find some ruling lines, these are very long and will in most cases intersect with the supplied ceil plane
 
-			List<Line> rules = FindingRulingLines(surface,stepsize);
+			List<Tuple<Surface,Line>> rules = FindingRulingLines(surfaces,stepsize);
 			//TODO check that all rules intersect ceil plane
 
 			//this will hold rules that lie on the surface
 			var newRules = new List<List<Geometry>>();
 			
-			foreach (Line rule in rules)
+			foreach (var tuple in rules)
 			{
+				var surface = tuple.Item1;
+				var rule = tuple.Item2;	
 				var ruleNormal = surface.NormalAtPoint(rule.PointAtParameter(.5));
 				var ceilplaneNorm = ceilingPlane.Normal;
 				
 				Vector bxaCrossedNormals = ceilplaneNorm.Cross(ruleNormal);
-				var s = (bxaCrossedNormals.Length);
+				var s = (bxaCrossedNormals.Length) * -1.0;
 				var planeRotOrigin = Plane.ByOriginNormal(rule.Intersect(ceilingPlane).First() as Point, bxaCrossedNormals);
-				var c = ruleNormal.Dot(ceilplaneNorm);
+				var c = ruleNormal.Dot(ceilplaneNorm) *-1.0;
 
 				var radians = Math.Atan2(s, c);
 				var degrees = radians * (180.0 / Math.PI);
