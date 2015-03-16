@@ -242,6 +242,10 @@ namespace DynamoUnfold
             return RulingLineFinder.FindingRulingPatches(surface, stepsize);
 
         }
+		public static List<List<Geometry>> UnrollDevelopable(Surface surface,double stepsize,Plane ceilingPlane){
+			return RulingLineFinder.RotateRulesToCeiling(ceilingPlane,surface,stepsize);
+		}
+		
 
 		#endregion
 
