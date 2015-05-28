@@ -6,14 +6,13 @@ using Dynamo.DSEngine;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
-
+using Dynamo;
 
 
 namespace Unfold.Topology
 {
     public class Tesselation
     {
-
        public class MeshHelpers
         {
             public static List<List<T>> Split<T>(List<T> source, int subListLength)
@@ -107,18 +106,22 @@ namespace Unfold.Topology
 
         }
 
+
         public static List<List<Point>> Tessellate(List<Surface> surfaces,double tolerance,int maxGridLines)
         {
-            var rp = new RenderPackage();
+            var rpfactory = new DefaultRenderPackageFactory();
+            rpfactory.MaxTessellationDivisions = 512;
+            var rp = rpfactory.CreateRenderPackage();
+           
             
             foreach (var surface in surfaces)
             {
                 surface.Tessellate(rp,tolerance,maxGridLines);
-                rp.ItemsCount++;
+                
 
             }
             //grab double components from rp and subset them into points and further into triangles
-            List<List<double>> pointdata = MeshHelpers.Split(rp.TriangleVertices, 3);
+            List<List<double>> pointdata = MeshHelpers.Split(rp.MeshVertices.ToList(), 3);
 
             List<Point> points = pointdata.Select(x => Point.ByCoordinates(x[0], x[1], x[2])).ToList();
 

@@ -115,9 +115,8 @@ namespace DynamoUnfold
         /// <summary>
         /// method that generates labels on the unfolded faces
         /// </summary>
-        /// <param name="unfoldingObject"> requires an unfolding object 
-        /// that represents an unfolding operation</param>
-        /// /// <param name="labelScale"> scale for the text labels</param>
+        /// <param name="unfoldingObject"> requires an unfolding object that represents an unfolding operation</param>
+        /// <param name="labelScale"> scale for the text labels</param>
         /// <returns name = "labels"> labels composed of curve geometry </returns>
         public static List<List<Curve>> GenerateUnfoldedLabels
             (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity> unfoldingObject, double labelScale = 1.0)
@@ -215,8 +214,8 @@ namespace DynamoUnfold
 		/// edges. This single edge in the cube becomes two edges in the unfold, and only one is tabbed.
 		/// </summary>
 		/// <param name="unfoldingObject"> an unfolding object that represents a single unfold operation</param>
-		/// /// <param name="relativeWidth"> the tab thickness, relative to the distance between the center of the surface
-		/// it lies on and the edge it represents, bigger surfaces will have larger tabs</param>
+		/// <param name="relativeWidth"> the tab thickness, relative to the distance between the center of the surface
+		///it lies on and the edge it represents, bigger surfaces will have larger tabs</param>
 		/// <returns></returns>
         public static List<List<Surface>>GenerateUnfoldedTabs
            (PlanarUnfolder.PlanarUnfolding<EdgeLikeEntity, FaceLikeEntity> unfoldingObject,double relativeWidth = .3)
