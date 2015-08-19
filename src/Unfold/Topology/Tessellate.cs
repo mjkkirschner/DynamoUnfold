@@ -110,13 +110,14 @@ namespace Unfold.Topology
         public static List<List<Point>> Tessellate(List<Surface> surfaces,double tolerance,int maxGridLines)
         {
             var rpfactory = new DefaultRenderPackageFactory();
-            rpfactory.MaxTessellationDivisions = 512;
             var rp = rpfactory.CreateRenderPackage();
-           
+           var tp = new TessellationParameters();
+            tp.MaxTessellationDivisions = maxGridLines;
+            tp.Tolerance = tolerance;
             
             foreach (var surface in surfaces)
             {
-                surface.Tessellate(rp,tolerance,maxGridLines);
+                surface.Tessellate(rp, tp);
                 
 
             }

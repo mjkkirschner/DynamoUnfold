@@ -134,7 +134,7 @@ namespace UnfoldTests
             PolyCurve rect;
             try
             {
-                rect = Rectangle.ByWidthHeight();
+                rect = Rectangle.ByWidthLength();
             }
             catch
             {
@@ -478,7 +478,7 @@ namespace UnfoldTests
 
                 var curvePoints = curveList.Select(x => x.StartPoint);
                 var labelPlane = Plane.ByBestFitThroughPoints(curvePoints);
-                var testsurf = Surface.ByPatch(Rectangle.ByWidthHeight(1, 1).
+                var testsurf = Surface.ByPatch(Rectangle.ByWidthLength(1, 1).
                     Transform(CoordinateSystem.ByPlane(labelPlane)) as Curve);
 
                 //check that the aligned curves intersect the surface they are aligned to

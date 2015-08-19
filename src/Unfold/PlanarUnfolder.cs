@@ -496,7 +496,7 @@ namespace Unfold
             {   
                 Console.WriteLine(e.Message);
                 //Geometry.ExportToSAT(new List<Geometry>{surf1,surf2},"C:\\Users\\Mike\\Desktop\\debugGeo");
-                return new Geometry[1] { Surface.ByPatch(Rectangle.ByWidthHeight()) };
+                return new Geometry[1] { Surface.ByPatch(Rectangle.ByWidthLength()) };
 
             }
 
