@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Unfold;
 using Autodesk.DesignScript.Runtime;
 using Autodesk.DesignScript.Geometry;
-using Autodesk.DesignScript.Interfaces;
 using Unfold.Topology;
-using Unfold.Interfaces;
 
 namespace DynamoUnfold
 {

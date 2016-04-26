@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UnfoldTests</RootNamespace>
     <AssemblyName>UnfoldTests</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -17,10 +17,11 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-   <OutputPath>$(SolutionDir)../bin/$(Configuration)</OutputPath>
+    <OutputPath>$(SolutionDir)../bin/$(Configuration)</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,8 +30,14 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DynamoServices, Version=1.0.0.806, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Y:\Dynamo\bin\AnyCPU\Debug\DynamoServices.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\extern\nunit.framework.dll</HintPath>
@@ -38,10 +45,6 @@
     </Reference>
     <Reference Include="ProtoGeometry">
       <HintPath>..\..\..\Dynamo\extern\ProtoGeometry\ProtoGeometry.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ProtoInterface">
-      <HintPath>..\..\..\Dynamo\extern\ProtoGeometry\ProtoInterface.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

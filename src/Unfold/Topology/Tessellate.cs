@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Dynamo.DSEngine;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
 using Dynamo;
-
+using Dynamo.Visualization;
 
 namespace Unfold.Topology
 {

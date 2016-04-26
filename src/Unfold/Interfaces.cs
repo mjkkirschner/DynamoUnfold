@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Unfold;
 using Autodesk.DesignScript.Geometry;
-using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
 
 namespace Unfold.Interfaces

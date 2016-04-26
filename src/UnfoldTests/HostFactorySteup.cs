@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using Autodesk.DesignScript.Geometry;
-using Autodesk.DesignScript.Interfaces;
 using System.Threading;
 using System.Reflection;
 

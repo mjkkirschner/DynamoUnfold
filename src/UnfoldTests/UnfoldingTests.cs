@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.DesignScript.Geometry;
 using NUnit.Framework;
-using Autodesk.DesignScript.Interfaces;
 using Unfold;
 using System.Threading;
 using Unfold.Interfaces;
