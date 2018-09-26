@@ -23,7 +23,7 @@ Building this library requires that you have also cloned Dynamo, DynamoText, and
 
 **These projects (Dynamo,DynamoText,DynamoPack) must be located in the same directory that DynamoUnfold has been cloned into.**
 
-#####Build Steps
+##### Build Steps
 1. **Clone** Dynamo [Dynamo](https://github.com/DynamoDS/Dynamo)
 2. **Build** Dynamo 
 3. **Clone** DynamoText [DynamoText](https://github.com/holyjewsus/DynamoText/tree/fixnetversion)
@@ -35,29 +35,29 @@ Building this library requires that you have also cloned Dynamo, DynamoText, and
 
 The reason for this build order is to ensure that both DynamoText and DynamoUnfold are referencing the same version of the geometry library interfaces and the Dynamo Core.  You can actually clone all repos at the same time, but **Dynamo** must be built before the others.
 
-###OR###
+### OR
 Skip all of these steps and use the **auto clone and build** script in the tools folder.  This python script will clone all the projects and build them in the correct order for you.
 
-###Importing Into Dynamo###
+### Importing Into Dynamo
 Once DynamoUnfold is finished building, navigate to **DynamoUnfold/bin/...** and import the DynamoUnfold.dll into Dynamo using library import.
 
-###Pre-built###
+### Pre-built
 If you are just looking for the necessary .dll's to import through **Zero-Touch Import** into Dynamo check the Pre-built folder. These .dll's will be updated periodically - **but they may be out of snyc with the version of dynamo you are using!** Also Does Not Exist YET!
 
-###Through The **Package Manager**###
+### Through The **Package Manager**
 Master branch of this library will periodically be wrapped up as a package and distributed on the package manager with samples!
 
-###Running Unit Tests###
+### Running Unit Tests
 To run unit tests on this library requires manually copying over the correct libG.dll's from Dynamo's Bin Folder.  Please look at HostFactorySetup.cs for further instructions.  You will also need to specify a directory for the geometry library to search for ASM .dll's.  This will be an Autodesk host application install directory, examples exist in **src/UnfoldTests/HostFactorySetup.cs**
 
-####Contributing####
+#### Contributing
 please see: https://github.com/holyjewsus/DynamoUnfold/wiki
 
-####Known Issues####
+#### Known Issues
 - There is a speed issue when unfolding a tesselated surface with more than approximately 1000 faces, stems from the conversion of triangle data to surfaces.
 - There is an intersection bug that occurs intermittently - more so with large numbers of surfaces, this is being looked into. 
 
-## Dynamo License ##
+## Dynamo License
 
 Those portions created by Ian are provided with the following copyright:
 
