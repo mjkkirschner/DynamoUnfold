@@ -81,13 +81,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
-###NUnit####
+### NUnit ####
 
 http://www.nunit.org/
 
 http://www.nunit.org/index.php?p=license&r=2.6.2  
 
-###DynamoPack###
+### DynamoPack ###
 This library makes use of the Nuclex Framework's [CygonRectanglePacker](https://devel.nuclex.org/framework/wiki/RectanglePacking).
 
 [Eclipse CPL](http://www.ibm.com/developerworks/library/os-cpl.html)
